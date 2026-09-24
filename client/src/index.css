@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+.theme-foods {
+  --theme-primary: #2F5D3A;
+  --theme-primary-hover: #1F4D2E;
+  --theme-accent: #D9A441;
+  --theme-accent-hover: #C28E31;
+  --theme-bg: #FAF6EC;
+  --theme-text: #2B2B2B;
+  --theme-card: #FFFFFF;
+  --theme-border: #E7E0D0;
+  --theme-badge-bg: #EAF2EC;
+  --theme-badge-text: #2F5D3A;
+  --theme-tint: #EAF2EC;
+
+  --store-primary: #2F5D3A;
+  --store-tint: #EAF2EC;
+  --store-accent: #D9A441;
+}
+
+.theme-baby {
+  --theme-primary: #2C8CAE;
+  --theme-primary-hover: #1E6B86;
+  --theme-accent: #F4A261;
+  --theme-accent-hover: #DE8D4D;
+  --theme-bg: #FAF6EC; /* Keep ivory page canvas */
+  --theme-text: #2B2B2B;
+  --theme-card: #FFFFFF;
+  --theme-border: #D8EBF3;
+  --theme-badge-bg: #E6F4FA;
+  --theme-badge-text: #1E6B86;
+  --theme-tint: #E6F4FA;
+
+  --store-primary: #5DB4D6;
+  --store-tint: #E6F4FA;
+  --store-accent: #F4A261;
+}
+
+.theme-care {
+  --theme-primary: #C26371;
+  --theme-primary-hover: #A84E5B;
+  --theme-accent: #C7926B;
+  --theme-accent-hover: #B17D56;
+  --theme-bg: #FAF6EC; /* Keep ivory page canvas */
+  --theme-text: #2B2B2B;
+  --theme-card: #FFFFFF;
+  --theme-border: #F5DEE1;
+  --theme-badge-bg: #FCE9EC;
+  --theme-badge-text: #963846;
+  --theme-tint: #FCE9EC;
+
+  --store-primary: #E0808C;
+  --store-tint: #FCE9EC;
+  --store-accent: #C7926B;
+}
+
+body {
+  background-color: var(--theme-bg, #FAF6EC);
+  color: var(--theme-text, #2B2B2B);
+  font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings scale */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, Cambria, serif;
+}
+
+/* Card hover lift effect */
+.card-hover-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-hover-lift,
+  .card-hover-lift:hover {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF6EC;
+}
+::-webkit-scrollbar-thumb {
+  background: #dcd3c1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b5aa98;
+}

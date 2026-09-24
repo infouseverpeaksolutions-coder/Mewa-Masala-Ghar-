@@ -1,0 +1,15 @@
+{
+  "name": "mewa-masala-ghar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mewa Masala Ghar - Indian Dry Fruits, Spices, Nutrition & Personal Care E-commerce Platform",
+  "scripts": {
+    "install:all": "npm.cmd --prefix server install && npm.cmd --prefix client install && npm.cmd --prefix admin install",
+    "dev:server": "npm.cmd --prefix server run dev",
+    "dev:client": "npm.cmd --prefix client run dev",
+    "dev:admin": "npm.cmd --prefix admin run dev",
+    "build": "npm.cmd --prefix server run build && npm.cmd --prefix client run build && npm.cmd --prefix admin run build",
+    "seed": "npm.cmd --prefix server run db:seed"
+  },
+  "keywords": ["dry-fruits", "spices", "makhana", "baby-nutrition", "multani-mitti", "ecommerce", "react", "express", "prisma", "mysql"]
+}
