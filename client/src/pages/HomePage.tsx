@@ -25,7 +25,7 @@ const HOMEPAGE_CATEGORIES = [
   {
     id: 'baby-products',
     name: 'Baby Products',
-    badge: 'Doctor Curated',
+    badge: 'Jimmi Jaggu',
     description: 'Sprouted ragi, infant nutrition & poshan',
     image: '/categories/baby_products.jpg',
     link: '/baby-nutrition',
@@ -41,7 +41,7 @@ const HOMEPAGE_CATEGORIES = [
   {
     id: 'skin-care',
     name: 'Skin Care',
-    badge: '100% Herbal',
+    badge: 'Jimmi Jaggu',
     description: 'Multani mitti & ancient volcanic clays',
     image: '/categories/skin_care.jpg',
     link: '/personal-care',
@@ -344,10 +344,65 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. BABY & FAMILY NUTRITION SHELF */}
+      {/* 5. JIMMI JAGGU SUB-BRAND SHOWCASE BANNER */}
+      <section id="jimmi-jaggu-showcase" className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#FAF4EC] via-[#FFF9F3] to-[#FAF4EC] border-2 border-[#D9A441]/40 shadow-soft p-6 sm:p-8 lg:p-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white p-2 shadow-md border-2 border-[#D9A441]/40 shrink-0 flex items-center justify-center">
+                <img
+                  src="/brands/jimmi_jaggu_logo.png"
+                  alt="Jimmi Jaggu Sub-Brand"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="space-y-1.5 max-w-xl">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#1F4D2E]/10 text-[#1F4D2E] text-[11px] font-bold tracking-wide uppercase">
+                  <span>Exclusive Sub-Brand</span>
+                  <span className="text-[#D9A441]">•</span>
+                  <span>Baby & Skincare</span>
+                </div>
+                <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#1F4D2E]">
+                  Jimmi Jaggu
+                </h3>
+                <p className="font-serif italic text-sm text-[#8C6D37] font-semibold">
+                  “From Our Store to Your Home”
+                </p>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  Doctor-approved <strong>Baby First Foods & Poshan</strong> paired with 100% pure <strong>Micro-Sifted Clays & Herbal Skincare</strong>. Preservative-free generational wellness.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 shrink-0">
+              <Link
+                to="/jimmi-jaggu"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#1F4D2E] hover:bg-[#163821] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all"
+              >
+                <span>Explore Sub-Brand</span>
+                <ArrowRight className="w-4 h-4 text-[#D9A441]" />
+              </Link>
+              <Link
+                to="/baby-nutrition"
+                className="inline-flex items-center gap-2 px-4 py-2.5 sm:py-3 rounded-full bg-[#2C8CAE] hover:bg-[#237492] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow transition-all"
+              >
+                <span>Baby Nutrition</span>
+              </Link>
+              <Link
+                to="/personal-care"
+                className="inline-flex items-center gap-2 px-4 py-2.5 sm:py-3 rounded-full bg-[#B85966] hover:bg-[#9E4753] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow transition-all"
+              >
+                <span>Skin Care Clays</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. BABY & FAMILY NUTRITION SHELF (Jimmi Jaggu) */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         <SectionHeading
-          title="Baby & Family Nutrition"
+          title="Baby & Family Nutrition • Jimmi Jaggu"
           viewAllLink="/baby-nutrition"
           leafColor="#5DB4D6"
         />
@@ -439,10 +494,10 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. PERSONAL CARE SHELF */}
+      {/* 7. PERSONAL CARE SHELF (Jimmi Jaggu) */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         <SectionHeading
-          title="Personal Care"
+          title="Personal Care & Natural Clays • Jimmi Jaggu"
           viewAllLink="/personal-care"
           leafColor="#E0808C"
         />

@@ -64,9 +64,24 @@ export const PersonalCareStorePage: React.FC = () => {
           <div className="relative z-10 w-full px-6 sm:px-12 lg:px-16 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left text column */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 border border-[#F5CED4] text-[#8E3B46] text-xs font-bold tracking-wide">
-                <Sparkles className="w-3.5 h-3.5 text-[#C26371]" />
-                <span>Pure Earth Minerals & Micro-Fine Clays</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  to="/jimmi-jaggu"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-[#D9A441]/50 text-[#1F4D2E] text-xs font-bold shadow-xs hover:border-[#D9A441] transition-all group"
+                >
+                  <img
+                    src="/brands/jimmi_jaggu_logo.png"
+                    alt="Jimmi Jaggu"
+                    className="w-5 h-5 rounded-full object-contain bg-white border border-[#D9A441]/30 shrink-0"
+                  />
+                  <span className="font-serif">A Jimmi Jaggu Collection</span>
+                  <span className="text-[10px] text-[#8C6D37] font-semibold hidden sm:inline">• “From Our Store to Your Home”</span>
+                </Link>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-[#F5CED4] text-[#8E3B46] text-xs font-bold tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-[#C26371]" />
+                  <span>Pure Earth Minerals & Micro-Fine Clays</span>
+                </div>
               </div>
 
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#8E3B46] leading-[1.1] tracking-tight">

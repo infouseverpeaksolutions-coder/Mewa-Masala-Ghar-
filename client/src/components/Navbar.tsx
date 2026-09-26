@@ -126,6 +126,39 @@ const STORE_MEGA_MENUS: Record<StoreType, MegaMenuCategory[]> = {
   ],
 };
 
+const JIMMI_JAGGU_MEGA_MENU: MegaMenuCategory[] = [
+  {
+    title: 'Baby Food & Infant Poshan',
+    link: '/baby-nutrition',
+    items: [
+      { name: 'Pratham Aahar (6+ Months)', link: '/shop?store=baby&category=pratham-aahar' },
+      { name: 'Sprouted Ragi & Almond Mix', link: '/shop?store=baby&category=pratham-aahar' },
+      { name: 'Daily Family Nutrition Mix', link: '/shop?store=baby&category=daily-poshan' },
+      { name: 'Pregnancy & Maternal Care', link: '/shop?store=baby&category=pregnancy-care' },
+    ],
+  },
+  {
+    title: 'Skin Care & Natural Clays',
+    link: '/personal-care',
+    items: [
+      { name: '300-Mesh Multani Mitti', link: '/shop?store=care&category=multani-mitti-clays' },
+      { name: 'French Pink Clay', link: '/shop?store=care&category=multani-mitti-clays' },
+      { name: 'Sun-Dried Rose Petal Powder', link: '/shop?store=care&category=rose-petal-herbal' },
+      { name: 'Dead Sea Mineral Mud Pack', link: '/shop?store=care&category=dead-sea-mud' },
+    ],
+  },
+  {
+    title: 'Jimmi Jaggu Sub-Brand',
+    link: '/jimmi-jaggu',
+    items: [
+      { name: '“From Our Store to Your Home”', link: '/jimmi-jaggu' },
+      { name: '100% Preservative Free Care', link: '/jimmi-jaggu' },
+      { name: 'Doctor & Ayurvedic Formulations', link: '/jimmi-jaggu' },
+      { name: 'Explore Jimmi Jaggu Store →', link: '/jimmi-jaggu' },
+    ],
+  },
+];
+
 export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
   const { activeStore, setActiveStore } = useTheme();
   const { itemCount, setIsCartOpen } = useCart();
@@ -138,7 +171,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
-  const [activeMegaMenu, setActiveMegaMenu] = useState<StoreType | null>(null);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<StoreType | 'jimmi' | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const megaMenuRef = useRef<HTMLDivElement>(null);
@@ -184,7 +217,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
   };
 
   // Hovering reveals the category options
-  const handleStoreMouseEnter = (storeKey: StoreType) => {
+  const handleStoreMouseEnter = (storeKey: StoreType | 'jimmi') => {
     if (megaMenuTimeoutRef.current) clearTimeout(megaMenuTimeoutRef.current);
     setActiveMegaMenu(storeKey);
   };
@@ -424,11 +457,11 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
           ref={megaMenuRef}
           onMouseLeave={handleStoreMouseLeave}
         >
-          <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto scrollbar-none py-1">
+          <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto scrollbar-none py-1">
             {/* Quick Home Tab Button */}
             <Link
               to="/"
-              className={`py-2.5 px-4 sm:px-5 rounded-full flex items-center gap-2 text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs shrink-0 cursor-pointer ${
+              className={`py-2 px-3.5 sm:px-4 rounded-full flex items-center gap-1.5 text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs shrink-0 cursor-pointer ${
                 location.pathname === '/'
                   ? 'bg-[#1F4D2E] text-white ring-2 ring-[#D9A441]'
                   : 'bg-white border border-[#E7E0D0] text-[#1F4D2E] hover:bg-[#FAF6EC]'
@@ -438,11 +471,39 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               <Home className="w-4 h-4 text-[#D9A441]" />
               <span>Home</span>
             </Link>
+
+            {/* Sub-Brand Tab: Jimmi Jaggu */}
+            <Link
+              to="/jimmi-jaggu"
+              onMouseEnter={() => handleStoreMouseEnter('jimmi')}
+              className={`py-2 px-3 sm:px-4 rounded-full flex items-center gap-2 text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs shrink-0 cursor-pointer border ${
+                location.pathname === '/jimmi-jaggu'
+                  ? 'bg-[#1F4D2E] text-white ring-2 ring-[#D9A441] border-[#1F4D2E]'
+                  : 'bg-white border-[#D9A441]/60 text-[#1F4D2E] hover:bg-[#FAF4EC] hover:border-[#D9A441]'
+              }`}
+              title="Jimmi Jaggu Sub-Brand • Baby Food & Skin Care"
+            >
+              <img
+                src="/brands/jimmi_jaggu_logo.png"
+                alt="Jimmi Jaggu"
+                className="w-5 h-5 rounded-full object-contain bg-white border border-[#D9A441]/30 shrink-0"
+              />
+              <span className="font-serif tracking-tight">Jimmi Jaggu</span>
+              <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-[#D9A441]/20 text-[#8C6D37] hidden xl:inline-block">
+                Sub-Brand
+              </span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  activeMegaMenu === 'jimmi' ? 'rotate-180 text-[#D9A441]' : 'text-gray-400'
+                }`}
+              />
+            </Link>
+
             {/* Tab 1: Mewa & Healthy Foods */}
             <button
               onClick={() => handleStoreTabClick('foods')}
               onMouseEnter={() => handleStoreMouseEnter('foods')}
-              className={`flex-1 min-w-[240px] py-2.5 px-5 rounded-full flex items-center justify-between text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs cursor-pointer ${
+              className={`flex-1 min-w-[210px] sm:min-w-[230px] py-2.5 px-4 sm:px-5 rounded-full flex items-center justify-between text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs cursor-pointer ${
                 isStoreActive('foods')
                   ? 'bg-[#2F5D3A] text-white ring-2 ring-[#D9A441]'
                   : 'bg-[#2F5D3A]/90 hover:bg-[#2F5D3A] text-white'
@@ -459,19 +520,22 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               />
             </button>
 
-            {/* Tab 2: Baby & Family Nutrition */}
+            {/* Tab 2: Baby & Family Nutrition (Jimmi Jaggu) */}
             <button
               onClick={() => handleStoreTabClick('baby')}
               onMouseEnter={() => handleStoreMouseEnter('baby')}
-              className={`flex-1 min-w-[240px] py-2.5 px-5 rounded-full flex items-center justify-between text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs cursor-pointer ${
+              className={`flex-1 min-w-[220px] sm:min-w-[240px] py-2.5 px-4 sm:px-5 rounded-full flex items-center justify-between text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs cursor-pointer ${
                 isStoreActive('baby')
                   ? 'bg-[#5DB4D6] text-white ring-2 ring-[#2C8CAE]'
                   : 'bg-[#5DB4D6]/90 hover:bg-[#5DB4D6] text-white'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <MotherChildIcon className="w-4 h-4 text-white" color="#FFFFFF" />
                 <span>Baby & Family Nutrition</span>
+                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-white/25 text-white hidden sm:inline-block">
+                  Jimmi Jaggu
+                </span>
               </div>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
@@ -480,19 +544,22 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               />
             </button>
 
-            {/* Tab 3: Personal Care */}
+            {/* Tab 3: Personal Care (Jimmi Jaggu) */}
             <button
               onClick={() => handleStoreTabClick('care')}
               onMouseEnter={() => handleStoreMouseEnter('care')}
-              className={`flex-1 min-w-[240px] py-2.5 px-5 rounded-full flex items-center justify-between text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs cursor-pointer ${
+              className={`flex-1 min-w-[200px] sm:min-w-[220px] py-2.5 px-4 sm:px-5 rounded-full flex items-center justify-between text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs cursor-pointer ${
                 isStoreActive('care')
                   ? 'bg-[#E0808C] text-white ring-2 ring-[#C26371]'
                   : 'bg-[#E0808C]/90 hover:bg-[#E0808C] text-white'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <LotusIcon className="w-4 h-4 text-white" color="#FFFFFF" />
                 <span>Personal Care</span>
+                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-white/25 text-white hidden sm:inline-block">
+                  Jimmi Jaggu
+                </span>
               </div>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
@@ -512,7 +579,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               className="absolute top-full left-0 right-0 mt-1 bg-white rounded-2xl shadow-2xl border border-[#E7E0D0] p-6 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {STORE_MEGA_MENUS[activeMegaMenu].map((col, idx) => (
+                {(activeMegaMenu === 'jimmi' ? JIMMI_JAGGU_MEGA_MENU : STORE_MEGA_MENUS[activeMegaMenu]).map((col, idx) => (
                   <div key={idx} className="space-y-3">
                     <Link
                       to={col.link}
@@ -576,6 +643,22 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             >
               <Home className="w-4 h-4 text-[#D9A441]" />
               <span>Home Page</span>
+            </Link>
+            <Link
+              to="/jimmi-jaggu"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`col-span-2 p-2.5 rounded-xl text-center font-bold flex items-center justify-center gap-2 transition-colors border ${
+                location.pathname === '/jimmi-jaggu'
+                  ? 'bg-[#1F4D2E] text-white border-[#1F4D2E]'
+                  : 'bg-white text-[#1F4D2E] hover:bg-[#FAF4EC] border-[#D9A441]/50'
+              }`}
+            >
+              <img
+                src="/brands/jimmi_jaggu_logo.png"
+                alt="Jimmi Jaggu"
+                className="w-5 h-5 rounded-full object-contain bg-white border border-[#D9A441]/30"
+              />
+              <span>Jimmi Jaggu (Baby Food & Skin Care)</span>
             </Link>
             <Link
               to="/about"

@@ -9,6 +9,7 @@ import { HomePage } from './pages/HomePage';
 import { FoodsStorePage } from './pages/FoodsStorePage';
 import { BabyNutritionStorePage } from './pages/BabyNutritionStorePage';
 import { PersonalCareStorePage } from './pages/PersonalCareStorePage';
+import { JimmiJagguBrandPage } from './pages/JimmiJagguBrandPage';
 import { ShopPage } from './pages/ShopPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { SearchPage } from './pages/SearchPage';
@@ -46,6 +47,7 @@ export const App: React.FC = () => {
           <Route path="/foods" element={<FoodsStorePage />} />
           <Route path="/baby-nutrition" element={<BabyNutritionStorePage />} />
           <Route path="/personal-care" element={<PersonalCareStorePage />} />
+          <Route path="/jimmi-jaggu" element={<JimmiJagguBrandPage />} />
 
           {/* Catalog & Product Discovery */}
           <Route path="/shop" element={<ShopPage />} />
