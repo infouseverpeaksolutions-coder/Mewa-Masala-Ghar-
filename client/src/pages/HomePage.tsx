@@ -9,7 +9,6 @@ import {
   Star,
 } from 'lucide-react';
 import { HeroVideo } from '../components/HeroVideo';
-import { TrustRow } from '../components/TrustRow';
 import { MewaProductCard } from '../components/MewaProductCard';
 import { BestsellerHorizontalCard } from '../components/BestsellerHorizontalCard';
 import {
@@ -67,12 +66,6 @@ export const HomePage: React.FC = () => {
         <HeroVideo />
       </div>
 
-      {/* 
-        ========================================================================
-        2. TRUST ROW (5 items with thin dividers & leaf illustrations)
-        ========================================================================
-      */}
-      <TrustRow />
 
       {/* 
         ========================================================================
