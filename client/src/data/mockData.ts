@@ -302,7 +302,7 @@ export const BESTSELLERS_PRODUCTS: MockProduct[] = [
     price: 349,
     rating: 4.8,
     reviewCount: '640',
-    image: '/products/seeds-aata/multigrain_atta.jpg',
+    image: '/products/seeds-aata/wheat_atta.jpg',
     link: '/shop?category=specialty-flours',
   },
 ];

@@ -287,7 +287,7 @@ export const HomePage: React.FC = () => {
               to={prod.link}
               className="group bg-white rounded-2xl sm:rounded-3xl border border-[#E7E0D0] p-4 shadow-soft hover:shadow-card transition-all duration-300 flex items-center justify-between gap-4 hover:-translate-y-1"
             >
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center p-1 shrink-0">
+              <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center p-1 shrink-0">
                 <img
                   src={prod.image}
                   alt={prod.name}
