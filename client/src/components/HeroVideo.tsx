@@ -29,14 +29,13 @@ export const HeroVideo: React.FC = () => {
     <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
       {/* 
         ========================================================================
-        WHOLE HERO SECTION VIDEO BANNER
-        The video plays across the entire width and height of the hero banner.
-        - Desktop: Left-aligned content with a deep dark gradient scrim for readability,
-                   leaving the orbiting dry fruits video clear and prominent.
-        - Mobile: Centered content with bottom-to-top gradient overlay.
+        FULL SCREEN FIT HERO SECTION
+        - Height fitted to viewport: h-[calc(100vh-130px)] min-h-[520px] max-h-[880px]
+        - Centered grand typography and call-to-action
+        - Balanced cinematic overlay so text is crisp and orbiting video is prominent
         ========================================================================
       */}
-      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden min-h-[480px] sm:min-h-[520px] lg:min-h-[580px] flex items-center shadow-lg bg-[#1F4D2E]">
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden w-full h-[calc(100vh-130px)] min-h-[520px] max-h-[880px] flex items-center justify-center shadow-lg bg-[#1F4D2E]">
         {/* Full-bleed background video / poster fallback */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {reducedMotion || videoError ? (
@@ -68,48 +67,42 @@ export const HeroVideo: React.FC = () => {
           )}
 
           {/* 
-            Desktop Overlay Scrim:
-            Rich dark gradient from left to right so text is crystal clear on the left,
-            while the orbiting nuts & fruits on the right are vivid and bright.
+            Balanced Center Overlay Scrim:
+            Translucent dark tint + radial & vertical gradients so centered text
+            has maximum readability while the orbiting nuts & fruits shine through.
           */}
-          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 via-45% to-black/20" />
-          
-          {/* Subtle top & bottom shadow gradient */}
-          <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
-
-          {/* 
-            Mobile Overlay Scrim:
-            Bottom-to-top gradient for centered content at the bottom.
-          */}
-          <div className="md:hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/25" />
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/45" />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.55) 100%)',
+            }}
+          />
         </div>
 
         {/* 
-          Hero Content Layer:
-          - Desktop: Left aligned, generous padding, max-w-xl.
-          - Mobile: Centered, bottom anchored.
+          Centered Hero Content Layer:
+          Grand serif headline, supporting line, and primary gold CTA.
         */}
-        <div className="relative z-10 w-full px-6 sm:px-10 lg:px-16 py-12 lg:py-20 flex flex-col justify-end md:justify-center items-center md:items-start text-center md:text-left h-full min-h-[480px] sm:min-h-[520px] lg:min-h-[580px]">
-          <div className="max-w-xl select-none">
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
-              {HERO_CONTENT.headlineTop}
-              <br className="hidden md:block" />
-              {' '}
-              <span className="text-[#F6ECE8]">{HERO_CONTENT.headlineToBottom}</span>
-            </h1>
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center justify-center text-center select-none">
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[80px] font-bold text-white leading-[1.08] tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] max-w-4xl mx-auto">
+            <span>{HERO_CONTENT.headlineTop}</span>{' '}
+            <span className="text-[#F6ECE8]">{HERO_CONTENT.headlineToBottom}</span>
+          </h1>
 
-            <p className="mt-4 text-xs sm:text-sm md:text-base lg:text-[17px] text-white/90 leading-relaxed font-sans max-w-lg drop-shadow-sm">
-              {HERO_CONTENT.supportingLine}
-            </p>
+          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg lg:text-xl text-white/95 leading-relaxed font-sans max-w-2xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] font-normal">
+            {HERO_CONTENT.supportingLine}
+          </p>
 
-            <div className="mt-7 sm:mt-8">
-              <Link
-                to={HERO_CONTENT.ctaLink}
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#D9A441] hover:bg-[#c28e31] text-[#1F4D2E] text-sm md:text-base font-bold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-              >
-                <span>{HERO_CONTENT.ctaText}</span>
-              </Link>
-            </div>
+          <div className="mt-8 sm:mt-10 flex items-center justify-center">
+            <Link
+              to={HERO_CONTENT.ctaLink}
+              className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-[#D9A441] hover:bg-[#c28e31] text-[#1F4D2E] text-sm sm:text-base md:text-lg font-bold shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span>{HERO_CONTENT.ctaText}</span>
+            </Link>
           </div>
         </div>
       </div>
