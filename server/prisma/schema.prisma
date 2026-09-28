@@ -70,6 +70,30 @@ enum TrackingStatus {
   RETURNED
 }
 
+// 0. Brands Table (Master Brand Model)
+model Brand {
+  id           String     @id @default(cuid())
+  slug         String     @unique // "mewa-masala-ghar" or "jimmi-jaggu"
+  name         String     // "Mewa Masala Ghar" or "Jimmi Jaggu"
+  tagline      String?    // "Pure Indian Goodness, Rooted in Tradition" or "From Our Store to Your Home"
+  description  String?    @db.Text
+  logo         String?    // "/logo.png" or "/brands/jimmi_jaggu_logo.png"
+  primaryColor String     @default("#2F5D3A") @map("primary_color")
+  accentColor  String     @default("#D9A441") @map("accent_color")
+  bgColor      String     @default("#FAF6EC") @map("bg_color")
+  textColor    String     @default("#2B2B2B") @map("text_color")
+  fssaiNumber  String?    @map("fssai_number")
+  isActive     Boolean    @default(true) @map("is_active")
+  categories   Category[]
+  products     Product[]
+  banners      Banner[]
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@index([slug])
+  @@map("brands")
+}
+
 // 1. Stores Table
 model Store {
   id           String     @id @default(cuid())
@@ -98,6 +122,8 @@ model Category {
   id           String     @id @default(cuid())
   storeId      String     @map("store_id")
   store        Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  brandId      String?    @map("brand_id")
+  brand        Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
   parentId     String?    @map("parent_id")
   parent       Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children     Category[] @relation("CategoryHierarchy")
@@ -111,6 +137,7 @@ model Category {
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
   @@index([storeId])
+  @@index([brandId])
   @@index([parentId])
   @@index([slug])
   @@map("categories")
@@ -121,6 +148,8 @@ model Product {
   id               String           @id @default(cuid())
   storeId          String           @map("store_id")
   store            Store            @relation(fields: [storeId], references: [id])
+  brandId          String?          @map("brand_id")
+  brand            Brand?           @relation(fields: [brandId], references: [id], onDelete: SetNull)
   categoryId       String           @map("category_id")
   category         Category         @relation(fields: [categoryId], references: [id])
   name             String
@@ -157,6 +186,7 @@ model Product {
 
   @@index([slug])
   @@index([storeId])
+  @@index([brandId])
   @@index([categoryId])
   @@map("products")
 }
@@ -499,6 +529,8 @@ model Banner {
   id           String   @id @default(cuid())
   storeId      String?  @map("store_id")
   store        Store?   @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  brandId      String?  @map("brand_id")
+  brand        Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
   title        String   @db.Text
   subtitle     String?  @db.Text
   ctaText      String?  @default("Shop Now") @map("cta_text")
@@ -510,6 +542,7 @@ model Banner {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@index([storeId])
+  @@index([brandId])
   @@map("banners")
 }
 

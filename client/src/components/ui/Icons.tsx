@@ -285,3 +285,63 @@ export const IndianArchFlourish: React.FC<{ className?: string; color?: string }
     <circle cx="32" cy="12" r="1.5" fill={color} opacity="0.6" />
   </svg>
 );
+
+// Flour / Mortar icon for stone-ground flour in trust row
+export const FlourIcon: React.FC<{ className?: string; color?: string }> = ({ className = 'w-6 h-6', color = '#2F5D3A' }) => (
+  <div className={`${className} rounded-full border-2 flex items-center justify-center p-1`} style={{ borderColor: color, color }}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-3.5 h-3.5">
+      <path d="M4 10a8 8 0 0 0 16 0H4z" />
+      <path d="M12 2v8" />
+      <path d="M7 19h10" />
+      <path d="M9 14v5" />
+      <path d="M15 14v5" />
+    </svg>
+  </div>
+);
+
+// Botanical Leaf Sprig pointing inward right
+export const BranchFlourishLeft: React.FC<{ className?: string; color?: string }> = ({
+  className = 'w-16 h-10',
+  color = '#2F5D3A',
+}) => (
+  <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M5 25 Q 45 22 95 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.75" />
+    <path d="M25 24 Q 28 14 36 18 Q 30 25 25 24 Z" fill={color} opacity="0.65" />
+    <path d="M40 22 Q 44 10 54 15 Q 46 23 40 22 Z" fill={color} opacity="0.65" />
+    <path d="M60 19 Q 65 7 75 12 Q 68 20 60 19 Z" fill={color} opacity="0.65" />
+    <path d="M80 17 Q 85 6 95 11 Q 88 18 80 17 Z" fill={color} opacity="0.65" />
+    <path d="M30 24 Q 34 32 42 28 Q 36 22 30 24 Z" fill={color} opacity="0.65" />
+    <path d="M50 21 Q 55 31 64 26 Q 57 20 50 21 Z" fill={color} opacity="0.65" />
+    <path d="M70 18 Q 75 27 84 23 Q 77 17 70 18 Z" fill={color} opacity="0.65" />
+  </svg>
+);
+
+// Botanical Leaf Sprig pointing inward left (mirrored)
+export const BranchFlourishRight: React.FC<{ className?: string; color?: string }> = ({
+  className = 'w-16 h-10',
+  color = '#2F5D3A',
+}) => (
+  <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${className} transform -scale-x-100`}>
+    <path d="M5 25 Q 45 22 95 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.75" />
+    <path d="M25 24 Q 28 14 36 18 Q 30 25 25 24 Z" fill={color} opacity="0.65" />
+    <path d="M40 22 Q 44 10 54 15 Q 46 23 40 22 Z" fill={color} opacity="0.65" />
+    <path d="M60 19 Q 65 7 75 12 Q 68 20 60 19 Z" fill={color} opacity="0.65" />
+    <path d="M80 17 Q 85 6 95 11 Q 88 18 80 17 Z" fill={color} opacity="0.65" />
+    <path d="M30 24 Q 34 32 42 28 Q 36 22 30 24 Z" fill={color} opacity="0.65" />
+    <path d="M50 21 Q 55 31 64 26 Q 57 20 50 21 Z" fill={color} opacity="0.65" />
+    <path d="M70 18 Q 75 27 84 23 Q 77 17 70 18 Z" fill={color} opacity="0.65" />
+  </svg>
+);
+
+// Section Title Leaf Accent
+export const SectionLeaf: React.FC<{ className?: string; color?: string }> = ({
+  className = 'w-4 h-4',
+  color = '#2F5D3A',
+}) => (
+  <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block ml-1.5 align-middle ${className}`}>
+    <path d="M17 3C11 3 7 7 5 12C8 11.5 11 11 13 8.5C15 6.5 16.5 4.5 17 3Z" fill={color} opacity="0.9" />
+    <path d="M3 17C4.5 15 7.5 11.5 12 9.5C11 12 8.5 15.5 3 17Z" fill={color} opacity="0.6" />
+    <path d="M3 17C5.5 13.5 9.5 10.5 17 3" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+

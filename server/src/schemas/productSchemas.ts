@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const getProductsQuerySchema = z.object({
   query: z.object({
     store: z.string().optional(),
+    brand: z.string().optional(),
     category: z.string().optional(),
     search: z.string().optional(),
     featured: z.string().optional(),
@@ -23,7 +24,8 @@ export const getProductsQuerySchema = z.object({
 
 export const createProductSchema = z.object({
   body: z.object({
-    storeId: z.string().min(1, 'Store is required'),
+    storeId: z.string().optional(),
+    brandId: z.string().optional(),
     categoryId: z.string().min(1, 'Category is required'),
     name: z.string().min(2, 'Name must be at least 2 characters'),
     shortDescription: z.string().optional(),

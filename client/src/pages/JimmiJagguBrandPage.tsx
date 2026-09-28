@@ -193,7 +193,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
       {/* 4. PILLAR ONE: BABY FOOD & NUTRITION */}
       {(activeTab === 'all' || activeTab === 'baby') && (
-        <section id="baby-nutrition" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <section id="baby-nutrition" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="bg-gradient-to-r from-[#EBF6FB] to-[#F2F8FB] border border-[#CCE8F5] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-[#1E6B86] text-xs font-bold border border-[#CCE8F5]">
@@ -217,26 +217,118 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </Link>
           </div>
 
+          {/* Baby Category Shelves (Moved from Homepage) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Pratham Aahar (6+ Months) */}
+            <div className="bg-[#E6F4FA] rounded-2xl border border-[#CCE8F5] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=200&q=80"
+                  alt="Pratham Aahar Baby Nutrition"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
+                />
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#1E6B86]">
+                    Pratham Aahar (6+ Months)
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">Pure. Safe. Nutritious.</p>
+                </div>
+              </div>
+
+              <Link
+                to="/shop?store=baby&category=pratham-aahar"
+                className="inline-flex items-center justify-center gap-2 py-2 px-5 rounded-full bg-[#2C8CAE] hover:bg-[#216F8C] text-white text-xs font-bold transition-colors"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Card 2: Daily Poshan (Family) */}
+            <div className="bg-[#E6F4FA] rounded-2xl border border-[#CCE8F5] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
+              <div>
+                <div className="flex items-center gap-4 mb-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80"
+                    alt="Daily Family Nutrition"
+                    className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
+                  />
+                  <div>
+                    <h3 className="font-serif font-bold text-base text-[#1E6B86]">
+                      Daily Poshan
+                    </h3>
+                    <p className="text-xs text-gray-600 mt-0.5">For a stronger family</p>
+                  </div>
+                </div>
+
+                {/* Sub-chips */}
+                <div className="flex flex-wrap gap-1.5 my-3">
+                  <span className="text-[10px] font-semibold bg-white/80 px-2 py-0.5 rounded-full text-[#1E6B86]">Women</span>
+                  <span className="text-[10px] font-semibold bg-white/80 px-2 py-0.5 rounded-full text-[#1E6B86]">Youngsters</span>
+                  <span className="text-[10px] font-semibold bg-white/80 px-2 py-0.5 rounded-full text-[#1E6B86]">Elders' Diet</span>
+                </div>
+              </div>
+
+              <Link
+                to="/shop?store=baby&category=daily-poshan"
+                className="inline-flex items-center justify-center gap-2 py-2 px-5 rounded-full bg-[#2C8CAE] hover:bg-[#216F8C] text-white text-xs font-bold transition-colors"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Card 3: Pregnancy Diet */}
+            <div className="bg-[#E6F4FA] rounded-2xl border border-[#CCE8F5] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=200&q=80"
+                  alt="Pregnancy Care & Maternal Diet"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
+                />
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#1E6B86]">
+                    Pregnancy Diet
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">Healthy mom. Healthy baby.</p>
+                </div>
+              </div>
+
+              <Link
+                to="/shop?store=baby&category=pregnancy-care"
+                className="inline-flex items-center justify-center gap-2 py-2 px-5 rounded-full bg-[#2C8CAE] hover:bg-[#216F8C] text-white text-xs font-bold transition-colors"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
           {/* Baby Products Grid */}
-          {loadingBaby ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="aspect-square bg-white rounded-2xl animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {babyProducts.slice(0, 8).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+          <div className="space-y-4 pt-2">
+            <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1E6B86]">
+              Featured Baby Foods & Poshan Blends
+            </h3>
+            {loadingBaby ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="aspect-square bg-white rounded-2xl animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {babyProducts.slice(0, 8).map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       )}
 
       {/* 5. PILLAR TWO: SKIN CARE & NATURAL CLAYS */}
       {(activeTab === 'all' || activeTab === 'care') && (
-        <section id="skin-care" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pt-4">
+        <section id="skin-care" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pt-4">
           <div className="bg-gradient-to-r from-[#FDF2F4] to-[#FAF0EE] border border-[#F5CED4] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-[#8E2835] text-xs font-bold border border-[#F5CED4]">
@@ -260,20 +352,103 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </Link>
           </div>
 
+          {/* Personal Care Category Shelves (Moved from Homepage) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Premium Multani Mitti */}
+            <div className="bg-[#FCE9EC] rounded-2xl border border-[#F5CED4] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=200&q=80"
+                  alt="Multani Mitti Clay Powder"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
+                />
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#8E3B46]">
+                    Premium Multani Mitti
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">(Export Quality 300 Mesh)</p>
+                </div>
+              </div>
+
+              <Link
+                to="/shop?store=care&category=multani-mitti-clays"
+                className="inline-flex items-center justify-center gap-2 py-2 px-5 rounded-full bg-[#C26371] hover:bg-[#A84E5B] text-white text-xs font-bold transition-colors"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Card 2: Pink Multani */}
+            <div className="bg-[#FCE9EC] rounded-2xl border border-[#F5CED4] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=200&q=80"
+                  alt="Pink Clay Powder"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
+                />
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#8E3B46]">
+                    Pink Multani
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">For Healthy & Glowing Skin</p>
+                </div>
+              </div>
+
+              <Link
+                to="/shop?store=care&category=multani-mitti-clays"
+                className="inline-flex items-center justify-center gap-2 py-2 px-5 rounded-full bg-[#C26371] hover:bg-[#A84E5B] text-white text-xs font-bold transition-colors"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Card 3: Dead Sea Mud */}
+            <div className="bg-[#FCE9EC] rounded-2xl border border-[#F5CED4] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=200&q=80"
+                  alt="Dead Sea Mud Mineral Pack"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
+                />
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#8E3B46]">
+                    Dead Sea Mud
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">With Natural Minerals</p>
+                </div>
+              </div>
+
+              <Link
+                to="/shop?store=care&category=dead-sea-mud"
+                className="inline-flex items-center justify-center gap-2 py-2 px-5 rounded-full bg-[#C26371] hover:bg-[#A84E5B] text-white text-xs font-bold transition-colors"
+              >
+                <span>Explore</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
           {/* Care Products Grid */}
-          {loadingCare ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="aspect-square bg-white rounded-2xl animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {careProducts.slice(0, 8).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+          <div className="space-y-4 pt-2">
+            <h3 className="font-serif text-lg sm:text-xl font-bold text-[#8E2835]">
+              Featured Micro Clays & Herbal Packs
+            </h3>
+            {loadingCare ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="aspect-square bg-white rounded-2xl animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {careProducts.slice(0, 8).map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       )}
 

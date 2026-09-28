@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { CartDrawer } from './components/CartDrawer';
 import { AuthModal } from './components/AuthModal';
 
@@ -98,6 +99,9 @@ export const App: React.FC = () => {
       {/* Global Mini-Cart Drawer and Auth Modal */}
       <CartDrawer />
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
+      {/* Sticky Mobile Bottom Navigation Bar */}
+      <MobileBottomNav onOpenAuth={() => setAuthModalOpen(true)} />
     </div>
   );
 };

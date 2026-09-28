@@ -56,8 +56,11 @@ import {
   getSearchSuggestions,
   getBestsellers,
 } from './controllers/productController';
+import { getBrands, getBrandBySlug } from './controllers/brandController';
 
 // Direct Catalog Aliases
+app.get('/api/brands', getBrands);
+app.get('/api/brands/:slug', getBrandBySlug);
 app.get('/api/stores', getStores);
 app.get('/api/categories', getCategories);
 app.get('/api/categories/tree', getCategories);

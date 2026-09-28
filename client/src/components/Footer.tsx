@@ -1,202 +1,200 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, Mail, MapPin, Instagram, Facebook, Youtube } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
-import { BrandLogoBadge, JaaliBorder } from './ui/Icons';
+import { BrandLogoBadge } from './ui/Icons';
 
 export const Footer: React.FC = () => {
   const { settings } = useSettings();
 
   return (
-    <footer className="bg-[#183B23] text-gray-200 relative pt-0 pb-10 overflow-hidden">
-      {/* 1. Scalloped / Jaali Pattern Border Strip across top */}
-      <div className="w-full overflow-hidden">
-        <JaaliBorder className="w-full h-3 text-[#1F4D2E]" color="#1F4D2E" />
-      </div>
-
-      <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 pt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 pb-12 border-b border-white/10">
-          {/* Brand Col */}
-          <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="inline-block">
-              <BrandLogoBadge size="lg" />
+    <footer className="bg-[#1F4D2E] text-white pt-12 pb-20 md:pb-12 border-t border-white/10">
+      <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
+        {/* Main 5-Column Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-10 border-b border-white/10">
+          {/* Col 1: Brand & Logo */}
+          <div className="space-y-4">
+            <Link to="/" className="inline-block bg-white/10 p-2.5 rounded-2xl backdrop-blur-xs border border-white/15">
+              <BrandLogoBadge size="md" className="brightness-110" />
             </Link>
-
-            <p className="text-xs text-gray-300 leading-relaxed max-w-sm">
-              Mewa Masala Ghar is an authentic Indian purveyor of sun-cured dry fruits, cold-ground spices, guilt-free roasted makhana, sprouted first foods for babies, and pure volcanic mineral clays.
+            <p className="text-xs text-emerald-100/80 leading-relaxed">
+              Pure, unadulterated dry fruits, cold-ground spices, guilt-free roasted snacks and authentic stone-ground flours.
             </p>
-
-            <p className="text-[11px] text-[#D9A441] font-serif italic">
-              Goodness from Nature • Rooted in Tradition
-            </p>
-
-            {/* FSSAI Badge */}
-            <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs">
-              <ShieldCheck className="w-4 h-4 text-[#D9A441]" />
-              <span className="text-[11px] text-gray-300">
-                FSSAI Lic. No. <strong className="text-white font-mono">{settings.fssai || '10021051000123'}</strong>
-              </span>
+            <div className="text-[11px] text-[#D9A441] font-serif italic">
+              Pure • Natural • Wholesome
             </div>
+            <p className="text-[11px] text-white/50">
+              FSSAI Lic. No. <span className="font-mono text-white/80">{settings.fssai || '10021051000123'}</span>
+            </p>
           </div>
 
-          {/* Store 1: Mewa & Healthy Foods */}
+          {/* Col 2: Shop */}
           <div>
-            <h4 className="font-serif font-bold text-sm text-[#D9A441] mb-3 uppercase tracking-wider">
-              Mewa & Healthy Foods
+            <h4 className="font-serif font-bold text-sm text-[#D9A441] mb-3.5 tracking-wide">
+              Shop
             </h4>
-            <ul className="space-y-2 text-xs text-gray-300">
+            <ul className="space-y-2 text-xs text-white/80">
               <li>
-                <Link to="/shop?store=foods&category=dry-fruits" className="hover:text-white transition-colors">
+                <Link to="/shop?category=dry-fruits" className="hover:text-[#D9A441] transition-colors">
                   Dry Fruits
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=foods&category=seeds-mixes" className="hover:text-white transition-colors">
-                  Seeds & Mixes
+                <Link to="/shop?category=seeds-mixes" className="hover:text-[#D9A441] transition-colors">
+                  Seeds
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=foods" className="hover:text-white transition-colors">
-                  Flavoured Makhana
+                <Link to="/shop?category=makhana" className="hover:text-[#D9A441] transition-colors">
+                  Makhana
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=foods&category=spices-seasonings" className="hover:text-white transition-colors">
-                  Artisanal Spices
+                <Link to="/shop?category=spices-seasonings" className="hover:text-[#D9A441] transition-colors">
+                  Spices
                 </Link>
               </li>
               <li>
-                <Link to="/shop?combo=true" className="hover:text-white transition-colors">
-                  Combo Packs (2/4/6)
+                <Link to="/shop?category=specialty-flours" className="hover:text-[#D9A441] transition-colors">
+                  Aataa (Flour)
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=foods" className="hover:text-white transition-colors">
-                  Nutrition Essentials
+                <Link to="/shop?combo=true" className="hover:text-[#D9A441] transition-colors">
+                  Combo Packs
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Store 2: Baby & Family Nutrition */}
+          {/* Col 3: Quick Links */}
           <div>
-            <h4 className="font-serif font-bold text-sm text-[#5DB4D6] mb-3 uppercase tracking-wider">
-              Baby & Family
+            <h4 className="font-serif font-bold text-sm text-[#D9A441] mb-3.5 tracking-wide">
+              Quick Links
             </h4>
-            <ul className="space-y-2 text-xs text-gray-300">
+            <ul className="space-y-2 text-xs text-white/80">
               <li>
-                <Link to="/shop?store=baby&category=pratham-aahar" className="hover:text-white transition-colors">
-                  Pratham Aahar (6+ Mo)
+                <Link to="/about" className="hover:text-[#D9A441] transition-colors">
+                  About Us
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=baby&category=daily-poshan" className="hover:text-white transition-colors">
-                  Daily Poshan
+                <Link to="/shop?featured=true" className="hover:text-[#D9A441] transition-colors">
+                  Bestsellers
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=baby&category=pregnancy-care" className="hover:text-white transition-colors">
-                  Pregnancy Diet
+                <Link to="/faq" className="hover:text-[#D9A441] transition-colors">
+                  FAQs
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=baby&category=daily-poshan" className="hover:text-white transition-colors">
-                  Elders' Diet
+                <Link to="/shipping-policy" className="hover:text-[#D9A441] transition-colors">
+                  Shipping & Returns
                 </Link>
               </li>
               <li>
-                <Link to="/shop?store=baby" className="hover:text-white transition-colors">
-                  Family Wellness
+                <Link to="/contact" className="hover:text-[#D9A441] transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/track-order" className="hover:text-[#D9A441] transition-colors">
+                  Track Order
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Store 3: Personal Care */}
-          <div>
-            <h4 className="font-serif font-bold text-sm text-[#E0808C] mb-3 uppercase tracking-wider">
-              Personal Care
+          {/* Col 4: Our Sister Brand */}
+          <div className="space-y-3">
+            <h4 className="font-serif font-bold text-sm text-[#D9A441] mb-3.5 tracking-wide">
+              Our Sister Brand
             </h4>
-            <ul className="space-y-2 text-xs text-gray-300">
-              <li>
-                <Link to="/shop?store=care&category=multani-mitti-clays" className="hover:text-white transition-colors">
-                  Premium Multani Mitti
+            <div className="space-y-2">
+              <div className="font-serif font-bold text-base text-white">
+                Jimmi Jaggu
+              </div>
+              <p className="text-xs text-emerald-100/75">
+                Baby • Skincare • Pregnancy
+              </p>
+              <div className="pt-2">
+                <Link
+                  to="/jimmi-jaggu"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/30 hover:border-[#D9A441] text-xs font-semibold text-white hover:text-[#D9A441] transition-all bg-white/5 hover:bg-white/10"
+                >
+                  <span>Visit Jimmi Jaggu</span>
+                  <span>→</span>
                 </Link>
-              </li>
-              <li>
-                <Link to="/shop?store=care&category=multani-mitti-clays" className="hover:text-white transition-colors">
-                  Pink Multani
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop?store=care&category=dead-sea-mud" className="hover:text-white transition-colors">
-                  Dead Sea Mud
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop?store=care&category=rose-petal-herbal" className="hover:text-white transition-colors">
-                  Herbal Body Care
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop?store=care" className="hover:text-white transition-colors">
-                  Clay Hair Masks
-                </Link>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
 
-          {/* Contact & Statutory Column */}
+          {/* Col 5: Get in Touch */}
           <div>
-            <h4 className="font-serif font-bold text-sm text-white mb-3 uppercase tracking-wider">
-              Contact Us
+            <h4 className="font-serif font-bold text-sm text-[#D9A441] mb-3.5 tracking-wide">
+              Get in Touch
             </h4>
-            <ul className="space-y-2.5 text-xs text-gray-300">
+            <ul className="space-y-2.5 text-xs text-white/80">
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
-                <a href={`tel:${(settings.phone || '+91 98200 12345').replace(/\s+/g, '')}`} className="hover:text-white">
+                <a
+                  href={`tel:${(settings.phone || '+91 98200 12345').replace(/\s+/g, '')}`}
+                  className="hover:text-white transition-colors"
+                >
                   {settings.phone || '+91 98200 12345'}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
-                <a href={`mailto:${settings.email || 'care@mewamasalaghar.com'}`} className="hover:text-white truncate">
+                <a
+                  href={`mailto:${settings.email || 'care@mewamasalaghar.com'}`}
+                  className="hover:text-white transition-colors truncate"
+                >
                   {settings.email || 'care@mewamasalaghar.com'}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
-                <span className="leading-tight text-gray-400">
-                  {settings.address || 'APMC Grain Market, Navi Mumbai, India'}
+                <span className="leading-tight text-white/70">
+                  {settings.address || 'APMC Grain Market, Vashi, Navi Mumbai, India'}
                 </span>
               </li>
             </ul>
-
-            {/* Payment & Security icons */}
-            <div className="mt-5 pt-4 border-t border-white/10">
-              <span className="text-[10px] uppercase font-bold text-gray-400 block mb-2">
-                We Accept Securely
-              </span>
-              <div className="flex flex-wrap gap-1.5 items-center">
-                <span className="px-2 py-0.5 bg-white/10 rounded text-[10px] font-bold text-white">UPI</span>
-                <span className="px-2 py-0.5 bg-white/10 rounded text-[10px] font-bold text-white">VISA</span>
-                <span className="px-2 py-0.5 bg-white/10 rounded text-[10px] font-bold text-white">Mastercard</span>
-                <span className="px-2 py-0.5 bg-white/10 rounded text-[10px] font-bold text-white">RuPay</span>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Bottom Strip: Copyright & Social Links */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
-          <p>© 2026 Mewa Masala Ghar Private Limited. All rights reserved.</p>
+        {/* Bottom Strip: Copyright, Socials & Payments */}
+        <div className="pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-white/60 gap-4">
+          <p>© 2025 Mewa Masala Ghar. All rights reserved.</p>
 
-          <div className="flex items-center gap-6">
-            <Link to="/about" className="hover:text-white transition-colors">About Us</Link>
-            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
-            <Link to="/faq" className="hover:text-white transition-colors">FAQ</Link>
+          {/* Social icons */}
+          <div className="flex items-center gap-4 text-white/80">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#D9A441] transition-colors">
+              <Instagram className="w-4 h-4" />
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#D9A441] transition-colors">
+              <Facebook className="w-4 h-4" />
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="hover:text-[#D9A441] transition-colors">
+              <Youtube className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* Payment badges */}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 hidden sm:inline">Follow Us:</span>
+            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-full">
+              <span className="text-[10px] font-bold text-white tracking-wider">VISA</span>
+              <span className="text-white/30">•</span>
+              <span className="text-[10px] font-bold text-white tracking-wider">Mastercard</span>
+              <span className="text-white/30">•</span>
+              <span className="text-[10px] font-bold text-white tracking-wider">RuPay</span>
+              <span className="text-white/30">•</span>
+              <span className="text-[10px] font-bold text-white tracking-wider">UPI</span>
+              <span className="text-white/30">•</span>
+              <span className="text-[10px] font-bold text-[#D9A441] tracking-wider">COD</span>
+            </div>
           </div>
         </div>
       </div>

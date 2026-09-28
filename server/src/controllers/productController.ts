@@ -25,9 +25,11 @@ export const getStores = async (req: Request, res: Response) => {
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
-    const { store } = req.query;
+    const { store, brand } = req.query;
     const where: any = {};
-    if (store) {
+    if (brand) {
+      where.brand = { slug: String(brand) };
+    } else if (store) {
       where.store = { slug: String(store) };
     }
 
@@ -35,6 +37,7 @@ export const getCategories = async (req: Request, res: Response) => {
       where,
       include: {
         store: { select: { id: true, slug: true, name: true } },
+        brand: { select: { id: true, slug: true, name: true, logo: true } },
         _count: { select: { products: { where: { isActive: true } } } },
       },
       orderBy: { displayOrder: 'asc' },
@@ -52,6 +55,7 @@ export const getCategories = async (req: Request, res: Response) => {
         displayOrder: cat.displayOrder,
         parentId: cat.parentId,
         store: cat.store,
+        brand: cat.brand,
         productCount: cat._count.products,
         children: [],
       });
@@ -81,6 +85,7 @@ export const getProducts = async (req: Request, res: Response) => {
   try {
     const {
       store,
+      brand,
       category,
       search,
       featured,
@@ -105,7 +110,9 @@ export const getProducts = async (req: Request, res: Response) => {
       isActive: true,
     };
 
-    if (store) {
+    if (brand) {
+      where.brand = { slug: String(brand) };
+    } else if (store) {
       where.store = { slug: String(store) };
     }
 
@@ -190,6 +197,7 @@ export const getProducts = async (req: Request, res: Response) => {
       prisma.product.findMany({
         where,
         include: {
+          brand: { select: { id: true, slug: true, name: true, logo: true } },
           store: { select: { id: true, slug: true, name: true, themeKey: true } },
           category: { select: { id: true, slug: true, name: true } },
           images: { orderBy: { displayOrder: 'asc' } },
@@ -258,10 +266,12 @@ export const getProductBySlug = async (req: Request, res: Response) => {
     const product = await prisma.product.findFirst({
       where: { slug, isActive: true },
       include: {
+        brand: true,
         store: true,
         category: {
           include: {
             parent: true,
+            brand: true,
           },
         },
         images: { orderBy: { displayOrder: 'asc' } },
