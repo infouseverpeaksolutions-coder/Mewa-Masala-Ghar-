@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { HERO_CONTENT } from '../data/mockData';
 
 export const HeroVideo: React.FC = () => {
@@ -87,21 +88,26 @@ export const HeroVideo: React.FC = () => {
           Grand serif headline, supporting line, and primary gold CTA.
         */}
         <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center justify-center text-center select-none">
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[80px] font-bold text-white leading-[1.08] tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] max-w-4xl mx-auto">
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[52px] font-bold text-white leading-tight tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] max-w-3xl mx-auto">
             <span>{HERO_CONTENT.headlineTop}</span>{' '}
-            <span className="text-[#F6ECE8]">{HERO_CONTENT.headlineToBottom}</span>
+            <span className="text-[#FAF6EC]">{HERO_CONTENT.headlineToBottom}</span>
           </h1>
 
-          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg lg:text-xl text-white/95 leading-relaxed font-sans max-w-2xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] font-normal">
+          <p className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base lg:text-lg text-white/95 leading-relaxed font-sans max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] font-normal">
             {HERO_CONTENT.supportingLine}
           </p>
 
-          <div className="mt-8 sm:mt-10 flex items-center justify-center">
+          <div className="mt-7 sm:mt-9 flex items-center justify-center">
             <Link
               to={HERO_CONTENT.ctaLink}
-              className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-[#D9A441] hover:bg-[#c28e31] text-[#1F4D2E] text-sm sm:text-base md:text-lg font-bold shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              className="group relative inline-flex items-center gap-3 pl-8 pr-3 py-3 rounded-full bg-[#1F4D2E] hover:bg-[#163821] text-[#FAF6EC] border border-[#D9A441] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_32px_rgba(217,164,65,0.35)] transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span>{HERO_CONTENT.ctaText}</span>
+              <span className="font-serif text-sm sm:text-base font-semibold tracking-wide">
+                {HERO_CONTENT.ctaText}
+              </span>
+              <span className="w-8 h-8 rounded-full bg-[#D9A441] text-[#1F4D2E] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shadow-xs">
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </span>
             </Link>
           </div>
         </div>

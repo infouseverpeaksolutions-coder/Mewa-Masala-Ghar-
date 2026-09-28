@@ -28,10 +28,10 @@ export interface MockReview {
 }
 
 export const HERO_CONTENT = {
-  headlineTop: 'Pure. Natural.',
-  headlineToBottom: 'Wholesome.',
+  headlineTop: 'Crafted by Nature,',
+  headlineToBottom: 'Trusted by Generations of Families',
   supportingLine: 'Premium quality dry fruits, makhana, seeds, spices and healthy foods for a better you.',
-  ctaText: 'Shop Now →',
+  ctaText: 'Shop Now',
   ctaLink: '/shop',
   videoDesktop: '/Nuts_and_raisins_floating_orbiting_20260926133918.mp4',
   videoMobile: '/hero-mobile.mp4',
