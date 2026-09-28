@@ -5,8 +5,7 @@ import { HERO_CONTENT } from '../data/mockData';
 export const HeroVideo: React.FC = () => {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const desktopVideoRef = useRef<HTMLVideoElement>(null);
-  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Respect prefers-reduced-motion
   useEffect(() => {
@@ -19,13 +18,10 @@ export const HeroVideo: React.FC = () => {
 
   // Ensure autoplay starts reliably
   useEffect(() => {
-    if (!reducedMotion && !videoError) {
-      if (desktopVideoRef.current) {
-        desktopVideoRef.current.play().catch(() => {});
-      }
-      if (mobileVideoRef.current) {
-        mobileVideoRef.current.play().catch(() => {});
-      }
+    if (!reducedMotion && !videoError && videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Fallback handled gracefully
+      });
     }
   }, [reducedMotion, videoError]);
 
@@ -33,136 +29,88 @@ export const HeroVideo: React.FC = () => {
     <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
       {/* 
         ========================================================================
-        DESKTOP / TABLET HERO (768px and up)
-        Ivory background #FAF6EC, rounded two-column layout:
-        - Left (~42%): Dark green serif headline, supporting text, pill button
-        - Right (~58%): Video cover with left edge gradient mask fading into ivory
+        WHOLE HERO SECTION VIDEO BANNER
+        The video plays across the entire width and height of the hero banner.
+        - Desktop: Left-aligned content with a deep dark gradient scrim for readability,
+                   leaving the orbiting dry fruits video clear and prominent.
+        - Mobile: Centered content with bottom-to-top gradient overlay.
         ========================================================================
       */}
-      <div className="hidden md:flex relative rounded-3xl overflow-hidden bg-[#FAF6EC] min-h-[440px] lg:min-h-[500px] items-stretch">
-        {/* Left Column (about 42% width) */}
-        <div className="w-[43%] lg:w-[40%] xl:w-[38%] py-10 lg:py-16 pl-8 lg:pl-14 pr-4 flex flex-col justify-center z-10 select-none">
-          <h1 className="font-serif text-3xl md:text-4xl lg:text-[46px] xl:text-[52px] font-bold text-[#1F4D2E] leading-[1.12] tracking-tight mb-4">
-            {HERO_CONTENT.headlineTop}
-            <br />
-            {HERO_CONTENT.headlineToBottom}
-          </h1>
-
-          <p className="text-xs md:text-sm lg:text-[15px] text-[#4A443B] leading-relaxed max-w-sm mb-7">
-            {HERO_CONTENT.supportingLine}
-          </p>
-
-          <div>
-            <Link
-              to={HERO_CONTENT.ctaLink}
-              className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1F4D2E] hover:bg-[#163821] text-white text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <span>{HERO_CONTENT.ctaText}</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Right Column (about 58% width): Video with seamless gradient mask */}
-        <div className="flex-1 relative overflow-hidden bg-[#FAF6EC]">
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden min-h-[480px] sm:min-h-[520px] lg:min-h-[580px] flex items-center shadow-lg bg-[#1F4D2E]">
+        {/* Full-bleed background video / poster fallback */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           {reducedMotion || videoError ? (
             <img
               src={HERO_CONTENT.posterDesktop}
               alt="Mewa Masala Ghar Natural Dry Fruits & Spices"
               className="w-full h-full object-cover object-center"
-              style={{
-                maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)',
-              }}
             />
           ) : (
             <video
-              ref={desktopVideoRef}
+              ref={videoRef}
               autoPlay
               muted
               loop
               playsInline
               poster={HERO_CONTENT.posterDesktop}
+              onError={() => setVideoError(true)}
               className="w-full h-full object-cover object-center"
-              style={{
-                maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)',
-              }}
             >
               <source
-                src={HERO_CONTENT.videoMobile}
-                media="(max-width: 767px)"
+                src={HERO_CONTENT.videoDesktop}
                 type="video/mp4"
               />
               <source
-                src={HERO_CONTENT.videoDesktop}
+                src={HERO_CONTENT.videoMobile}
                 type="video/mp4"
               />
             </video>
           )}
 
-          {/* Seamless edge blending overlay */}
-          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FAF6EC] via-[#FAF6EC]/40 to-transparent pointer-events-none" />
-        </div>
-      </div>
+          {/* 
+            Desktop Overlay Scrim:
+            Rich dark gradient from left to right so text is crystal clear on the left,
+            while the orbiting nuts & fruits on the right are vivid and bright.
+          */}
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 via-45% to-black/20" />
+          
+          {/* Subtle top & bottom shadow gradient */}
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-      {/* 
-        ========================================================================
-        MOBILE HERO (767px and below)
-        Full-bleed background video, height ~70vh (min 460px),
-        top-to-bottom dark gradient overlay, light text centered at bottom
-        ========================================================================
-      */}
-      <div className="md:hidden relative rounded-2xl overflow-hidden min-h-[460px] h-[70vh] flex flex-col justify-end bg-[#1F4D2E] shadow-sm">
-        {/* Full-bleed background video or fallback poster */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          {reducedMotion || videoError ? (
-            <img
-              src={HERO_CONTENT.posterMobile}
-              alt="Mewa Masala Ghar"
-              className="w-full h-full object-cover object-center"
-            />
-          ) : (
-            <video
-              ref={mobileVideoRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={HERO_CONTENT.posterMobile}
-              className="w-full h-full object-cover object-center"
-            >
-              <source
-                src={HERO_CONTENT.videoMobile}
-                media="(max-width: 767px)"
-                type="video/mp4"
-              />
-              <source
-                src={HERO_CONTENT.videoDesktop}
-                type="video/mp4"
-              />
-            </video>
-          )}
-
-          {/* Top-to-bottom dark gradient overlay for crystal-clear readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
+          {/* 
+            Mobile Overlay Scrim:
+            Bottom-to-top gradient for centered content at the bottom.
+          */}
+          <div className="md:hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/25" />
         </div>
 
-        {/* Content pinned to bottom of mobile hero */}
-        <div className="relative z-10 p-6 pb-8 text-center flex flex-col items-center">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight mb-2 drop-shadow-sm">
-            {HERO_CONTENT.headlineTop} {HERO_CONTENT.headlineToBottom}
-          </h1>
+        {/* 
+          Hero Content Layer:
+          - Desktop: Left aligned, generous padding, max-w-xl.
+          - Mobile: Centered, bottom anchored.
+        */}
+        <div className="relative z-10 w-full px-6 sm:px-10 lg:px-16 py-12 lg:py-20 flex flex-col justify-end md:justify-center items-center md:items-start text-center md:text-left h-full min-h-[480px] sm:min-h-[520px] lg:min-h-[580px]">
+          <div className="max-w-xl select-none">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
+              {HERO_CONTENT.headlineTop}
+              <br className="hidden md:block" />
+              {' '}
+              <span className="text-[#F6ECE8]">{HERO_CONTENT.headlineToBottom}</span>
+            </h1>
 
-          <p className="text-xs text-white/90 leading-relaxed max-w-xs mb-5 drop-shadow-xs">
-            {HERO_CONTENT.supportingLine}
-          </p>
+            <p className="mt-4 text-xs sm:text-sm md:text-base lg:text-[17px] text-white/90 leading-relaxed font-sans max-w-lg drop-shadow-sm">
+              {HERO_CONTENT.supportingLine}
+            </p>
 
-          <Link
-            to={HERO_CONTENT.ctaLink}
-            className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#D9A441] hover:bg-[#C28E31] text-[#1F4D2E] text-xs font-bold shadow-md transition-all active:scale-95"
-          >
-            <span>{HERO_CONTENT.ctaText}</span>
-          </Link>
+            <div className="mt-7 sm:mt-8">
+              <Link
+                to={HERO_CONTENT.ctaLink}
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#D9A441] hover:bg-[#c28e31] text-[#1F4D2E] text-sm md:text-base font-bold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <span>{HERO_CONTENT.ctaText}</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
