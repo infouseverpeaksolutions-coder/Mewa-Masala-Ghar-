@@ -25,7 +25,6 @@ import {
   BESTSELLERS_PRODUCTS,
   SISTER_BRAND_BANNER,
   SUB_BRAND_BANNERS,
-  CUSTOMER_REVIEWS,
 } from '../data/mockData';
 import api from '../services/api';
 
@@ -394,67 +393,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 
-        ========================================================================
-        11. WHAT OUR CUSTOMERS SAY (3 Review Cards + Dots)
-        ========================================================================
-      */}
-      <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center">
-            <span>What Our Customers Say</span>
-            <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
-          </h2>
-          <span className="text-xs sm:text-sm font-semibold text-[#1F4D2E] dark:text-[#E5B85C] cursor-pointer hover:underline">
-            View All →
-          </span>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {CUSTOMER_REVIEWS.map((rev) => (
-            <div
-              key={rev.id}
-              className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-5 sm:p-6 shadow-soft flex flex-col justify-between"
-            >
-              <p className="text-xs sm:text-[13px] text-[#4A443B] dark:text-[#E2DDD3] leading-relaxed italic mb-4">
-                "{rev.comment}"
-              </p>
-
-              <div className="flex items-center justify-between pt-3 border-t border-black/5 dark:border-white/10">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={rev.avatar}
-                    alt={rev.name}
-                    className="w-9 h-9 rounded-full object-cover border border-[#D9A441]/40"
-                  />
-                  <div>
-                    <h4 className="font-serif text-xs sm:text-sm font-bold text-[#1F4D2E] dark:text-[#8ED9A0]">
-                      {rev.name}
-                    </h4>
-                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{rev.city}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-0.5">
-                  {[...Array(rev.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-3 h-3 fill-[#D9A441] text-[#D9A441]"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Carousel indicator dots */}
-        <div className="flex justify-center items-center gap-1.5 mt-5">
-          <span className="w-4 h-1.5 rounded-full bg-[#1F4D2E] dark:bg-[#8ED9A0]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
-        </div>
-      </section>
 
       {/* 
         ========================================================================
