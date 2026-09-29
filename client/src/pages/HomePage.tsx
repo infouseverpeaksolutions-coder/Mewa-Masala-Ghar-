@@ -25,6 +25,7 @@ import {
   SPICES_PRODUCTS,
   BESTSELLERS_PRODUCTS,
   SISTER_BRAND_BANNER,
+  SUB_BRAND_BANNERS,
   CUSTOMER_REVIEWS,
 } from '../data/mockData';
 import api from '../services/api';
@@ -149,37 +150,33 @@ export const HomePage: React.FC = () => {
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#1F4D2E] text-white p-5 sm:p-7 lg:p-8 shadow-card flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Left Column: Icon, Title, Subtitle, Button */}
-          <div className="flex items-center gap-4 sm:gap-6 text-left">
-            {/* Gold Outline Gift Box Icon */}
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border border-[#D9A441]/60 flex items-center justify-center shrink-0 bg-white/5">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-card h-[150px] sm:h-[170px] lg:h-[190px]">
+          {/* Full background image */}
+          <img
+            src={COMBO_PACKS_BANNER.image}
+            alt="Combo Packs"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+
+          {/* Text overlay — positioned on the left */}
+          <div className="relative z-10 h-full flex items-center gap-4 sm:gap-5 px-5 sm:px-7 lg:px-8">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border border-[#D9A441]/40 flex items-center justify-center shrink-0 backdrop-blur-sm bg-white/5">
               <Gift className="w-7 h-7 text-[#D9A441]" strokeWidth={1.5} />
             </div>
-
             <div>
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight leading-tight">
+              <h3 className="font-serif text-xl sm:text-2xl lg:text-[28px] font-bold text-white tracking-tight leading-tight drop-shadow-lg">
                 {COMBO_PACKS_BANNER.title}
               </h3>
-              <p className="text-xs sm:text-sm text-[#D9A441] font-medium mt-0.5 mb-3">
+              <p className="text-[11px] sm:text-xs text-[#D9A441] font-medium mt-0.5 mb-2.5 drop-shadow-md">
                 {COMBO_PACKS_BANNER.subtitle}
               </p>
               <Link
                 to={COMBO_PACKS_BANNER.link}
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#D9A441] hover:bg-[#C28E31] text-[#1F4D2E] text-xs font-bold transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full bg-[#C8933B] hover:bg-[#B38131] text-white text-[10px] sm:text-xs font-bold tracking-wide transition-all shadow-sm"
               >
-                <span>{COMBO_PACKS_BANNER.ctaText}</span>
+                {COMBO_PACKS_BANNER.ctaText}
               </Link>
             </div>
-          </div>
-
-          {/* Right Column: Combo Hampers & Ribbon Jars */}
-          <div className="w-full md:w-auto max-w-sm rounded-xl overflow-hidden shadow-xs">
-            <img
-              src={COMBO_PACKS_BANNER.image}
-              alt="Curated Combo Packs of 2 4 6"
-              className="w-full h-32 sm:h-36 object-cover rounded-xl"
-            />
           </div>
         </div>
       </section>
@@ -190,8 +187,8 @@ export const HomePage: React.FC = () => {
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center gap-1.5">
             <span>Flavoured Makhana</span>
             <SectionLeaf className="w-4 h-4 text-[#2F5D3A]" color="#2F5D3A" />
           </h2>
@@ -203,32 +200,34 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
           {FLAVOURED_MAKHANA_PANELS.map((panel) => (
             <Link
               key={panel.id}
               to={panel.link}
-              className="group relative rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 flex items-center justify-between hover:-translate-y-1"
-              style={{ backgroundColor: panel.bgColor }}
+              className="group relative rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 h-[130px] sm:h-[145px]"
             >
-              <div className="max-w-[55%] z-10">
-                <h3 className="font-serif text-lg sm:text-xl font-bold leading-snug">
+              {/* Full background image */}
+              <img
+                src={panel.image}
+                alt={panel.name.replace('\n', ' ')}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+
+              {/* Gradient overlay on left for text */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(to right, ${panel.bgColor}dd 0%, ${panel.bgColor}aa 20%, ${panel.bgColor}55 40%, transparent 65%)`,
+                }}
+              />
+
+              {/* Title text */}
+              <div className="relative z-10 h-full flex items-center p-4 sm:p-5">
+                <h3 className="font-serif text-base sm:text-lg lg:text-xl font-bold leading-snug text-white whitespace-pre-line drop-shadow-lg">
                   {panel.name}
                 </h3>
-                <span className="inline-flex items-center gap-1 text-[11px] text-white/80 font-medium mt-2 underline underline-offset-2">
-                  <span>Explore Jar</span>
-                  <span>→</span>
-                </span>
-              </div>
-
-              {/* Jar Image */}
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-white/20 p-1 flex items-center justify-center shrink-0">
-                <img
-                  src={panel.image}
-                  alt={panel.name}
-                  loading="lazy"
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                />
               </div>
             </Link>
           ))}
@@ -237,11 +236,11 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        7. SEEDS & AATAA ROW (7 cards with prices & round cart buttons)
+        7. SEEDS & AATAA ROW (7 products in bordered container)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center">
             <span>Seeds & Aataa</span>
             <SectionLeaf className="w-4 h-4 text-[#2F5D3A]" color="#2F5D3A" />
@@ -254,20 +253,46 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
-          {SEEDS_AATAA_PRODUCTS.map((prod) => (
-            <MewaProductCard key={prod.id} product={prod} />
-          ))}
+        <div className="border border-[#E7E0D0] rounded-2xl bg-white py-5 px-3 sm:px-5 shadow-soft overflow-x-auto">
+          <div className="flex min-w-max lg:min-w-0 lg:grid lg:grid-cols-7">
+            {SEEDS_AATAA_PRODUCTS.map((prod, idx) => (
+              <Link
+                key={prod.id}
+                to={prod.link}
+                className={`group flex flex-col items-center text-center w-[115px] sm:w-[125px] lg:w-auto shrink-0 px-2 sm:px-3 py-1 ${
+                  idx < SEEDS_AATAA_PRODUCTS.length - 1 ? 'lg:border-r lg:border-[#E7E0D0]/60' : ''
+                }`}
+              >
+                {/* 4:5 aspect ratio image container */}
+                <div className="w-[80px] h-[100px] sm:w-[90px] sm:h-[112px] lg:w-[95px] lg:h-[118px] rounded-lg overflow-hidden bg-[#FAF6EC]/40 flex items-center justify-center p-1.5 mb-2.5">
+                  <img
+                    src={prod.image}
+                    alt={prod.name}
+                    loading="eager"
+                    decoding="async"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                    onError={(e) => { e.currentTarget.src = '/foods/foods_dryfruits.jpg'; }}
+                  />
+                </div>
+                <h3 className="font-serif text-xs sm:text-[13px] font-semibold text-[#2B2B2B] group-hover:text-[#D9A441] transition-colors leading-tight mb-1">
+                  {prod.name}
+                </h3>
+                <div className="font-bold text-sm sm:text-base text-[#1F4D2E] tracking-tight">
+                  ₹ {prod.price}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* 
         ========================================================================
-        8. SPICES ROW (3 cards with prices)
+        8. SPICES ROW (3 products — image + name + price)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center">
             <span>Spices</span>
             <SectionLeaf className="w-4 h-4 text-[#2F5D3A]" color="#2F5D3A" />
@@ -280,34 +305,30 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-3 gap-4 sm:gap-8 lg:gap-12">
           {SPICES_PRODUCTS.map((prod) => (
             <Link
               key={prod.id}
               to={prod.link}
-              className="group bg-white rounded-2xl sm:rounded-3xl border border-[#E7E0D0] p-4 shadow-soft hover:shadow-card transition-all duration-300 flex items-center justify-between gap-4 hover:-translate-y-1"
+              className="group flex items-center gap-3 sm:gap-4"
             >
-              <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center p-1 shrink-0">
+              {/* 4:5 aspect ratio image */}
+              <div className="w-[70px] h-[88px] sm:w-[85px] sm:h-[106px] lg:w-[95px] lg:h-[118px] shrink-0 rounded-lg overflow-hidden bg-[#FAF6EC]/40 flex items-center justify-center p-1.5">
                 <img
                   src={prod.image}
                   alt={prod.name}
                   loading="eager"
                   decoding="async"
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"
                 />
               </div>
-
-              <div className="flex-1 text-left">
-                <h3 className="font-serif text-sm sm:text-base font-bold text-[#1F4D2E] group-hover:text-[#D9A441] transition-colors">
+              <div>
+                <h3 className="font-serif text-sm sm:text-base font-bold text-[#2B2B2B] group-hover:text-[#D9A441] transition-colors leading-tight">
                   {prod.name}
                 </h3>
-                <div className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] mt-1">
+                <div className="font-bold text-sm sm:text-base text-[#1F4D2E] mt-0.5 tracking-tight">
                   ₹ {prod.price}
                 </div>
-              </div>
-
-              <div className="w-8 h-8 rounded-full bg-[#1F4D2E] text-white flex items-center justify-center shrink-0 group-hover:bg-[#163821] transition-colors">
-                <ArrowRight className="w-4 h-4" />
               </div>
             </Link>
           ))}
@@ -316,11 +337,11 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        9. BESTSELLERS (2-Column list of horizontal product cards)
+        9. BESTSELLERS (2x2 grid of horizontal product cards)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center">
             <span>Bestsellers</span>
             <SectionLeaf className="w-4 h-4 text-[#2F5D3A]" color="#2F5D3A" />
@@ -333,7 +354,7 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {BESTSELLERS_PRODUCTS.map((prod) => (
             <BestsellerHorizontalCard key={prod.id} product={prod} />
           ))}
@@ -342,38 +363,84 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        10. SISTER BRAND BANNER (Jimmi Jaggu - Soft Rose Palette)
+        10. SUB-BRAND BANNERS (Jimmy & Jaggu - Beauty & Baby Care)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F6ECE8] border border-[#E8D4D0] p-6 sm:p-8 lg:p-10 shadow-soft">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">
-            <div className="text-center lg:text-left space-y-2 max-w-xl">
-              <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#3B2825] leading-snug">
-                {SISTER_BRAND_BANNER.headline}
-              </h3>
-              <p className="font-serif text-sm sm:text-base text-[#7A5852] italic font-medium">
-                {SISTER_BRAND_BANNER.subline}
-              </p>
-              <div className="pt-3">
+        <div className="flex items-center justify-between mb-4 sm:mb-5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center gap-1.5">
+              <span>Jimmy & Jaggu</span>
+              <SectionLeaf className="w-4 h-4 text-[#2F5D3A]" color="#2F5D3A" />
+            </h2>
+            <span className="text-xs sm:text-sm text-[#7A5852] font-semibold italic">
+              (presented by Mewa Masala Ghar)
+            </span>
+          </div>
+          <Link
+            to="/jimmi-jaggu"
+            className="text-xs sm:text-sm font-semibold text-[#1F4D2E] hover:text-[#D9A441] transition-colors"
+          >
+            Explore Brand →
+          </Link>
+        </div>
+
+        <div className="space-y-4 sm:space-y-6">
+          {SUB_BRAND_BANNERS.map((banner) => (
+            <div
+              key={banner.id}
+              className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-card border border-[#E8D4D0]/70 h-[200px] sm:h-[230px] md:h-[260px] lg:h-[280px] group bg-[#FAF6EC]"
+            >
+              {/* Full-bleed background image */}
+              <img
+                src={banner.image}
+                alt={banner.title}
+                className={`absolute inset-0 w-full h-full object-cover ${
+                  banner.id === 'baby-products'
+                    ? 'object-[85%_center] sm:object-right md:object-center'
+                    : 'object-[70%_center] sm:object-right md:object-center'
+                } group-hover:scale-[1.02] transition-transform duration-500`}
+              />
+
+              {/* Gradient overlay on left to ensure crisp text readability */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    banner.id === 'beauty-products'
+                      ? 'linear-gradient(to right, rgba(253, 244, 240, 0.98) 0%, rgba(253, 244, 240, 0.94) 42%, rgba(253, 244, 240, 0.5) 65%, transparent 88%)'
+                      : 'linear-gradient(to right, rgba(255, 252, 247, 0.98) 0%, rgba(255, 252, 247, 0.94) 42%, rgba(255, 252, 247, 0.5) 65%, transparent 88%)',
+                }}
+              />
+
+              {/* Text content over the image */}
+              <div className="relative z-10 h-full flex flex-col justify-center max-w-[78%] sm:max-w-sm md:max-w-md p-4 sm:p-7 lg:p-9">
+                {/* Tagline */}
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[#1F4D2E]/10 border border-[#1F4D2E]/25 text-[#1F4D2E] text-[10px] sm:text-xs font-bold tracking-wide w-fit mb-1.5 sm:mb-2 backdrop-blur-xs">
+                  <span>{banner.tagline}</span>
+                </div>
+
+                {/* Title */}
+                <h3 className="font-serif text-base sm:text-2xl lg:text-[26px] font-bold text-[#3B2825] leading-tight mb-1 sm:mb-1.5">
+                  {banner.title}
+                </h3>
+
+                {/* Subtitle */}
+                <p className="text-[11px] sm:text-xs md:text-sm text-[#7A5852] font-medium line-clamp-2 mb-2.5 sm:mb-4">
+                  {banner.subtitle}
+                </p>
+
+                {/* Action button */}
                 <Link
-                  to={SISTER_BRAND_BANNER.link}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#C27E7A] hover:bg-[#B06D69] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all"
+                  to={banner.link}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-[11px] sm:text-xs md:text-sm font-bold shadow-md hover:shadow-lg transition-all w-fit cursor-pointer"
+                  style={{ backgroundColor: banner.buttonColor }}
                 >
-                  <span>{SISTER_BRAND_BANNER.ctaText}</span>
+                  <span>{banner.ctaText}</span>
                 </Link>
               </div>
             </div>
-
-            {/* Baby & Care Image */}
-            <div className="w-full lg:w-80 h-44 sm:h-52 rounded-2xl overflow-hidden bg-white/70 shadow-xs flex items-center justify-center p-2">
-              <img
-                src={SISTER_BRAND_BANNER.image}
-                alt="Jimmi Jaggu Baby and Personal Care"
-                className="w-full h-full object-cover rounded-xl"
-              />
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 

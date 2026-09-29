@@ -150,30 +150,30 @@ export const COMBO_PACKS_BANNER = {
   title: 'Combo Packs',
   subtitle: 'of 2 / 4 / 6',
   ctaText: 'Shop Now →',
-  image: '/foods/foods_combos.jpg',
+  image: '/foods/combo_banner.png',
   link: '/shop?combo=true',
 };
 
 export const FLAVOURED_MAKHANA_PANELS = [
   {
     id: 'peri-peri',
-    name: 'Peri-Peri Makhana',
+    name: 'Peri-Peri\nMakhana',
     bgColor: '#8B1E1E',
-    image: '/foods/makhana/makhana_peri_peri.jpg',
+    image: '/foods/makhana/peri_peri_banner.png',
     link: '/shop?category=makhana',
   },
   {
     id: 'mint-punch',
-    name: 'Mint Punch Makhana',
-    bgColor: '#2F5D3A',
-    image: '/foods/makhana/makhana_mint_punch.jpg',
+    name: 'Mint Punch\nMakhana',
+    bgColor: '#2E5F3B',
+    image: '/foods/makhana/mint_punch_banner.png',
     link: '/shop?category=makhana',
   },
   {
     id: 'cream-onion',
-    name: 'Cream & Onion Makhana',
-    bgColor: '#1E6E85',
-    image: '/foods/makhana/makhana_cream_onion.jpg',
+    name: 'Cream & Onion\nMakhana',
+    bgColor: '#0B6A7A',
+    image: '/foods/makhana/cream_onion_banner.png',
     link: '/shop?category=makhana',
   },
 ];
@@ -307,12 +307,39 @@ export const BESTSELLERS_PRODUCTS: MockProduct[] = [
   },
 ];
 
+export const SUB_BRAND_BANNERS = [
+  {
+    id: 'beauty-products',
+    category: 'Beauty & Skincare',
+    title: 'Natural Beauty & Skincare',
+    subtitle: 'Gentle face washes, toners, nourishing lotions & body scrubs',
+    tagline: '(presented by Mewa Masala Ghar)',
+    ctaText: 'Explore Beauty Products →',
+    link: '/jimmi-jaggu?category=personal-care',
+    image: '/banners/jimmi_jaggu_skincare_banner.png',
+    buttonColor: '#C27E7A',
+    buttonHover: '#B06D69',
+  },
+  {
+    id: 'baby-products',
+    category: 'Baby Care',
+    title: 'Gentle & Pure Baby Care',
+    subtitle: 'Tear-free shampoos, soothing baby lotions, oils & pure care',
+    tagline: '(presented by Mewa Masala Ghar)',
+    ctaText: 'Explore Baby Products →',
+    link: '/jimmi-jaggu?category=baby-nutrition',
+    image: '/banners/jimmi_jaggu_baby_banner.png',
+    buttonColor: '#4A7A8C',
+    buttonHover: '#3B6373',
+  },
+];
+
 export const SISTER_BRAND_BANNER = {
   headline: 'Looking for baby, skincare or pregnancy essentials?',
   subline: 'Discover Jimmi Jaggu, our sister brand.',
   ctaText: 'Explore Jimmi Jaggu →',
   link: '/jimmi-jaggu',
-  image: '/categories/baby_products.jpg',
+  image: '/banners/jimmi_jaggu_baby_banner.png',
 };
 
 export const CUSTOMER_REVIEWS: MockReview[] = [
