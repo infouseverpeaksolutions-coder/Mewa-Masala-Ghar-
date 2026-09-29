@@ -34,11 +34,11 @@ export const BestsellerHorizontalCard: React.FC<{ product: MockProduct }> = ({ p
   };
 
   return (
-    <div className="group bg-white rounded-2xl sm:rounded-3xl border border-[#E7E0D0] p-3 sm:p-4 shadow-soft hover:shadow-card transition-all duration-300 flex items-center justify-between gap-3 sm:gap-4 hover:-translate-y-1">
+    <div className="group bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 sm:p-4 shadow-soft hover:shadow-card transition-all duration-300 flex items-center justify-between gap-3 sm:gap-4 hover:-translate-y-1">
       {/* Left Product Image */}
       <Link
         to={product.link}
-        className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC]/70 flex items-center justify-center p-1.5"
+        className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC]/70 dark:bg-[#111813]/60 flex items-center justify-center p-1.5"
       >
         <img
           src={product.image}
@@ -55,21 +55,21 @@ export const BestsellerHorizontalCard: React.FC<{ product: MockProduct }> = ({ p
       {/* Middle: Details */}
       <div className="flex-1 min-w-0 pr-2">
         <Link to={product.link} className="block">
-          <h3 className="font-serif text-xs sm:text-sm font-bold text-[#1F4D2E] group-hover:text-[#D9A441] transition-colors leading-tight truncate">
+          <h3 className="font-serif text-xs sm:text-sm font-bold text-[#1F4D2E] dark:text-[#8ED9A0] group-hover:text-[#D9A441] dark:group-hover:text-[#E5B85C] transition-colors leading-tight truncate">
             {product.name}
           </h3>
         </Link>
 
-        <div className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] mt-1">
+        <div className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-white mt-1">
           ₹ {product.price}
         </div>
 
         {product.rating && (
-          <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#8C6D37] mt-0.5">
+          <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#8C6D37] dark:text-[#E5B85C] mt-0.5">
             <Star className="w-3 h-3 fill-[#D9A441] text-[#D9A441]" />
             <span className="font-semibold">{product.rating}</span>
             {product.reviewCount && (
-              <span className="text-gray-400">({product.reviewCount})</span>
+              <span className="text-gray-400 dark:text-gray-500">({product.reviewCount})</span>
             )}
           </div>
         )}
@@ -82,7 +82,7 @@ export const BestsellerHorizontalCard: React.FC<{ product: MockProduct }> = ({ p
         className={`w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center transition-all duration-200 shadow-xs cursor-pointer ${
           added
             ? 'bg-emerald-600 text-white scale-105'
-            : 'bg-[#1F4D2E] hover:bg-[#163821] text-white active:scale-95'
+            : 'bg-[#1F4D2E] hover:bg-[#163821] dark:bg-[#284F33] dark:hover:bg-[#346643] text-white active:scale-95'
         }`}
       >
         {added ? (

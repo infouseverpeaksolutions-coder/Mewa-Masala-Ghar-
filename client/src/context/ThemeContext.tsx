@@ -42,10 +42,15 @@ export const STORE_THEMES: Record<StoreType, StoreThemeInfo> = {
   },
 };
 
+export type ColorMode = 'light' | 'dark' | 'auto';
+
 interface ThemeContextType {
   activeStore: StoreType;
   setActiveStore: (store: StoreType) => void;
   currentTheme: StoreThemeInfo;
+  colorMode: ColorMode;
+  setColorMode: (mode: ColorMode) => void;
+  isDarkMode: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -56,11 +61,30 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return (saved as StoreType) || 'foods';
   });
 
+  const [colorMode, setColorModeState] = useState<ColorMode>(() => {
+    const saved = localStorage.getItem('mmg_theme_mode');
+    return (saved as ColorMode) || 'auto';
+  });
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem('mmg_theme_mode') as ColorMode | null;
+    if (saved === 'dark') return true;
+    if (saved === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
   const setActiveStore = (store: StoreType) => {
     setActiveStoreState(store);
     localStorage.setItem('mmg_active_store', store);
   };
 
+  const setColorMode = (mode: ColorMode) => {
+    setColorModeState(mode);
+    localStorage.setItem('mmg_theme_mode', mode);
+  };
+
+  // Synchronize store theme class (e.g. theme-foods, theme-baby, theme-care)
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('theme-foods', 'theme-baby', 'theme-care');
@@ -68,10 +92,55 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.classList.add(themeClass);
   }, [activeStore]);
 
+  // Synchronize dark / light / auto mode with system theme listener
+  useEffect(() => {
+    const root = document.documentElement;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const evaluateTheme = () => {
+      let activeIsDark = false;
+      if (colorMode === 'dark') {
+        activeIsDark = true;
+      } else if (colorMode === 'light') {
+        activeIsDark = false;
+      } else {
+        // 'auto' mode: match system
+        activeIsDark = mediaQuery.matches;
+      }
+
+      setIsDarkMode(activeIsDark);
+      if (activeIsDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    };
+
+    evaluateTheme();
+
+    const handleSystemChange = () => {
+      if (colorMode === 'auto') {
+        evaluateTheme();
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
+  }, [colorMode]);
+
   const currentTheme = STORE_THEMES[activeStore] || STORE_THEMES.foods;
 
   return (
-    <ThemeContext.Provider value={{ activeStore, setActiveStore, currentTheme }}>
+    <ThemeContext.Provider
+      value={{
+        activeStore,
+        setActiveStore,
+        currentTheme,
+        colorMode,
+        setColorMode,
+        isDarkMode,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );

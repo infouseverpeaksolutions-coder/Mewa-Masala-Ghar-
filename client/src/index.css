@@ -57,6 +57,79 @@
   --store-accent: #C7926B;
 }
 
+/* =========================================================================
+   DARK THEME VARIABLES (Deep Forest Obsidian & Midnight Hues)
+   ========================================================================= */
+.dark,
+.dark.theme-foods {
+  --theme-primary: #3E7B4E;
+  --theme-primary-hover: #4F9963;
+  --theme-accent: #E5B85C;
+  --theme-accent-hover: #F0C670;
+  --theme-bg: #111813;
+  --theme-text: #F3EFE6;
+  --theme-card: #18221B;
+  --theme-border: #2A3B2F;
+  --theme-badge-bg: #1B2B20;
+  --theme-badge-text: #8ED9A0;
+  --theme-tint: #1B2B20;
+
+  --store-primary: #3E7B4E;
+  --store-tint: #1B2B20;
+  --store-accent: #E5B85C;
+}
+
+.dark.theme-baby {
+  --theme-primary: #3DA5C9;
+  --theme-primary-hover: #53B9DC;
+  --theme-accent: #F7B07A;
+  --theme-accent-hover: #FABE91;
+  --theme-bg: #0F171B;
+  --theme-text: #EDF5F8;
+  --theme-card: #162228;
+  --theme-border: #24353E;
+  --theme-badge-bg: #162832;
+  --theme-badge-text: #6DCBEB;
+  --theme-tint: #162832;
+
+  --store-primary: #5DB4D6;
+  --store-tint: #162832;
+  --store-accent: #F7B07A;
+}
+
+.dark.theme-care {
+  --theme-primary: #D47281;
+  --theme-primary-hover: #E08896;
+  --theme-accent: #D6A47E;
+  --theme-accent-hover: #E2B491;
+  --theme-bg: #1A1315;
+  --theme-text: #FAEEF0;
+  --theme-card: #251B1E;
+  --theme-border: #3D2B30;
+  --theme-badge-bg: #2D1A20;
+  --theme-badge-text: #F29EAA;
+  --theme-tint: #2D1A20;
+
+  --store-primary: #E0808C;
+  --store-tint: #2D1A20;
+  --store-accent: #D6A47E;
+}
+
+.dark body {
+  background-color: var(--theme-bg, #111813);
+  color: var(--theme-text, #F3EFE6);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #111813;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #2A3B2F;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3B5242;
+}
+
 body {
   background-color: var(--theme-bg, #FAF6EC);
   color: var(--theme-text, #2B2B2B);

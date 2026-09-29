@@ -18,6 +18,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
 import { LeafIcon, BrandLogoBadge } from './ui/Icons';
+import { ThemeToggle } from './ThemeToggle';
 
 export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
   const { itemCount, setIsCartOpen } = useCart();
@@ -75,12 +76,14 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
   const navItemClass = (path: string) => {
     const isActive = location.pathname === path;
     return `text-xs lg:text-[13px] font-semibold transition-colors duration-200 cursor-pointer ${
-      isActive ? 'text-[#1F4D2E] font-bold' : 'text-[#2B2B2B] hover:text-[#1F4D2E]'
+      isActive
+        ? 'text-[#1F4D2E] dark:text-[#8ED9A0] font-bold'
+        : 'text-[#2B2B2B] dark:text-[#E2DDD3] hover:text-[#1F4D2E] dark:hover:text-[#E5B85C]'
     }`;
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF6EC] border-b border-[#E7E0D0] transition-colors duration-300">
+    <header className="sticky top-0 z-40 bg-[#FAF6EC] dark:bg-[#111813] border-b border-[#E7E0D0] dark:border-[#243529] transition-colors duration-300">
       {/* 
         ========================================================================
         1. ANNOUNCEMENT BAR (Deep Forest Green #1F4D2E)
@@ -291,15 +294,18 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             </Link>
           </nav>
 
-          {/* Right Action Icons: Search, Account, Cart */}
-          <div className="flex items-center gap-3 sm:gap-4 lg:gap-5">
+          {/* Right Action Icons: Theme Toggle, Search, Account, Cart */}
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+            {/* Theme Toggle Button (Light / Dark / Auto) */}
+            <ThemeToggle variant="navbar" />
+
             {/* Search Icon / Toggle */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 text-gray-700 hover:text-[#1F4D2E] transition-colors rounded-full hover:bg-black/5"
+              className="p-2 text-gray-700 dark:text-gray-200 hover:text-[#1F4D2E] dark:hover:text-[#E5B85C] transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
               aria-label="Search"
             >
-              <Search className="w-5 h-5 text-[#2B2B2B]" />
+              <Search className="w-5 h-5 text-[#2B2B2B] dark:text-[#E2DDD3]" />
             </button>
 
             {/* User Account Icon */}
@@ -307,25 +313,25 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                  className="p-2 text-gray-700 hover:text-[#1F4D2E] transition-colors rounded-full hover:bg-black/5"
+                  className="p-2 text-gray-700 dark:text-gray-200 hover:text-[#1F4D2E] dark:hover:text-[#E5B85C] transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
                   aria-label="Account menu"
                 >
-                  <UserIcon className="w-5 h-5 text-[#2B2B2B]" />
+                  <UserIcon className="w-5 h-5 text-[#2B2B2B] dark:text-[#E2DDD3]" />
                 </button>
 
                 {accountDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#E7E0D0] py-2 z-50 animate-in fade-in duration-150">
-                    <div className="px-4 py-2.5 border-b border-gray-100">
-                      <p className="text-xs text-gray-500">Namaste,</p>
-                      <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
-                      <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#18221B] rounded-2xl shadow-xl border border-[#E7E0D0] dark:border-[#2A3B2F] py-2 z-50 animate-in fade-in duration-150">
+                    <div className="px-4 py-2.5 border-b border-gray-100 dark:border-white/10">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Namaste,</p>
+                      <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user.name}</p>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
                     </div>
 
                     <div className="py-1">
                       <Link
                         to="/account?tab=profile"
                         onClick={() => setAccountDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#1F2E23] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                       >
                         <UserCircle className="w-4 h-4 text-gray-400" />
                         <span>My Account</span>
@@ -333,7 +339,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                       <Link
                         to="/account?tab=orders"
                         onClick={() => setAccountDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#1F2E23] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                       >
                         <Package className="w-4 h-4 text-gray-400" />
                         <span>My Orders</span>
@@ -341,7 +347,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                       <Link
                         to="/track-order"
                         onClick={() => setAccountDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#1F2E23] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                       >
                         <Compass className="w-4 h-4 text-gray-400" />
                         <span>Track Order</span>
@@ -349,21 +355,21 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                       <Link
                         to="/account?tab=addresses"
                         onClick={() => setAccountDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#1F2E23] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                       >
                         <MapPin className="w-4 h-4 text-gray-400" />
                         <span>Saved Addresses</span>
                       </Link>
                     </div>
 
-                    <div className="border-t border-gray-100 pt-1">
+                    <div className="border-t border-gray-100 dark:border-white/10 pt-1">
                       <button
                         onClick={() => {
                           setAccountDropdownOpen(false);
                           logout();
                           navigate('/');
                         }}
-                        className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 text-left cursor-pointer"
                       >
                         <LogOut className="w-4 h-4 text-red-500" />
                         <span>Logout</span>
@@ -375,21 +381,21 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             ) : (
               <Link
                 to="/login"
-                className="p-2 text-gray-700 hover:text-[#1F4D2E] transition-colors rounded-full hover:bg-black/5"
+                className="p-2 text-gray-700 dark:text-gray-200 hover:text-[#1F4D2E] dark:hover:text-[#E5B85C] transition-colors rounded-full hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
                 aria-label="Sign in"
               >
-                <UserIcon className="w-5 h-5 text-[#2B2B2B]" />
+                <UserIcon className="w-5 h-5 text-[#2B2B2B] dark:text-[#E2DDD3]" />
               </Link>
             )}
 
             {/* Shopping Cart Icon with Gold Count Badge */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="p-2 text-gray-700 hover:text-[#1F4D2E] transition-colors relative rounded-full hover:bg-black/5"
+              className="p-2 text-gray-700 dark:text-gray-200 hover:text-[#1F4D2E] dark:hover:text-[#E5B85C] transition-colors relative rounded-full hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
               aria-label="Shopping Cart"
             >
               <div className="relative">
-                <ShoppingBag className="w-5 h-5 text-[#2B2B2B]" />
+                <ShoppingBag className="w-5 h-5 text-[#2B2B2B] dark:text-[#E2DDD3]" />
                 <span className="absolute -top-1.5 -right-2 bg-[#D9A441] text-[#1F4D2E] text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-xs">
                   {itemCount > 0 ? itemCount : 2}
                 </span>
@@ -399,7 +405,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             {/* Mobile Menu Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:text-[#1F4D2E] rounded-lg"
+              className="md:hidden p-2 text-gray-700 dark:text-gray-200 hover:text-[#1F4D2E] dark:hover:text-[#E5B85C] rounded-lg"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -447,7 +453,10 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
         ========================================================================
       */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#E7E0D0] bg-[#FAF6EC] px-4 py-4 space-y-4 shadow-lg animate-in slide-in-from-top duration-200">
+        <div className="md:hidden border-t border-[#E7E0D0] dark:border-[#243529] bg-[#FAF6EC] dark:bg-[#111813] px-4 py-4 space-y-4 shadow-lg animate-in slide-in-from-top duration-200">
+          {/* Theme Selector for Mobile */}
+          <ThemeToggle variant="mobile" />
+
           <form onSubmit={handleSearch}>
             <div className="relative flex items-center">
               <input
@@ -455,11 +464,11 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
-                className="w-full pl-4 pr-10 py-2 text-xs bg-white border border-[#E7E0D0] rounded-full focus:outline-none focus:ring-2 focus:ring-[#1F4D2E]"
+                className="w-full pl-4 pr-10 py-2 text-xs bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] text-[#2B2B2B] dark:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-[#1F4D2E]"
               />
               <button
                 type="submit"
-                className="absolute right-1.5 w-7 h-7 rounded-full bg-[#1F4D2E] text-white flex items-center justify-center"
+                className="absolute right-1.5 w-7 h-7 rounded-full bg-[#1F4D2E] text-white flex items-center justify-center cursor-pointer"
               >
                 <Search className="w-3.5 h-3.5" />
               </button>
@@ -470,49 +479,49 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-[#1F4D2E] font-bold border border-[#E7E0D0]"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-[#1F4D2E] dark:text-[#8ED9A0] font-bold border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               Home
             </Link>
             <Link
               to="/shop"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-[#E7E0D0]"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               Shop All
             </Link>
             <Link
               to="/shop?category=dry-fruits"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-[#E7E0D0]"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               Dry Fruits
             </Link>
             <Link
               to="/shop?category=seeds-mixes"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-[#E7E0D0]"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               Seeds
             </Link>
             <Link
               to="/shop?category=makhana"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-[#E7E0D0]"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               Makhana
             </Link>
             <Link
-              to="/shop?category=spices-seasonings"
+              to="/shop?category=specialty-flours"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-[#E7E0D0]"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
-              Spices
+              Aataa (Flour)
             </Link>
             <Link
               to="/jimmi-jaggu"
               onClick={() => setMobileMenuOpen(false)}
-              className="col-span-2 p-2.5 bg-[#FAF4EC] rounded-xl text-center font-bold text-[#1F4D2E] border border-[#D9A441]/50 flex items-center justify-center gap-2"
+              className="col-span-2 p-2.5 bg-[#FAF4EC] dark:bg-[#1F2A22] rounded-xl text-center font-bold text-[#1F4D2E] dark:text-[#8ED9A0] border border-[#D9A441]/50 flex items-center justify-center gap-2"
             >
               <img
                 src="/brands/jimmi_jaggu_logo.png"
@@ -524,14 +533,14 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             <Link
               to="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-gray-100"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               About Us
             </Link>
             <Link
               to="/contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2.5 bg-white rounded-xl text-center text-gray-700 hover:bg-gray-50 border border-gray-100"
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
               Contact Us
             </Link>
