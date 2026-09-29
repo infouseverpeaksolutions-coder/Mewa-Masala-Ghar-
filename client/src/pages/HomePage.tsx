@@ -338,52 +338,56 @@ export const HomePage: React.FC = () => {
           {SUB_BRAND_BANNERS.map((banner) => (
             <div
               key={banner.id}
-              className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-card border border-[#E8D4D0]/70 h-[200px] sm:h-[230px] md:h-[260px] lg:h-[280px] group bg-[#FAF6EC]"
+              className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-card border border-[#E8D4D0]/70 h-[225px] sm:h-[260px] md:h-[290px] lg:h-[310px] group bg-[#FAF6EC]"
             >
-              {/* Full-bleed background image */}
+              {/* Full-bleed background image across whole banner (no fade) */}
               <img
                 src={banner.image}
                 alt={banner.title}
                 className={`absolute inset-0 w-full h-full object-cover ${
                   banner.id === 'baby-products'
-                    ? 'object-[85%_center] sm:object-right md:object-center'
-                    : 'object-[70%_center] sm:object-right md:object-center'
+                    ? 'object-[82%_center] sm:object-center'
+                    : 'object-[75%_center] sm:object-center'
                 } group-hover:scale-[1.02] transition-transform duration-500`}
               />
 
-              {/* Gradient overlay on left to ensure crisp text readability */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    banner.id === 'beauty-products'
-                      ? 'linear-gradient(to right, rgba(253, 244, 240, 0.98) 0%, rgba(253, 244, 240, 0.94) 42%, rgba(253, 244, 240, 0.5) 65%, transparent 88%)'
-                      : 'linear-gradient(to right, rgba(255, 252, 247, 0.98) 0%, rgba(255, 252, 247, 0.94) 42%, rgba(255, 252, 247, 0.5) 65%, transparent 88%)',
-                }}
-              />
-
-              {/* Text content over the image */}
-              <div className="relative z-10 h-full flex flex-col justify-center max-w-[78%] sm:max-w-sm md:max-w-md p-4 sm:p-7 lg:p-9">
+              {/* Text content directly onto the image with sharp, visible colors */}
+              <div className="relative z-10 h-full flex flex-col justify-center max-w-[82%] sm:max-w-md md:max-w-lg p-4 sm:p-8 lg:p-10">
                 {/* Tagline */}
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[#1F4D2E]/10 border border-[#1F4D2E]/25 text-[#1F4D2E] text-[10px] sm:text-xs font-bold tracking-wide w-fit mb-1.5 sm:mb-2 backdrop-blur-xs">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/95 text-[#1F4D2E] border border-[#1F4D2E]/25 text-[10px] sm:text-xs font-extrabold tracking-wide w-fit mb-1.5 sm:mb-2.5 shadow-sm backdrop-blur-xs">
                   <span>{banner.tagline}</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="font-serif text-base sm:text-2xl lg:text-[26px] font-bold text-[#3B2825] leading-tight mb-1 sm:mb-1.5">
+                <h3
+                  className="font-serif text-lg sm:text-2xl md:text-3xl lg:text-[34px] font-black text-[#14261B] leading-tight mb-1 sm:mb-2"
+                  style={{
+                    textShadow:
+                      '0 1px 3px rgba(255,255,255,0.95), 0 2px 10px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.85)',
+                  }}
+                >
                   {banner.title}
                 </h3>
 
                 {/* Subtitle */}
-                <p className="text-[11px] sm:text-xs md:text-sm text-[#7A5852] font-medium line-clamp-2 mb-2.5 sm:mb-4">
+                <p
+                  className="text-[11px] sm:text-sm md:text-base font-bold text-[#1F3325] line-clamp-2 mb-2.5 sm:mb-5 max-w-xs sm:max-w-md leading-snug sm:leading-relaxed"
+                  style={{
+                    textShadow:
+                      '0 1px 3px rgba(255,255,255,0.95), 0 2px 8px rgba(255,255,255,0.9)',
+                  }}
+                >
                   {banner.subtitle}
                 </p>
 
                 {/* Action button */}
                 <Link
                   to={banner.link}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-[11px] sm:text-xs md:text-sm font-bold shadow-md hover:shadow-lg transition-all w-fit cursor-pointer"
-                  style={{ backgroundColor: banner.buttonColor }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-6 sm:py-3 rounded-full text-white text-[11px] sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all w-fit cursor-pointer active:scale-98"
+                  style={{
+                    backgroundColor:
+                      banner.id === 'beauty-products' ? '#B84E5E' : '#1B6F8E',
+                  }}
                 >
                   <span>{banner.ctaText}</span>
                 </Link>
