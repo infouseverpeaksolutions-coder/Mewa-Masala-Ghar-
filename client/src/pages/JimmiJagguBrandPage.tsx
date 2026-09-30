@@ -171,12 +171,26 @@ export const JimmiJagguBrandPage: React.FC = () => {
     <div className="bg-[#FAF7F2] dark:bg-[#111813] text-[#2B2321] dark:text-[#F3EFE6] transition-colors duration-300 min-h-screen">
       {/* 
         ========================================================================
-        1. HERO SECTION (Mother & Baby intimate care portrait + botanical lines)
+        1. HERO SECTION (Full-width background image with text overlaid)
         ========================================================================
       */}
-      <section className="relative overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] border-b border-[#EFE8DF] dark:border-[#243529] py-8 sm:py-12 lg:py-16">
+      <section className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] min-h-[540px] sm:min-h-[500px] md:min-h-[540px] lg:min-h-[580px] flex flex-col justify-end sm:justify-center bg-[#FAF6F0] dark:bg-[#141E17]">
+        {/* Full-bleed background image across whole hero section */}
+        <img
+          src="/jimmi-jaggu/hero_mother_baby.jpg"
+          alt="Gentle Care for Little Ones & You - Mother and smiling baby"
+          className="absolute inset-0 w-full h-full object-cover object-[78%_15%] sm:object-[72%_center] lg:object-[68%_center]"
+        />
+
+        {/* 
+          Seamless directional gradient scrim spanning 100% width:
+          - Mobile: Bottom-to-top gradient keeping mother & baby's smiling faces in the top half
+          - Desktop (sm+): Left-to-right gradient with smooth alpha rolloff leaving right side 100% natural & unfaded
+        */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none bg-[linear-gradient(0deg,rgba(250,247,242,0.97)_0%,rgba(250,247,242,0.88)_50%,rgba(250,247,242,0.2)_75%,transparent_100%)] dark:bg-[linear-gradient(0deg,rgba(17,24,19,0.98)_0%,rgba(17,24,19,0.92)_50%,rgba(17,24,19,0.3)_75%,transparent_100%)] sm:bg-[linear-gradient(90deg,rgba(250,247,242,0.96)_0%,rgba(250,247,242,0.86)_32%,rgba(250,247,242,0.35)_52%,transparent_72%)] dark:sm:bg-[linear-gradient(90deg,rgba(17,24,19,0.97)_0%,rgba(17,24,19,0.88)_32%,rgba(17,24,19,0.4)_52%,transparent_72%)]" />
+
         {/* Subtle decorative botanical background line art (Left) */}
-        <div className="absolute top-0 left-0 w-64 h-64 pointer-events-none opacity-25 dark:opacity-10">
+        <div className="absolute top-4 left-2 sm:left-6 w-64 h-64 pointer-events-none opacity-20 dark:opacity-10 hidden sm:block">
           <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#C7926B]">
             <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
@@ -186,39 +200,42 @@ export const JimmiJagguBrandPage: React.FC = () => {
           </svg>
         </div>
 
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Content Column */}
-            <div className="lg:col-span-6 space-y-5 sm:space-y-6 relative z-10 text-left">
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[52px] leading-[1.12] font-bold text-[#2B2321] dark:text-white tracking-tight">
-                Gentle Care <br className="hidden sm:inline" />
-                for Little Ones & You
-              </h1>
-
-              <p className="text-sm sm:text-base text-[#6B5E59] dark:text-gray-300 max-w-md leading-relaxed font-normal">
-                Natural products for happy babies, healthy skin and a healthier tomorrow.
-              </p>
-
-              <div>
-                <a
-                  href="#featured-products"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-semibold shadow-soft hover:shadow-md transition-all hover:scale-105 active:scale-95"
-                >
-                  <span>Shop Now</span>
-                  <span className="text-sm">→</span>
-                </a>
-              </div>
+        {/* Text Content Container positioned directly over the image */}
+        <div className="relative z-10 w-full px-5 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pb-7 pt-28 sm:py-16 lg:py-20">
+          <div className="max-w-xl lg:max-w-2xl space-y-3.5 sm:space-y-6 text-left">
+            {/* Sub-brand badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-[#18221B]/90 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[11px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#C47D76]" />
+              <span>Presented by Mewa Masala Ghar</span>
             </div>
 
-            {/* Right Photo Column (The mother holding smiling baby) */}
-            <div className="lg:col-span-6 relative">
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-soft border border-[#EAE1D5] dark:border-[#2A3B2F] bg-[#FAF6F0] aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/11]">
-                <img
-                  src="/jimmi-jaggu/hero_mother_baby.jpg"
-                  alt="Gentle Care for Little Ones & You - Mother and smiling baby"
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
+            {/* Headline */}
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.14] font-bold text-[#2B2321] dark:text-white tracking-tight drop-shadow-xs dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              Gentle Care <br className="hidden sm:inline" />
+              for Little Ones & You
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-xs sm:text-base md:text-lg text-[#61514B] dark:text-gray-200 max-w-md leading-relaxed font-medium">
+              Natural products for happy babies, healthy skin and a healthier tomorrow.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="pt-1.5 sm:pt-2 flex items-center gap-3 sm:gap-4 flex-wrap">
+              <a
+                href="#featured-products"
+                className="inline-flex items-center justify-center gap-2 px-7 sm:px-8 py-3 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-semibold shadow-soft hover:shadow-md transition-all hover:scale-105 active:scale-95"
+              >
+                <span>Shop Now</span>
+                <span className="text-sm">→</span>
+              </a>
+
+              <a
+                href="#categories"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-semibold backdrop-blur-xs transition-all hover:scale-105 shadow-2xs"
+              >
+                <span>Explore Categories</span>
+              </a>
             </div>
           </div>
         </div>
@@ -229,7 +246,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
         2. CATEGORY SHOWCASE CARDS (3 Columns: Baby, Skincare, Pregnancy)
         ========================================================================
       */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
+      <section id="categories" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
           {/* Card 1: Baby Products */}
           <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-3.5 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
