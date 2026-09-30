@@ -158,17 +158,16 @@ export const JimmiJagguBrandPage: React.FC = () => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
 
   // Auto-advance hero slides every 4 seconds with smooth blur transition
   useEffect(() => {
-    if (isPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [currentSlide]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -176,6 +175,23 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    touchStartX.current = null;
   };
 
   useEffect(() => {
@@ -245,12 +261,13 @@ export const JimmiJagguBrandPage: React.FC = () => {
       {/* 
         ========================================================================
         1. HERO SECTION (Full-Screen Image Slider with 4s Smooth Blur Transition)
+        Centered Heading, Badge, Subtitle & Buttons, Perfectly Fit to Viewport
         ========================================================================
       */}
       <section
-        className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-9.5rem)] sm:h-[calc(100vh-5rem)] min-h-[460px] sm:min-h-[640px] lg:min-h-[720px] max-h-[960px] flex flex-col justify-end sm:justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-9.75rem)] sm:h-[calc(100dvh-7.25rem)] min-h-[440px] sm:min-h-[500px] max-h-[820px] flex items-center justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
       >
         {/* Full-bleed background images with dreamy smooth blur crossfade */}
         {HERO_SLIDES.map((slide, index) => {
@@ -265,7 +282,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
               style={{
                 opacity: isActive ? 1 : 0,
                 filter: isActive ? 'blur(0px)' : 'blur(16px)',
-                transform: isActive ? 'scale(1)' : 'scale(1.05)',
+                transform: isActive ? 'scale(1)' : 'scale(1.04)',
                 transition: 'opacity 1100ms cubic-bezier(0.4, 0, 0.2, 1), filter 1100ms cubic-bezier(0.4, 0, 0.2, 1), transform 1100ms cubic-bezier(0.4, 0, 0.2, 1)',
               }}
             >
@@ -279,28 +296,36 @@ export const JimmiJagguBrandPage: React.FC = () => {
         })}
 
         {/* 
-          Seamless protective ambient gradient across the whole section:
-          - Mobile: Bottom-to-top gradient for crisp text over bottom half
-          - Desktop (sm+): Left-to-right gradient for razor-sharp typography while right side stays 100% natural & vibrant
+          Balanced radial ambient scrim centered behind the content:
+          Provides crisp, high-contrast readability for centered typography and buttons
+          while letting the rich natural photography shine through across the full screen.
         */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-[linear-gradient(0deg,rgba(250,247,242,0.97)_0%,rgba(250,247,242,0.90)_45%,rgba(250,247,242,0.25)_70%,transparent_100%)] dark:bg-[linear-gradient(0deg,rgba(17,24,19,0.98)_0%,rgba(17,24,19,0.92)_45%,rgba(17,24,19,0.35)_70%,transparent_100%)] sm:bg-[linear-gradient(90deg,rgba(250,247,242,0.96)_0%,rgba(250,247,242,0.85)_35%,rgba(250,247,242,0.30)_55%,transparent_75%)] dark:sm:bg-[linear-gradient(90deg,rgba(17,24,19,0.97)_0%,rgba(17,24,19,0.88)_35%,rgba(17,24,19,0.35)_55%,transparent_75%)]" />
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-[radial-gradient(ellipse_at_center,rgba(250,247,242,0.92)_0%,rgba(250,247,242,0.72)_45%,rgba(250,247,242,0.28)_72%,transparent_100%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(17,24,19,0.94)_0%,rgba(17,24,19,0.78)_45%,rgba(17,24,19,0.35)_72%,transparent_100%)]" />
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-black/5 dark:bg-black/25" />
 
-        {/* Subtle decorative botanical background line art (Left) */}
-        <div className="absolute top-6 left-4 sm:left-8 w-64 h-64 pointer-events-none opacity-20 dark:opacity-10 hidden sm:block z-10">
+        {/* Subtle decorative botanical background line art (Left & Right) */}
+        <div className="absolute top-6 left-6 w-56 h-56 pointer-events-none opacity-20 dark:opacity-10 hidden md:block z-10">
           <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#C7926B]">
             <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
             <path d="M100 95 C 115 80, 140 85, 145 100 C 135 110, 110 105, 100 95 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-            <path d="M130 65 C 145 50, 170 55, 175 70 C 165 80, 140 75, 130 65 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
             <circle cx="50" cy="150" r="15" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
           </svg>
         </div>
+        <div className="absolute bottom-10 right-8 w-56 h-56 pointer-events-none opacity-20 dark:opacity-10 hidden md:block z-10">
+          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#C7926B]">
+            <path d="M180 20 C 140 80, 110 130, 40 160" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M130 75 C 115 90, 90 85, 85 70 C 95 60, 120 65, 130 75 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
+            <path d="M100 105 C 85 120, 60 115, 55 100 C 65 90, 90 95, 100 105 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
+            <circle cx="150" cy="50" r="15" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
+          </svg>
+        </div>
 
-        {/* Text Content Container positioned directly over the image */}
-        <div className="relative z-20 w-full px-5 sm:px-8 lg:px-12 xl:px-16 max-w-7xl mx-auto pb-6 pt-10 sm:py-20 lg:py-24">
-          <div className="max-w-xl lg:max-w-2xl space-y-2.5 sm:space-y-6 text-left">
+        {/* Centered Content Container positioned directly over the image */}
+        <div className="relative z-20 w-full px-5 sm:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-6 sm:py-10">
+          <div className="flex flex-col items-center justify-center text-center space-y-3 sm:space-y-5 max-w-2xl sm:max-w-3xl">
             {/* Sub-brand badge with official Jimmi Jaggu logo */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs transition-all">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs transition-all mx-auto">
               <img
                 src="/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
@@ -317,20 +342,20 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </div>
 
             {/* Headline with dynamic slide title */}
-            <h1 className="font-serif text-2xl sm:text-5xl md:text-6xl lg:text-[60px] leading-[1.14] sm:leading-[1.12] font-black text-[#2B2321] dark:text-white tracking-tight drop-shadow-xs dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] transition-all duration-700">
-              {HERO_SLIDES[currentSlide].title} <br className="hidden sm:inline" />
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.15] font-black text-[#2B2321] dark:text-white tracking-tight drop-shadow-xs dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] transition-all duration-700 mx-auto">
+              {HERO_SLIDES[currentSlide].title}{' '}
               <span className="text-[#C47D76] dark:text-[#E5B85C]">
                 {HERO_SLIDES[currentSlide].titleAccent}
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-base md:text-lg text-[#554641] dark:text-gray-200 max-w-md sm:max-w-lg leading-relaxed font-medium transition-all duration-700 line-clamp-2 sm:line-clamp-none">
+            <p className="text-xs sm:text-base md:text-lg text-[#554641] dark:text-gray-200 max-w-lg sm:max-w-xl leading-relaxed font-medium transition-all duration-700 mx-auto">
               {HERO_SLIDES[currentSlide].subtitle}
             </p>
 
-            {/* CTA Buttons */}
-            <div className="pt-1.5 sm:pt-3 flex items-center gap-2.5 sm:gap-4 flex-wrap">
+            {/* CTA Buttons - Centered */}
+            <div className="pt-2 sm:pt-3 flex items-center justify-center gap-3 sm:gap-4 flex-wrap mx-auto">
               <a
                 href={HERO_SLIDES[currentSlide].ctaLink}
                 className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-soft hover:shadow-md transition-all hover:scale-105 active:scale-95"
@@ -341,7 +366,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
               <a
                 href="#categories"
-                className="inline-flex items-center justify-center gap-2 px-4.5 sm:px-6 py-2.5 sm:py-3.5 rounded-full bg-white/90 dark:bg-[#18221B]/90 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-semibold backdrop-blur-xs transition-all hover:scale-105 shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-white/90 dark:bg-[#18221B]/90 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-semibold backdrop-blur-xs transition-all hover:scale-105 shadow-2xs"
               >
                 <span>Explore Categories</span>
               </a>
@@ -349,44 +374,40 @@ export const JimmiJagguBrandPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Carousel Slide Indicators & Manual Nav Controls */}
-        <div className="absolute bottom-2.5 sm:bottom-8 left-0 right-0 z-20 px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto flex items-center justify-between pointer-events-none">
-          {/* Progress Indicators (Clickable) */}
-          <div className="flex items-center gap-2 pointer-events-auto">
-            {HERO_SLIDES.map((slide, idx) => {
-              const isActive = idx === currentSlide;
-              return (
-                <button
-                  key={slide.id}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
-                    isActive
-                      ? 'w-8 sm:w-12 bg-[#C47D76] dark:bg-[#E5B85C] shadow-sm'
-                      : 'w-2 sm:w-2.5 bg-black/25 dark:bg-white/30 hover:bg-black/40 dark:hover:bg-white/50'
-                  }`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              );
-            })}
-          </div>
+        {/* Left / Right Nav Arrows (Edge Positioned, Vertically Centered on sm+) */}
+        <button
+          onClick={prevSlide}
+          className="hidden sm:flex absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
 
-          {/* Left / Right Nav Arrows (Desktop & Tablet) */}
-          <div className="hidden sm:flex items-center gap-2 pointer-events-auto">
-            <button
-              onClick={prevSlide}
-              className="w-9 h-9 rounded-full bg-white/80 dark:bg-[#18221B]/80 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] flex items-center justify-center shadow-xs backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
-              aria-label="Previous hero slide"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="w-9 h-9 rounded-full bg-white/80 dark:bg-[#18221B]/80 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] flex items-center justify-center shadow-xs backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
-              aria-label="Next hero slide"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+        <button
+          onClick={nextSlide}
+          className="hidden sm:flex absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+
+        {/* Slide Progress Indicators - Centered at Bottom with safe clearance */}
+        <div className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 pointer-events-auto">
+          {HERO_SLIDES.map((slide, idx) => {
+            const isActive = idx === currentSlide;
+            return (
+              <button
+                key={slide.id}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
+                  isActive
+                    ? 'w-8 sm:w-12 bg-[#C47D76] dark:bg-[#E5B85C] shadow-sm'
+                    : 'w-2 sm:w-2.5 bg-black/25 dark:bg-white/35 hover:bg-black/45 dark:hover:bg-white/60'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            );
+          })}
         </div>
       </section>
 
