@@ -97,13 +97,86 @@ const TESTIMONIALS = [
   },
 ];
 
+interface HeroSlide {
+  id: string;
+  image: string;
+  badgeStore: string;
+  title: string;
+  titleAccent: string;
+  subtitle: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+const HERO_SLIDES: HeroSlide[] = [
+  {
+    id: 'slide-1',
+    image: '/jimmi-jaggu/hero_slide_1.jpg',
+    badgeStore: 'Presented by Mewa Masala Ghar',
+    title: 'Gentle Care for',
+    titleAccent: 'Little Ones & You',
+    subtitle: 'Pure, wholesome botanicals crafted for happy babies, healthy skin and a healthier tomorrow.',
+    ctaText: 'Shop Baby Care',
+    ctaLink: '#featured-products',
+  },
+  {
+    id: 'slide-2',
+    image: '/jimmi-jaggu/hero_slide_2.jpg',
+    badgeStore: '100% Safe & Certified Essentials',
+    title: 'Pure Comfort for',
+    titleAccent: 'Tender Baby Skin',
+    subtitle: 'Nourishing botanical oils, soothing creams and everyday bedtime warmth.',
+    ctaText: 'Explore Baby Products',
+    ctaLink: '/shop?store=baby',
+  },
+  {
+    id: 'slide-3',
+    image: '/jimmi-jaggu/hero_slide_3.jpg',
+    badgeStore: 'Ayurvedic Poshan for Mothers',
+    title: 'Loving Care for',
+    titleAccent: 'Mothers-to-Be',
+    subtitle: 'Thoughtful formulations crafted for every stage — from bump to babyhood.',
+    ctaText: 'Shop Pregnancy Care',
+    ctaLink: '/shop?store=baby&category=pregnancy-care',
+  },
+  {
+    id: 'slide-4',
+    image: '/jimmi-jaggu/hero_slide_4.jpg',
+    badgeStore: 'Triple-Sifted Ayurvedic Purity',
+    title: 'Pure Botanical &',
+    titleAccent: 'Ayurvedic Skincare',
+    subtitle: 'Time-honored natural clays, multani mitti and chemical-free botanical blends.',
+    ctaText: 'Discover Skincare',
+    ctaLink: '/shop?store=care',
+  },
+];
+
 export const JimmiJagguBrandPage: React.FC = () => {
   const { setActiveStore } = useTheme();
   const { addToCart } = useCart();
   const [addedItem, setAddedItem] = useState<string | null>(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Auto-advance hero slides every 4 seconds with smooth blur transition
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -171,26 +244,49 @@ export const JimmiJagguBrandPage: React.FC = () => {
     <div className="bg-[#FAF7F2] dark:bg-[#111813] text-[#2B2321] dark:text-[#F3EFE6] transition-colors duration-300 min-h-screen">
       {/* 
         ========================================================================
-        1. HERO SECTION (Full-width background image with text overlaid)
+        1. HERO SECTION (Full-Screen Image Slider with 4s Smooth Blur Transition)
         ========================================================================
       */}
-      <section className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] min-h-[540px] sm:min-h-[500px] md:min-h-[540px] lg:min-h-[580px] flex flex-col justify-end sm:justify-center bg-[#FAF6F0] dark:bg-[#141E17]">
-        {/* Full-bleed background image across whole hero section */}
-        <img
-          src="/jimmi-jaggu/hero_mother_baby.jpg"
-          alt="Gentle Care for Little Ones & You - Mother and smiling baby"
-          className="absolute inset-0 w-full h-full object-cover object-[78%_15%] sm:object-[72%_center] lg:object-[68%_center]"
-        />
+      <section
+        className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-9.5rem)] sm:h-[calc(100vh-5rem)] min-h-[460px] sm:min-h-[640px] lg:min-h-[720px] max-h-[960px] flex flex-col justify-end sm:justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {/* Full-bleed background images with dreamy smooth blur crossfade */}
+        {HERO_SLIDES.map((slide, index) => {
+          const isActive = index === currentSlide;
+          return (
+            <div
+              key={slide.id}
+              aria-hidden={!isActive}
+              className={`absolute inset-0 w-full h-full will-change-[opacity,filter,transform] ${
+                isActive ? 'z-0 pointer-events-auto' : '-z-10 pointer-events-none'
+              }`}
+              style={{
+                opacity: isActive ? 1 : 0,
+                filter: isActive ? 'blur(0px)' : 'blur(16px)',
+                transform: isActive ? 'scale(1)' : 'scale(1.05)',
+                transition: 'opacity 1100ms cubic-bezier(0.4, 0, 0.2, 1), filter 1100ms cubic-bezier(0.4, 0, 0.2, 1), transform 1100ms cubic-bezier(0.4, 0, 0.2, 1)',
+              }}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover object-center"
+              />
+            </div>
+          );
+        })}
 
         {/* 
-          Seamless directional gradient scrim spanning 100% width:
-          - Mobile: Bottom-to-top gradient keeping mother & baby's smiling faces in the top half
-          - Desktop (sm+): Left-to-right gradient with smooth alpha rolloff leaving right side 100% natural & unfaded
+          Seamless protective ambient gradient across the whole section:
+          - Mobile: Bottom-to-top gradient for crisp text over bottom half
+          - Desktop (sm+): Left-to-right gradient for razor-sharp typography while right side stays 100% natural & vibrant
         */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none bg-[linear-gradient(0deg,rgba(250,247,242,0.97)_0%,rgba(250,247,242,0.88)_50%,rgba(250,247,242,0.2)_75%,transparent_100%)] dark:bg-[linear-gradient(0deg,rgba(17,24,19,0.98)_0%,rgba(17,24,19,0.92)_50%,rgba(17,24,19,0.3)_75%,transparent_100%)] sm:bg-[linear-gradient(90deg,rgba(250,247,242,0.96)_0%,rgba(250,247,242,0.86)_32%,rgba(250,247,242,0.35)_52%,transparent_72%)] dark:sm:bg-[linear-gradient(90deg,rgba(17,24,19,0.97)_0%,rgba(17,24,19,0.88)_32%,rgba(17,24,19,0.4)_52%,transparent_72%)]" />
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-[linear-gradient(0deg,rgba(250,247,242,0.97)_0%,rgba(250,247,242,0.90)_45%,rgba(250,247,242,0.25)_70%,transparent_100%)] dark:bg-[linear-gradient(0deg,rgba(17,24,19,0.98)_0%,rgba(17,24,19,0.92)_45%,rgba(17,24,19,0.35)_70%,transparent_100%)] sm:bg-[linear-gradient(90deg,rgba(250,247,242,0.96)_0%,rgba(250,247,242,0.85)_35%,rgba(250,247,242,0.30)_55%,transparent_75%)] dark:sm:bg-[linear-gradient(90deg,rgba(17,24,19,0.97)_0%,rgba(17,24,19,0.88)_35%,rgba(17,24,19,0.35)_55%,transparent_75%)]" />
 
         {/* Subtle decorative botanical background line art (Left) */}
-        <div className="absolute top-4 left-2 sm:left-6 w-64 h-64 pointer-events-none opacity-20 dark:opacity-10 hidden sm:block">
+        <div className="absolute top-6 left-4 sm:left-8 w-64 h-64 pointer-events-none opacity-20 dark:opacity-10 hidden sm:block z-10">
           <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#C7926B]">
             <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
@@ -201,51 +297,95 @@ export const JimmiJagguBrandPage: React.FC = () => {
         </div>
 
         {/* Text Content Container positioned directly over the image */}
-        <div className="relative z-10 w-full px-5 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pb-7 pt-28 sm:py-16 lg:py-20">
-          <div className="max-w-xl lg:max-w-2xl space-y-3.5 sm:space-y-6 text-left">
+        <div className="relative z-20 w-full px-5 sm:px-8 lg:px-12 xl:px-16 max-w-7xl mx-auto pb-6 pt-10 sm:py-20 lg:py-24">
+          <div className="max-w-xl lg:max-w-2xl space-y-2.5 sm:space-y-6 text-left">
             {/* Sub-brand badge with official Jimmi Jaggu logo */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[11px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs transition-all">
               <img
                 src="/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
-                className="w-4 h-5 object-contain dark:hidden"
+                className="w-3.5 h-4 sm:w-4 sm:h-5 object-contain dark:hidden"
               />
               <img
                 src="/jimmi-jaggu/logo_light.png"
                 alt="Jimmi Jaggu"
-                className="w-4 h-5 object-contain hidden dark:block"
+                className="w-3.5 h-4 sm:w-4 sm:h-5 object-contain hidden dark:block"
               />
-              <span>Presented by Mewa Masala Ghar</span>
+              <span className="transition-opacity duration-500">
+                {HERO_SLIDES[currentSlide].badgeStore}
+              </span>
             </div>
 
-            {/* Headline */}
-            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.14] font-bold text-[#2B2321] dark:text-white tracking-tight drop-shadow-xs dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-              Gentle Care <br className="hidden sm:inline" />
-              for Little Ones & You
+            {/* Headline with dynamic slide title */}
+            <h1 className="font-serif text-2xl sm:text-5xl md:text-6xl lg:text-[60px] leading-[1.14] sm:leading-[1.12] font-black text-[#2B2321] dark:text-white tracking-tight drop-shadow-xs dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] transition-all duration-700">
+              {HERO_SLIDES[currentSlide].title} <br className="hidden sm:inline" />
+              <span className="text-[#C47D76] dark:text-[#E5B85C]">
+                {HERO_SLIDES[currentSlide].titleAccent}
+              </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-base md:text-lg text-[#61514B] dark:text-gray-200 max-w-md leading-relaxed font-medium">
-              Natural products for happy babies, healthy skin and a healthier tomorrow.
+            <p className="text-xs sm:text-base md:text-lg text-[#554641] dark:text-gray-200 max-w-md sm:max-w-lg leading-relaxed font-medium transition-all duration-700 line-clamp-2 sm:line-clamp-none">
+              {HERO_SLIDES[currentSlide].subtitle}
             </p>
 
             {/* CTA Buttons */}
-            <div className="pt-1.5 sm:pt-2 flex items-center gap-3 sm:gap-4 flex-wrap">
+            <div className="pt-1.5 sm:pt-3 flex items-center gap-2.5 sm:gap-4 flex-wrap">
               <a
-                href="#featured-products"
-                className="inline-flex items-center justify-center gap-2 px-7 sm:px-8 py-3 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-semibold shadow-soft hover:shadow-md transition-all hover:scale-105 active:scale-95"
+                href={HERO_SLIDES[currentSlide].ctaLink}
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-soft hover:shadow-md transition-all hover:scale-105 active:scale-95"
               >
-                <span>Shop Now</span>
+                <span>{HERO_SLIDES[currentSlide].ctaText}</span>
                 <span className="text-sm">→</span>
               </a>
 
               <a
                 href="#categories"
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-semibold backdrop-blur-xs transition-all hover:scale-105 shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 px-4.5 sm:px-6 py-2.5 sm:py-3.5 rounded-full bg-white/90 dark:bg-[#18221B]/90 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-semibold backdrop-blur-xs transition-all hover:scale-105 shadow-2xs"
               >
                 <span>Explore Categories</span>
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Carousel Slide Indicators & Manual Nav Controls */}
+        <div className="absolute bottom-2.5 sm:bottom-8 left-0 right-0 z-20 px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto flex items-center justify-between pointer-events-none">
+          {/* Progress Indicators (Clickable) */}
+          <div className="flex items-center gap-2 pointer-events-auto">
+            {HERO_SLIDES.map((slide, idx) => {
+              const isActive = idx === currentSlide;
+              return (
+                <button
+                  key={slide.id}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
+                    isActive
+                      ? 'w-8 sm:w-12 bg-[#C47D76] dark:bg-[#E5B85C] shadow-sm'
+                      : 'w-2 sm:w-2.5 bg-black/25 dark:bg-white/30 hover:bg-black/40 dark:hover:bg-white/50'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Left / Right Nav Arrows (Desktop & Tablet) */}
+          <div className="hidden sm:flex items-center gap-2 pointer-events-auto">
+            <button
+              onClick={prevSlide}
+              className="w-9 h-9 rounded-full bg-white/80 dark:bg-[#18221B]/80 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] flex items-center justify-center shadow-xs backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
+              aria-label="Previous hero slide"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="w-9 h-9 rounded-full bg-white/80 dark:bg-[#18221B]/80 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] flex items-center justify-center shadow-xs backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
+              aria-label="Next hero slide"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </section>
