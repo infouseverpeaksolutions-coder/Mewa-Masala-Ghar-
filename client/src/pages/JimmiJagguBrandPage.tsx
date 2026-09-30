@@ -424,13 +424,13 @@ export const JimmiJagguBrandPage: React.FC = () => {
       <section id="categories" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
           {/* Card 1: Baby Products */}
-          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-3.5 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
             <div>
               <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
                 <img
-                  src="/jimmi-jaggu/cat_baby.png"
+                  src="/jimmi-jaggu/cat_baby_bottle.jpg"
                   alt="Baby Products"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
@@ -443,7 +443,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div className="px-1">
               <Link
                 to="/shop?store=baby"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
                 <span>Explore</span>
                 <span className="text-xs">→</span>
@@ -452,13 +452,13 @@ export const JimmiJagguBrandPage: React.FC = () => {
           </div>
 
           {/* Card 2: Personal Care & Skincare */}
-          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-3.5 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
             <div>
               <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
                 <img
-                  src="/jimmi-jaggu/cat_care.png"
+                  src="/jimmi-jaggu/cat_ayurvedic_powder.jpg"
                   alt="Personal Care & Skincare"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
@@ -471,7 +471,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div className="px-1">
               <Link
                 to="/shop?store=care"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#7E8F79] hover:bg-[#6D7E68] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#6D8B74] hover:bg-[#5C7762] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
                 <span>Explore</span>
                 <span className="text-xs">→</span>
@@ -480,13 +480,13 @@ export const JimmiJagguBrandPage: React.FC = () => {
           </div>
 
           {/* Card 3: Pregnancy Products */}
-          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-3.5 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
             <div>
               <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
                 <img
-                  src="/jimmi-jaggu/cat_preg.png"
+                  src="/jimmi-jaggu/cat_pregnancy_mother.jpg"
                   alt="Pregnancy Products"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
@@ -499,7 +499,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div className="px-1">
               <Link
                 to="/shop?store=baby&category=pregnancy-care"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
                 <span>Explore</span>
                 <span className="text-xs">→</span>
