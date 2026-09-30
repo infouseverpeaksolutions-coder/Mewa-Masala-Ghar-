@@ -17,20 +17,12 @@ export const Footer: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-10 border-b border-white/10">
             {/* Col 1: Brand & Logo */}
             <div className="space-y-4">
-              <Link to="/jimmi-jaggu" className="inline-flex items-center gap-2.5">
+              <Link to="/jimmi-jaggu" className="inline-block transition-transform duration-200 hover:scale-105">
                 <img
-                  src="/brands/jimmi_jaggu_logo.png"
-                  alt="Jimmi Jaggu"
-                  className="w-12 h-12 rounded-full object-contain bg-white p-1 shadow-sm border border-[#D9A9A0]"
+                  src="/jimmi-jaggu/logo_light.png"
+                  alt="Jimmi Jaggu - From Our Store to Your Home"
+                  className="h-20 sm:h-24 w-auto object-contain"
                 />
-                <div>
-                  <span className="font-serif text-lg font-bold text-white tracking-tight block">
-                    Jimmi Jaggu
-                  </span>
-                  <span className="text-[10px] font-serif italic text-[#D9A441] block -mt-0.5">
-                    From Our Store to Your Home
-                  </span>
-                </div>
               </Link>
               <p className="text-xs text-emerald-100/75 leading-relaxed">
                 Natural care crafted for happy babies, radiant mothers and healthy families.
@@ -251,13 +243,22 @@ export const Footer: React.FC = () => {
                 Our Sister Brand
               </h4>
               <div className="space-y-2">
-                <div className="font-serif font-bold text-base text-white">
-                  Jimmi Jaggu
-                </div>
-                <p className="text-xs text-emerald-100/75">
-                  Baby • Skincare • Pregnancy
-                </p>
-                <div className="pt-2">
+                <Link to="/jimmi-jaggu" className="inline-flex items-center gap-2.5 group">
+                  <img
+                    src="/jimmi-jaggu/logo_light.png"
+                    alt="Jimmi Jaggu"
+                    className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
+                  />
+                  <div>
+                    <div className="font-serif font-bold text-base text-white group-hover:text-[#D9A441] transition-colors">
+                      Jimmi Jaggu
+                    </div>
+                    <p className="text-[11px] text-emerald-100/75">
+                      Baby • Skincare • Pregnancy
+                    </p>
+                  </div>
+                </Link>
+                <div className="pt-1">
                   <Link
                     to="/jimmi-jaggu"
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/30 hover:border-[#D9A441] text-xs font-semibold text-white hover:text-[#D9A441] transition-all bg-white/5 hover:bg-white/10"

@@ -203,9 +203,18 @@ export const JimmiJagguBrandPage: React.FC = () => {
         {/* Text Content Container positioned directly over the image */}
         <div className="relative z-10 w-full px-5 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pb-7 pt-28 sm:py-16 lg:py-20">
           <div className="max-w-xl lg:max-w-2xl space-y-3.5 sm:space-y-6 text-left">
-            {/* Sub-brand badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-[#18221B]/90 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[11px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#C47D76]" />
+            {/* Sub-brand badge with official Jimmi Jaggu logo */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[11px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs">
+              <img
+                src="/jimmi-jaggu/logo_dark.png"
+                alt="Jimmi Jaggu"
+                className="w-4 h-5 object-contain dark:hidden"
+              />
+              <img
+                src="/jimmi-jaggu/logo_light.png"
+                alt="Jimmi Jaggu"
+                className="w-4 h-5 object-contain hidden dark:block"
+              />
               <span>Presented by Mewa Masala Ghar</span>
             </div>
 
@@ -512,12 +521,26 @@ export const JimmiJagguBrandPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 items-center">
             {/* Left Content */}
             <div className="p-6 sm:p-8 lg:p-12 md:col-span-6 lg:col-span-5 relative z-10 space-y-3 sm:space-y-4">
-              <span className="text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
-                OUR SISTER BRAND
-              </span>
-              <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2B2321] dark:text-white">
-                JIMMI JAGGU
-              </h3>
+              <div className="flex items-center gap-3.5">
+                <img
+                  src="/jimmi-jaggu/logo_dark.png"
+                  alt="Jimmi Jaggu"
+                  className="h-14 sm:h-16 w-auto object-contain dark:hidden"
+                />
+                <img
+                  src="/jimmi-jaggu/logo_light.png"
+                  alt="Jimmi Jaggu"
+                  className="h-14 sm:h-16 w-auto object-contain hidden dark:block"
+                />
+                <div>
+                  <span className="text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
+                    OUR SISTER BRAND
+                  </span>
+                  <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2B2321] dark:text-white">
+                    JIMMI JAGGU
+                  </h3>
+                </div>
+              </div>
               <p className="text-xs sm:text-sm font-medium text-[#7A6D68] dark:text-gray-300 tracking-wider">
                 Baby &nbsp;•&nbsp; Skincare &nbsp;•&nbsp; Pregnancy
               </p>

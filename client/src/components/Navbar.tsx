@@ -142,17 +142,24 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
           {/* Logo on Left */}
           <div className="flex items-center gap-3 shrink-0">
             {isJimmiJaggu ? (
-              <Link to="/jimmi-jaggu" className="flex items-center gap-2.5">
+              <Link to="/jimmi-jaggu" className="flex items-center gap-2.5 sm:gap-3 group py-1">
+                {/* Official Jimmi Jaggu Logo (Dark version for light mode) */}
                 <img
-                  src="/brands/jimmi_jaggu_logo.png"
+                  src="/jimmi-jaggu/logo_dark.png"
                   alt="Jimmi Jaggu"
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-contain bg-white p-1 shadow-sm border border-[#D9A9A0]"
+                  className="h-11 sm:h-13 md:h-14 w-auto object-contain dark:hidden group-hover:scale-105 transition-transform duration-200"
                 />
-                <div>
-                  <span className="font-serif text-lg sm:text-xl font-bold text-[#2A2A2A] dark:text-white tracking-tight block">
+                {/* Official Jimmi Jaggu Logo (Light version for dark mode) */}
+                <img
+                  src="/jimmi-jaggu/logo_light.png"
+                  alt="Jimmi Jaggu"
+                  className="h-11 sm:h-13 md:h-14 w-auto object-contain hidden dark:block group-hover:scale-105 transition-transform duration-200"
+                />
+                <div className="hidden sm:block">
+                  <span className="font-serif text-lg sm:text-xl font-bold text-[#2A2A2A] dark:text-white tracking-tight block group-hover:text-[#C47D76] transition-colors">
                     Jimmi Jaggu
                   </span>
-                  <span className="text-[10px] font-serif italic text-[#8C6D37] dark:text-[#E5B85C] block -mt-0.5">
+                  <span className="text-[10px] sm:text-[11px] font-serif italic text-[#8C6D37] dark:text-[#E5B85C] block -mt-0.5">
                     From Our Store to Your Home
                   </span>
                 </div>
@@ -539,9 +546,14 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               className="col-span-2 p-2.5 bg-[#FAF4EC] dark:bg-[#1F2A22] rounded-xl text-center font-bold text-[#1F4D2E] dark:text-[#8ED9A0] border border-[#D9A441]/50 flex items-center justify-center gap-2"
             >
               <img
-                src="/brands/jimmi_jaggu_logo.png"
+                src="/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
-                className="w-5 h-5 rounded-full object-contain"
+                className="w-5 h-6 object-contain dark:hidden"
+              />
+              <img
+                src="/jimmi-jaggu/logo_light.png"
+                alt="Jimmi Jaggu"
+                className="w-5 h-6 object-contain hidden dark:block"
               />
               <span>Jimmi Jaggu Sister Brand →</span>
             </Link>
