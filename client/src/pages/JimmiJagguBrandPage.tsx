@@ -683,23 +683,23 @@ export const JimmiJagguBrandPage: React.FC = () => {
         ========================================================================
       */}
       <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EAE1D5] dark:border-[#2A3B2F] bg-gradient-to-r from-[#FAF4EC] via-[#FDF8F3] to-[#F5ECE1] dark:from-[#18221B] dark:to-[#141E17] shadow-soft">
-          <div className="grid grid-cols-1 md:grid-cols-12 items-center">
+        <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EFE8DF] dark:border-[#2A3B2F] bg-[#FFFDF9] dark:bg-[#18221B] shadow-soft p-2 sm:p-3 md:p-3.5">
+          <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-4 md:gap-6">
             {/* Left Content */}
-            <div className="p-6 sm:p-8 lg:p-12 md:col-span-6 lg:col-span-5 relative z-10 space-y-3 sm:space-y-4">
+            <div className="p-4 sm:p-6 lg:p-8 md:col-span-5 lg:col-span-5 relative z-10 space-y-3 sm:space-y-4">
               <div className="flex items-center gap-3.5">
                 <img
                   src="/jimmi-jaggu/logo_dark.png"
                   alt="Jimmi Jaggu"
-                  className="h-14 sm:h-16 w-auto object-contain dark:hidden"
+                  className="h-12 sm:h-14 lg:h-16 w-auto object-contain dark:hidden"
                 />
                 <img
                   src="/jimmi-jaggu/logo_light.png"
                   alt="Jimmi Jaggu"
-                  className="h-14 sm:h-16 w-auto object-contain hidden dark:block"
+                  className="h-12 sm:h-14 lg:h-16 w-auto object-contain hidden dark:block"
                 />
                 <div>
-                  <span className="text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
+                  <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
                     OUR SISTER BRAND
                   </span>
                   <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2B2321] dark:text-white">
@@ -716,7 +716,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
               <div className="pt-2">
                 <Link
                   to="/shop?store=baby"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
                 >
                   <span>Explore Jimmi Jaggu</span>
                   <span>→</span>
@@ -725,11 +725,11 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </div>
 
             {/* Right Banner Image */}
-            <div className="md:col-span-6 lg:col-span-7 h-52 sm:h-64 md:h-full min-h-[220px] relative overflow-hidden">
+            <div className="md:col-span-7 lg:col-span-7 h-56 sm:h-64 md:h-[280px] lg:h-[310px] rounded-xl sm:rounded-2xl overflow-hidden relative shadow-xs">
               <img
-                src="/jimmi-jaggu/banner_still.png"
+                src="/jimmi-jaggu/banner_still.jpg"
                 alt="Jimmi Jaggu Baby and Skincare"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-[78%_center]"
               />
             </div>
           </div>
