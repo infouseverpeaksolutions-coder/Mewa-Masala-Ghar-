@@ -90,29 +90,44 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
         "🌿 Free shipping above ₹499 | 100% Veg | FSSAI Certified 🌿"
         ========================================================================
       */}
-      <div className="bg-[#1F4D2E] text-white text-xs py-2 px-2 sm:px-4 lg:px-6 font-medium tracking-wide">
+      <div className={`text-white text-xs py-2 px-2 sm:px-4 lg:px-6 font-medium tracking-wide transition-colors ${
+        isJimmiJaggu ? 'bg-[#C47D76]' : 'bg-[#1F4D2E]'
+      }`}>
         <div className="w-full mx-auto flex items-center justify-center relative">
-          {/* Back link when inside /jimmi-jaggu */}
+          {/* Centered Offer Text */}
+          <div className="flex items-center gap-2 text-center text-xs sm:text-[13px] font-semibold">
+            {isJimmiJaggu ? (
+              <>
+                <span className="text-white/60">‹</span>
+                <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
+                <span className="text-white/40">|</span>
+                <span>100% Safe & Gentle</span>
+                <span className="text-white/40">|</span>
+                <span>FSSAI Certified</span>
+                <span className="text-white/60">›</span>
+              </>
+            ) : (
+              <>
+                <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
+                <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
+                <span className="text-white/40">|</span>
+                <span>100% Veg</span>
+                <span className="text-white/40">|</span>
+                <span>FSSAI Certified</span>
+                <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
+              </>
+            )}
+          </div>
+
+          {/* Back link when inside /jimmi-jaggu (top right matching mockup) */}
           {isJimmiJaggu && (
             <Link
               to="/"
-              className="absolute left-0 text-[11px] text-[#D9A441] hover:underline flex items-center gap-1 font-semibold"
+              className="hidden sm:flex absolute right-0 text-[11px] text-white hover:text-white/80 hover:underline items-center gap-1 font-semibold"
             >
-              <ArrowLeft className="w-3 h-3" />
-              <span>Back to Mewa Masala Ghar</span>
+              <span>← Back to Mewa Masala Ghar</span>
             </Link>
           )}
-
-          {/* Centered Offer Text flanked by gold leaf icons */}
-          <div className="flex items-center gap-2 text-center text-xs sm:text-[13px] font-semibold">
-            <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
-            <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
-            <span className="text-white/40">|</span>
-            <span>100% Veg</span>
-            <span className="text-white/40">|</span>
-            <span>FSSAI Certified</span>
-            <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
-          </div>
         </div>
       </div>
 
@@ -134,10 +149,10 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-contain bg-white p-1 shadow-sm border border-[#D9A9A0]"
                 />
                 <div>
-                  <span className="font-serif text-lg sm:text-xl font-bold text-[#2A2A2A] tracking-tight block">
+                  <span className="font-serif text-lg sm:text-xl font-bold text-[#2A2A2A] dark:text-white tracking-tight block">
                     Jimmi Jaggu
                   </span>
-                  <span className="text-[10px] font-serif italic text-[#8C6D37] block -mt-0.5">
+                  <span className="text-[10px] font-serif italic text-[#8C6D37] dark:text-[#E5B85C] block -mt-0.5">
                     From Our Store to Your Home
                   </span>
                 </div>

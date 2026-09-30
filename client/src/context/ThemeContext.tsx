@@ -50,6 +50,8 @@ interface ThemeContextType {
   currentTheme: StoreThemeInfo;
   colorMode: ColorMode;
   setColorMode: (mode: ColorMode) => void;
+  toggleTheme: () => void;
+  cycleColorMode: () => void;
   isDarkMode: boolean;
 }
 
@@ -82,6 +84,24 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setColorMode = (mode: ColorMode) => {
     setColorModeState(mode);
     localStorage.setItem('mmg_theme_mode', mode);
+  };
+
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      setColorMode('light');
+    } else {
+      setColorMode('dark');
+    }
+  };
+
+  const cycleColorMode = () => {
+    if (colorMode === 'light') {
+      setColorMode('dark');
+    } else if (colorMode === 'dark') {
+      setColorMode('auto');
+    } else {
+      setColorMode('light');
+    }
   };
 
   // Synchronize store theme class (e.g. theme-foods, theme-baby, theme-care)
@@ -138,6 +158,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         currentTheme,
         colorMode,
         setColorMode,
+        toggleTheme,
+        cycleColorMode,
         isDarkMode,
       }}
     >
