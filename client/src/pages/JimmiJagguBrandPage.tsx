@@ -106,6 +106,7 @@ interface HeroSlide {
   subtitle: string;
   ctaText: string;
   ctaLink: string;
+  objectPosition?: string;
 }
 
 const HERO_SLIDES: HeroSlide[] = [
@@ -118,6 +119,7 @@ const HERO_SLIDES: HeroSlide[] = [
     subtitle: 'Pure, wholesome botanicals crafted for happy babies, healthy skin and a healthier tomorrow.',
     ctaText: 'Shop Baby Care',
     ctaLink: '#featured-products',
+    objectPosition: 'object-[65%_35%] sm:object-[center_35%]',
   },
   {
     id: 'slide-2',
@@ -128,6 +130,7 @@ const HERO_SLIDES: HeroSlide[] = [
     subtitle: 'Nourishing botanical oils, soothing creams and everyday bedtime warmth.',
     ctaText: 'Explore Baby Products',
     ctaLink: '/shop?store=baby',
+    objectPosition: 'object-[50%_35%] sm:object-[center_35%]',
   },
   {
     id: 'slide-3',
@@ -138,6 +141,7 @@ const HERO_SLIDES: HeroSlide[] = [
     subtitle: 'Thoughtful formulations crafted for every stage — from bump to babyhood.',
     ctaText: 'Shop Pregnancy Care',
     ctaLink: '/shop?store=baby&category=pregnancy-care',
+    objectPosition: 'object-[50%_45%] sm:object-[center_40%]',
   },
   {
     id: 'slide-4',
@@ -148,6 +152,7 @@ const HERO_SLIDES: HeroSlide[] = [
     subtitle: 'Time-honored natural clays, multani mitti and chemical-free botanical blends.',
     ctaText: 'Discover Skincare',
     ctaLink: '/shop?store=care',
+    objectPosition: 'object-[50%_55%] sm:object-[center_50%]',
   },
 ];
 
@@ -267,7 +272,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
       <section
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-9.75rem)] sm:h-[calc(100dvh-7.25rem)] min-h-[440px] sm:min-h-[500px] max-h-[820px] flex items-center justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
+        className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-152px)] sm:h-[calc(100dvh-114px)] min-h-[380px] flex items-center justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
       >
         {/* Full-bleed background images with dreamy smooth blur crossfade */}
         {HERO_SLIDES.map((slide, index) => {
@@ -289,7 +294,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
               <img
                 src={slide.image}
                 alt={slide.title}
-                className="w-full h-full object-cover object-center"
+                className={`w-full h-full object-cover ${slide.objectPosition || 'object-center'}`}
               />
             </div>
           );
@@ -308,6 +313,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
             <path d="M100 95 C 115 80, 140 85, 145 100 C 135 110, 110 105, 100 95 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
+            <path d="M130 65 C 145 50, 170 55, 175 70 C 165 80, 140 75, 130 65 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
             <circle cx="50" cy="150" r="15" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
           </svg>
         </div>
@@ -321,10 +327,10 @@ export const JimmiJagguBrandPage: React.FC = () => {
         </div>
 
         {/* Centered Content directly over the image (No box / No heavy card) */}
-        <div className="relative z-20 w-full px-5 sm:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-6 sm:py-10">
-          <div className="flex flex-col items-center justify-center text-center space-y-3 sm:space-y-5 max-w-2xl sm:max-w-3xl">
+        <div className="relative z-20 w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-2 sm:py-6">
+          <div className="flex flex-col items-center justify-center text-center space-y-2 sm:space-y-3.5 md:space-y-4 max-w-xl sm:max-w-2xl lg:max-w-3xl">
             {/* Sub-brand badge with official Jimmi Jaggu logo */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-md transition-all mx-auto">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-md transition-all mx-auto">
               <img
                 src="/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
@@ -340,8 +346,8 @@ export const JimmiJagguBrandPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Headline with dynamic slide title & high-visibility text-shadow */}
-            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.15] font-black text-[#1F1410] dark:text-white tracking-tight drop-shadow-[0_2px_14px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] transition-all duration-700 mx-auto">
+            {/* Headline with dynamic slide title & responsive typography */}
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[46px] xl:text-[52px] leading-[1.14] sm:leading-[1.12] font-black text-[#1F1410] dark:text-white tracking-tight drop-shadow-[0_2px_14px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] transition-all duration-700 mx-auto">
               {HERO_SLIDES[currentSlide].title}{' '}
               <span className="text-[#A0352A] dark:text-[#F0C060] drop-shadow-[0_2px_12px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 {HERO_SLIDES[currentSlide].titleAccent}
@@ -349,15 +355,15 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </h1>
 
             {/* Subtitle with high-visibility shadow */}
-            <p className="text-xs sm:text-base md:text-lg text-[#2A1D18] dark:text-gray-100 max-w-lg sm:max-w-xl leading-relaxed font-semibold drop-shadow-[0_1px_10px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] transition-all duration-700 mx-auto">
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-[#2A1D18] dark:text-gray-100 max-w-md sm:max-w-lg md:max-w-xl leading-relaxed font-semibold drop-shadow-[0_1px_10px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] transition-all duration-700 mx-auto line-clamp-2 sm:line-clamp-none">
               {HERO_SLIDES[currentSlide].subtitle}
             </p>
 
             {/* CTA Buttons - Centered */}
-            <div className="pt-2 sm:pt-3 flex items-center justify-center gap-3 sm:gap-4 flex-wrap mx-auto">
+            <div className="pt-1.5 sm:pt-2.5 md:pt-3 flex items-center justify-center gap-2.5 sm:gap-4 flex-wrap mx-auto">
               <a
                 href={HERO_SLIDES[currentSlide].ctaLink}
-                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
               >
                 <span>{HERO_SLIDES[currentSlide].ctaText}</span>
                 <span className="text-sm">→</span>
@@ -365,7 +371,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
               <a
                 href="#categories"
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-bold backdrop-blur-xs transition-all hover:scale-105 shadow-md"
+                className="inline-flex items-center justify-center gap-2 px-4.5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white/95 dark:bg-[#18221B]/95 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-bold backdrop-blur-xs transition-all hover:scale-105 shadow-md"
               >
                 <span>Explore Categories</span>
               </a>
@@ -376,22 +382,22 @@ export const JimmiJagguBrandPage: React.FC = () => {
         {/* Left / Right Nav Arrows (Edge Positioned, Vertically Centered on sm+) */}
         <button
           onClick={prevSlide}
-          className="hidden sm:flex absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
+          className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         <button
           onClick={nextSlide}
-          className="hidden sm:flex absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
+          className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* Slide Progress Indicators - Centered at Bottom with safe clearance */}
-        <div className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 pointer-events-auto">
+        <div className="absolute bottom-3.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 pointer-events-auto">
           {HERO_SLIDES.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (

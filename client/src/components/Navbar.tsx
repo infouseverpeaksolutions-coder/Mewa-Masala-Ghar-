@@ -90,30 +90,30 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
         "🌿 Free shipping above ₹499 | 100% Veg | FSSAI Certified 🌿"
         ========================================================================
       */}
-      <div className={`text-white text-xs py-2 px-2 sm:px-4 lg:px-6 font-medium tracking-wide transition-colors ${
+      <div className={`text-white text-xs py-1.5 sm:py-2 px-2 sm:px-4 lg:px-6 font-medium tracking-wide transition-colors ${
         isJimmiJaggu ? 'bg-[#C47D76]' : 'bg-[#1F4D2E]'
       }`}>
         <div className="w-full mx-auto flex items-center justify-center relative">
           {/* Centered Offer Text */}
-          <div className="flex items-center gap-2 text-center text-xs sm:text-[13px] font-semibold">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-center text-[10px] sm:text-xs md:text-[13px] font-semibold whitespace-nowrap overflow-hidden">
             {isJimmiJaggu ? (
               <>
                 <span className="text-white/60">‹</span>
                 <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
-                <span className="text-white/40">|</span>
+                <span className="text-white/40">•</span>
                 <span>100% Safe & Gentle</span>
-                <span className="text-white/40">|</span>
-                <span>FSSAI Certified</span>
+                <span className="text-white/40 hidden sm:inline">•</span>
+                <span className="hidden sm:inline">FSSAI Certified</span>
                 <span className="text-white/60">›</span>
               </>
             ) : (
               <>
                 <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
                 <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
-                <span className="text-white/40">|</span>
+                <span className="text-white/40">•</span>
                 <span>100% Veg</span>
-                <span className="text-white/40">|</span>
-                <span>FSSAI Certified</span>
+                <span className="text-white/40 hidden sm:inline">•</span>
+                <span className="hidden sm:inline">FSSAI Certified</span>
                 <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
               </>
             )}
