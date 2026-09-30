@@ -683,54 +683,59 @@ export const JimmiJagguBrandPage: React.FC = () => {
         ========================================================================
       */}
       <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
-        <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EFE8DF] dark:border-[#2A3B2F] bg-[#FFFDF9] dark:bg-[#18221B] shadow-soft p-2 sm:p-3 md:p-3.5">
-          <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-4 md:gap-6">
-            {/* Left Content */}
-            <div className="p-4 sm:p-6 lg:p-8 md:col-span-5 lg:col-span-5 relative z-10 space-y-3 sm:space-y-4">
-              <div className="flex items-center gap-3.5">
-                <img
-                  src="/jimmi-jaggu/logo_dark.png"
-                  alt="Jimmi Jaggu"
-                  className="h-12 sm:h-14 lg:h-16 w-auto object-contain dark:hidden"
-                />
-                <img
-                  src="/jimmi-jaggu/logo_light.png"
-                  alt="Jimmi Jaggu"
-                  className="h-12 sm:h-14 lg:h-16 w-auto object-contain hidden dark:block"
-                />
-                <div>
-                  <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
-                    OUR SISTER BRAND
-                  </span>
-                  <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2B2321] dark:text-white">
-                    JIMMI JAGGU
-                  </h3>
-                </div>
-              </div>
-              <p className="text-xs sm:text-sm font-medium text-[#7A6D68] dark:text-gray-300 tracking-wider">
-                Baby &nbsp;•&nbsp; Skincare &nbsp;•&nbsp; Pregnancy
-              </p>
-              <p className="text-xs sm:text-sm text-[#5B504B] dark:text-gray-300 max-w-md leading-relaxed">
-                Thoughtfully crafted products for every stage of your journey — from bump to babyhood.
-              </p>
-              <div className="pt-2">
-                <Link
-                  to="/shop?store=baby"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-                >
-                  <span>Explore Jimmi Jaggu</span>
-                  <span>→</span>
-                </Link>
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-card min-h-[340px] sm:min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex items-center group">
+          {/* Full-bleed background image across the whole banner */}
+          <img
+            src="/jimmi-jaggu/banner_still.jpg"
+            alt="Jimmi Jaggu Baby and Skincare"
+            className="absolute inset-0 w-full h-full object-cover object-[78%_center] group-hover:scale-[1.02] transition-transform duration-700 ease-out"
+          />
+
+          {/* Gentle gradient overlay on left for sharp, pristine text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9]/95 via-[#FFFDF9]/85 to-transparent dark:from-[#18221B]/95 dark:via-[#18221B]/85 dark:to-transparent max-w-lg sm:max-w-xl md:max-w-2xl pointer-events-none" />
+
+          {/* Subtle mobile overlay for extra clarity on small screens */}
+          <div className="absolute inset-0 bg-[#FFFDF9]/30 dark:bg-[#18221B]/30 sm:hidden pointer-events-none" />
+
+          {/* Content overlay directly on the banner */}
+          <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12 max-w-lg sm:max-w-xl space-y-3.5 sm:space-y-4">
+            <div className="flex items-center gap-3.5">
+              <img
+                src="/jimmi-jaggu/logo_dark.png"
+                alt="Jimmi Jaggu"
+                className="h-12 sm:h-14 lg:h-16 w-auto object-contain dark:hidden"
+              />
+              <img
+                src="/jimmi-jaggu/logo_light.png"
+                alt="Jimmi Jaggu"
+                className="h-12 sm:h-14 lg:h-16 w-auto object-contain hidden dark:block"
+              />
+              <div>
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
+                  OUR SISTER BRAND
+                </span>
+                <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2B2321] dark:text-white">
+                  JIMMI JAGGU
+                </h3>
               </div>
             </div>
 
-            {/* Right Banner Image */}
-            <div className="md:col-span-7 lg:col-span-7 h-56 sm:h-64 md:h-[280px] lg:h-[310px] rounded-xl sm:rounded-2xl overflow-hidden relative shadow-xs">
-              <img
-                src="/jimmi-jaggu/banner_still.jpg"
-                alt="Jimmi Jaggu Baby and Skincare"
-                className="w-full h-full object-cover object-[78%_center]"
-              />
+            <p className="text-xs sm:text-sm font-semibold text-[#6E5D57] dark:text-gray-200 tracking-wider">
+              Baby &nbsp;•&nbsp; Skincare &nbsp;•&nbsp; Pregnancy
+            </p>
+
+            <p className="text-xs sm:text-sm text-[#4A3F3A] dark:text-gray-200 max-w-md leading-relaxed font-normal">
+              Thoughtfully crafted products for every stage of your journey — from bump to babyhood.
+            </p>
+
+            <div className="pt-2">
+              <Link
+                to="/shop?store=baby"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-98"
+              >
+                <span>Explore Jimmi Jaggu</span>
+                <span>→</span>
+              </Link>
             </div>
           </div>
         </div>
