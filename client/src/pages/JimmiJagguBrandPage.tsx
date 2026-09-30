@@ -281,9 +281,9 @@ export const JimmiJagguBrandPage: React.FC = () => {
               }`}
               style={{
                 opacity: isActive ? 1 : 0,
-                filter: isActive ? 'blur(0px)' : 'blur(16px)',
-                transform: isActive ? 'scale(1)' : 'scale(1.04)',
-                transition: 'opacity 1100ms cubic-bezier(0.4, 0, 0.2, 1), filter 1100ms cubic-bezier(0.4, 0, 0.2, 1), transform 1100ms cubic-bezier(0.4, 0, 0.2, 1)',
+                filter: isActive ? 'blur(0px)' : 'blur(8px)',
+                transform: isActive ? 'scale(1)' : 'scale(1.02)',
+                transition: 'opacity 700ms cubic-bezier(0.4, 0, 0.2, 1), filter 700ms cubic-bezier(0.4, 0, 0.2, 1), transform 700ms cubic-bezier(0.4, 0, 0.2, 1)',
               }}
             >
               <img
@@ -296,12 +296,11 @@ export const JimmiJagguBrandPage: React.FC = () => {
         })}
 
         {/* 
-          Balanced radial ambient scrim centered behind the content:
-          Provides crisp, high-contrast readability for centered typography and buttons
-          while letting the rich natural photography shine through across the full screen.
+          Ultra-low fade scrim (reduced to ~15%):
+          Ensures images are 100% vibrant, rich and natural without any milky wash,
+          while providing optimal contrast for centered text across all slides.
         */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-[radial-gradient(ellipse_at_center,rgba(250,247,242,0.92)_0%,rgba(250,247,242,0.72)_45%,rgba(250,247,242,0.28)_72%,transparent_100%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(17,24,19,0.94)_0%,rgba(17,24,19,0.78)_45%,rgba(17,24,19,0.35)_72%,transparent_100%)]" />
-        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-black/5 dark:bg-black/25" />
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.08)_50%,transparent_80%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(17,24,19,0.40)_0%,rgba(17,24,19,0.15)_50%,transparent_80%)]" />
 
         {/* Subtle decorative botanical background line art (Left & Right) */}
         <div className="absolute top-6 left-6 w-56 h-56 pointer-events-none opacity-20 dark:opacity-10 hidden md:block z-10">
@@ -321,11 +320,11 @@ export const JimmiJagguBrandPage: React.FC = () => {
           </svg>
         </div>
 
-        {/* Centered Content Container positioned directly over the image */}
+        {/* Centered Content directly over the image (No box / No heavy card) */}
         <div className="relative z-20 w-full px-5 sm:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-6 sm:py-10">
           <div className="flex flex-col items-center justify-center text-center space-y-3 sm:space-y-5 max-w-2xl sm:max-w-3xl">
             {/* Sub-brand badge with official Jimmi Jaggu logo */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-2xs transition-all mx-auto">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-md transition-all mx-auto">
               <img
                 src="/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
@@ -341,16 +340,16 @@ export const JimmiJagguBrandPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Headline with dynamic slide title */}
-            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.15] font-black text-[#2B2321] dark:text-white tracking-tight drop-shadow-xs dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] transition-all duration-700 mx-auto">
+            {/* Headline with dynamic slide title & high-visibility text-shadow */}
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.15] font-black text-[#1F1410] dark:text-white tracking-tight drop-shadow-[0_2px_14px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] transition-all duration-700 mx-auto">
               {HERO_SLIDES[currentSlide].title}{' '}
-              <span className="text-[#C47D76] dark:text-[#E5B85C]">
+              <span className="text-[#A0352A] dark:text-[#F0C060] drop-shadow-[0_2px_12px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 {HERO_SLIDES[currentSlide].titleAccent}
               </span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-xs sm:text-base md:text-lg text-[#554641] dark:text-gray-200 max-w-lg sm:max-w-xl leading-relaxed font-medium transition-all duration-700 mx-auto">
+            {/* Subtitle with high-visibility shadow */}
+            <p className="text-xs sm:text-base md:text-lg text-[#2A1D18] dark:text-gray-100 max-w-lg sm:max-w-xl leading-relaxed font-semibold drop-shadow-[0_1px_10px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] transition-all duration-700 mx-auto">
               {HERO_SLIDES[currentSlide].subtitle}
             </p>
 
@@ -358,7 +357,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div className="pt-2 sm:pt-3 flex items-center justify-center gap-3 sm:gap-4 flex-wrap mx-auto">
               <a
                 href={HERO_SLIDES[currentSlide].ctaLink}
-                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-soft hover:shadow-md transition-all hover:scale-105 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
               >
                 <span>{HERO_SLIDES[currentSlide].ctaText}</span>
                 <span className="text-sm">→</span>
@@ -366,7 +365,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
               <a
                 href="#categories"
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-white/90 dark:bg-[#18221B]/90 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-semibold backdrop-blur-xs transition-all hover:scale-105 shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-bold backdrop-blur-xs transition-all hover:scale-105 shadow-md"
               >
                 <span>Explore Categories</span>
               </a>
