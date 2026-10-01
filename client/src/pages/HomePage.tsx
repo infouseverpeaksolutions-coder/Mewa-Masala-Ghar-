@@ -7,6 +7,11 @@ import {
   CheckCircle2,
   Loader2,
   Star,
+  Baby,
+  Sparkles,
+  Heart,
+  Leaf,
+  ShieldCheck,
 } from 'lucide-react';
 import { HeroVideo } from '../components/HeroVideo';
 import { MewaProductCard } from '../components/MewaProductCard';
@@ -312,14 +317,17 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        9. SUB-BRAND BANNERS (Jimmy & Jaggu - Beauty & Baby Care)
+        9. JIMMI JAGGU SHOWCASE BANNER (Single Banner • Pure Logo Gradient • No Photos)
+        - Pure CSS gradient using Jimmi Jaggu logo colors (#78363A, #B97375, #C47D68, #6D8B74, #D9A441)
+        - Interactive navigation to Jimmi Jaggu page using official brand logo
+        - Unique showcase featuring the 3 core pillars: Baby Nutrition (Pratham Aahar), Multani Clays, Maternal Care
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between mb-4 sm:mb-5">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center gap-1.5">
-              <span>Jimmy & Jaggu</span>
+              <span>Jimmi Jaggu</span>
               <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
             </h2>
             <span className="text-xs sm:text-sm text-[#7A5852] dark:text-[#C5BCAD] font-semibold italic">
@@ -328,72 +336,202 @@ export const HomePage: React.FC = () => {
           </div>
           <Link
             to="/jimmi-jaggu"
-            className="text-xs sm:text-sm font-semibold text-[#1F4D2E] dark:text-[#E5B85C] hover:text-[#D9A441] transition-colors"
+            className="text-xs sm:text-sm font-semibold text-[#8F4349] dark:text-[#E8A598] hover:text-[#B97375] transition-colors"
           >
-            Explore Brand →
+            Explore Brand Store →
           </Link>
         </div>
 
-        <div className="space-y-4 sm:space-y-6">
-          {SUB_BRAND_BANNERS.map((banner) => (
-            <div
-              key={banner.id}
-              className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-card border border-[#E8D4D0]/70 h-[225px] sm:h-[260px] md:h-[290px] lg:h-[310px] group bg-[#FAF6EC]"
-            >
-              {/* Full-bleed background image across whole banner (no fade) */}
-              <img
-                src={banner.image}
-                alt={banner.title}
-                className={`absolute inset-0 w-full h-full object-cover ${
-                  banner.id === 'baby-products'
-                    ? 'object-[82%_center] sm:object-center'
-                    : 'object-[75%_center] sm:object-center'
-                } group-hover:scale-[1.02] transition-transform duration-500`}
-              />
+        {/* Single Premium Showcase Banner */}
+        <div
+          className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 lg:p-12 text-white border border-[#E4B5AF]/40 transition-all duration-300"
+          style={{
+            background:
+              'linear-gradient(135deg, #62282D 0%, #7E373D 25%, #9E4D54 50%, #B86762 75%, #CB7F74 100%)',
+          }}
+        >
+          {/* Luminous Ambient Glows using Jimmi Jaggu Logo Palette (Gold & Sage Eucalyptus) */}
+          <div
+            className="absolute -top-24 -right-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-35 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #D9A441 0%, transparent 70%)' }}
+          />
+          <div
+            className="absolute -bottom-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-30 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #6D8B74 0%, transparent 70%)' }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-20"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(255,240,235,0.25) 0%, transparent 70%)',
+            }}
+          />
 
-              {/* Text content directly onto the image with sharp, visible colors */}
-              <div className="relative z-10 h-full flex flex-col justify-center max-w-[82%] sm:max-w-md md:max-w-lg p-4 sm:p-8 lg:p-10">
-                {/* Tagline */}
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/95 text-[#1F4D2E] border border-[#1F4D2E]/25 text-[10px] sm:text-xs font-extrabold tracking-wide w-fit mb-1.5 sm:mb-2.5 shadow-sm backdrop-blur-xs">
-                  <span>{banner.tagline}</span>
+          {/* Subtle Decorative Botanical Vector Flourish (No image file) */}
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-36 sm:w-48 h-36 sm:h-48 pointer-events-none opacity-15">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-white">
+              <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
+              <path d="M100 95 C 115 80, 140 85, 145 100 C 135 110, 110 105, 100 95 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
+              <path d="M130 65 C 145 50, 170 55, 175 70 C 165 80, 140 75, 130 65 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
+              <circle cx="50" cy="150" r="12" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
+            </svg>
+          </div>
+
+          <div className="relative z-10">
+            {/* 1. Direct Navigation to Jimmi Jaggu using the Official Logo */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-white/20">
+              <Link
+                to="/jimmi-jaggu"
+                className="group inline-flex items-center gap-3.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 border border-white/30 backdrop-blur-md shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                title="Navigate to Jimmi Jaggu Page"
+              >
+                <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-white p-1.5 shadow-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                  <img
+                    src="/brands/jimmi_jaggu_logo.png"
+                    alt="Jimmi Jaggu Official Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif text-base sm:text-lg font-bold tracking-tight text-white group-hover:text-[#FDEBE6] transition-colors">
+                      Jimmi Jaggu
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF6EC] text-[#7A3338] font-extrabold uppercase tracking-wider shadow-xs">
+                      Official Sister Brand
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/85 font-medium flex items-center gap-1 group-hover:text-white transition-colors">
+                    <span>Visit Jimmi Jaggu Page</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </p>
+                </div>
+              </Link>
 
-                {/* Title */}
-                <h3
-                  className="font-serif text-lg sm:text-2xl md:text-3xl lg:text-[34px] font-black text-[#14261B] leading-tight mb-1 sm:mb-2"
-                  style={{
-                    textShadow:
-                      '0 1px 3px rgba(255,255,255,0.95), 0 2px 10px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.85)',
-                  }}
-                >
-                  {banner.title}
-                </h3>
-
-                {/* Subtitle */}
-                <p
-                  className="text-[11px] sm:text-sm md:text-base font-bold text-[#1F3325] line-clamp-2 mb-2.5 sm:mb-5 max-w-xs sm:max-w-md leading-snug sm:leading-relaxed"
-                  style={{
-                    textShadow:
-                      '0 1px 3px rgba(255,255,255,0.95), 0 2px 8px rgba(255,255,255,0.9)',
-                  }}
-                >
-                  {banner.subtitle}
-                </p>
-
-                {/* Action button */}
-                <Link
-                  to={banner.link}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-6 sm:py-3 rounded-full text-white text-[11px] sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all w-fit cursor-pointer active:scale-98"
-                  style={{
-                    backgroundColor:
-                      banner.id === 'beauty-products' ? '#B84E5E' : '#1B6F8E',
-                  }}
-                >
-                  <span>{banner.ctaText}</span>
-                </Link>
+              <div className="flex items-center gap-2 text-white/90 text-xs sm:text-sm font-medium">
+                <span className="w-2 h-2 rounded-full bg-[#D9A441] animate-pulse" />
+                <span>Presented with Love by <strong>Mewa Masala Ghar</strong></span>
               </div>
             </div>
-          ))}
+
+            {/* 2. Headline & Mission */}
+            <div className="mt-5 sm:mt-7 max-w-2xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs border border-white/30 text-white text-[11px] sm:text-xs font-semibold mb-2.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#D9A441]" />
+                <span>Pure Botanicals & Ayurvedic Living</span>
+              </div>
+              <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-white leading-tight drop-shadow-sm">
+                Gentle Care for Little Ones, Radiant Skin & Maternal Poshan
+              </h3>
+              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm md:text-base text-white/90 leading-relaxed font-sans max-w-xl">
+                Rooted in timeless Indian wisdom — from sprouted multi-grain baby food and soothing massage oils to triple-sifted earthen multani clays and nurturing postpartum care.
+              </p>
+            </div>
+
+            {/* 3. Unique Showcase: The 3 Core Pillars of Jimmi Jaggu */}
+            <div className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-5">
+              {/* Pillar 1: Baby Nutrition & Care */}
+              <Link
+                to="/jimmi-jaggu?category=baby-nutrition"
+                className="group relative rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 hover:border-white/40 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-white/20 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
+                    <Baby className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 block">
+                    Baby Care & Nutrition
+                  </span>
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
+                    Pratham Aahar & Baby Food
+                  </h4>
+                  <p className="mt-2 text-xs text-white/85 leading-relaxed font-normal">
+                    100% natural sprouted multi-grain porridge, nourishing infant massage oils, and soothing baby creams.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs font-semibold text-[#FAF6EC]">
+                  <span>Shop Baby Care</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+
+              {/* Pillar 2: Personal Care & Multani Mitti */}
+              <Link
+                to="/jimmi-jaggu?category=multani-collection"
+                className="group relative rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 hover:border-white/40 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-white/20 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 block">
+                    Personal Care & Skincare
+                  </span>
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
+                    Multani Collection & Clays
+                  </h4>
+                  <p className="mt-2 text-xs text-white/85 leading-relaxed font-normal">
+                    300-Mesh triple-sifted Fuller’s Earth, Dead Sea mineral mud packs, and Pink Glow Clay for chemical-free detox.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs font-semibold text-[#FAF6EC]">
+                  <span>Shop Multani Clays</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+
+              {/* Pillar 3: Pregnancy & Maternal Poshan */}
+              <Link
+                to="/jimmi-jaggu?category=pregnancy-care"
+                className="group relative rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 hover:border-white/40 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-white/20 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
+                    <Heart className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 block">
+                    Pregnancy & Maternity
+                  </span>
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
+                    Maternal & Family Poshan
+                  </h4>
+                  <p className="mt-2 text-xs text-white/85 leading-relaxed font-normal">
+                    Ayurvedic prenatal and postpartum nourishment formulated with ancient Indian wisdom for mothers.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs font-semibold text-[#FAF6EC]">
+                  <span>Shop Maternal Care</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            </div>
+
+            {/* 4. Footer Strip: Trust Badges & Grand Action Button */}
+            <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/20 flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-5">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-[11px] sm:text-xs font-semibold text-white/95">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/20">
+                  <Leaf className="w-3.5 h-3.5 text-[#8ED9A0]" />
+                  <span>100% Ayurvedic Heritage</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/20">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#D9A441]" />
+                  <span>Zero Harsh Chemicals</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/20">
+                  <Sparkles className="w-3.5 h-3.5 text-[#FBEAE4]" />
+                  <span>Pediatrician & Derm Verified</span>
+                </div>
+              </div>
+
+              <Link
+                to="/jimmi-jaggu"
+                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-[#FAF6EC] hover:bg-white text-[#78363A] font-serif font-bold text-xs sm:text-sm tracking-wide shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 shrink-0 group"
+              >
+                <span>Explore Jimmi Jaggu Collection</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#78363A]" />
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

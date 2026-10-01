@@ -119,13 +119,25 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             )}
           </div>
 
-          {/* Back link when inside /jimmi-jaggu (top right matching mockup) */}
-          {isJimmiJaggu && (
+          {/* Navigation link between Mewa Masala Ghar and Jimmi Jaggu */}
+          {isJimmiJaggu ? (
             <Link
               to="/"
               className="hidden sm:flex absolute right-0 text-[11px] text-white hover:text-white/80 hover:underline items-center gap-1 font-semibold"
             >
               <span>← Back to Mewa Masala Ghar</span>
+            </Link>
+          ) : (
+            <Link
+              to="/jimmi-jaggu"
+              className="hidden md:flex absolute right-0 text-[11px] text-[#FAF6EC] hover:text-[#D9A441] items-center gap-1.5 font-semibold transition-colors group"
+            >
+              <img
+                src="/brands/jimmi_jaggu_logo.png"
+                alt="Jimmi Jaggu"
+                className="w-4 h-4 rounded-full bg-white/20 p-0.5 object-contain group-hover:scale-110 transition-transform"
+              />
+              <span>Explore Jimmi Jaggu ↗</span>
             </Link>
           )}
         </div>
@@ -318,6 +330,29 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
 
           {/* Right Action Icons: Theme Toggle, Search, Account, Cart */}
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+            {/* Direct Navigation to Jimmi Jaggu using Logo */}
+            {!isJimmiJaggu && (
+              <Link
+                to="/jimmi-jaggu"
+                className="hidden xl:flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-gradient-to-r from-[#FAF2EE] to-[#FBEAE4] dark:from-[#291B1D] dark:to-[#382226] border border-[#E8C5BC] dark:border-[#5A353A] hover:border-[#B97375] shadow-2xs hover:shadow-xs transition-all group shrink-0"
+                title="Visit Jimmi Jaggu — Baby Nutrition & Natural Skincare"
+              >
+                <img
+                  src="/brands/jimmi_jaggu_logo.png"
+                  alt="Jimmi Jaggu Logo"
+                  className="w-5 h-5 object-contain rounded-full shadow-2xs group-hover:scale-105 transition-transform"
+                />
+                <div className="flex flex-col text-left">
+                  <span className="text-[11px] font-bold text-[#8F4F52] dark:text-[#F3C5BA] group-hover:text-[#B97375] transition-colors leading-none">
+                    Jimmi Jaggu
+                  </span>
+                  <span className="text-[9px] font-medium text-[#B97375] dark:text-[#E8A598] leading-tight">
+                    Baby & Care ↗
+                  </span>
+                </div>
+              </Link>
+            )}
+
             {/* Theme Toggle Button (Light / Dark / Auto) */}
             <ThemeToggle variant="navbar" />
 
@@ -543,19 +578,16 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             <Link
               to="/jimmi-jaggu"
               onClick={() => setMobileMenuOpen(false)}
-              className="col-span-2 p-2.5 bg-[#FAF4EC] dark:bg-[#1F2A22] rounded-xl text-center font-bold text-[#1F4D2E] dark:text-[#8ED9A0] border border-[#D9A441]/50 flex items-center justify-center gap-2"
+              className="col-span-2 p-3 bg-gradient-to-r from-[#FAF2EE] via-[#FCEAE5] to-[#F7DDD7] dark:from-[#2B1B1D] dark:via-[#362024] dark:to-[#45272D] rounded-xl text-center font-bold text-[#8F4F52] dark:text-[#F3C5BA] border border-[#E8C5BC] dark:border-[#5C383E] shadow-2xs flex items-center justify-center gap-2.5 transition-all"
             >
               <img
-                src="/jimmi-jaggu/logo_dark.png"
+                src="/brands/jimmi_jaggu_logo.png"
                 alt="Jimmi Jaggu"
-                className="w-5 h-6 object-contain dark:hidden"
+                className="w-6 h-6 object-contain rounded-full shadow-2xs"
               />
-              <img
-                src="/jimmi-jaggu/logo_light.png"
-                alt="Jimmi Jaggu"
-                className="w-5 h-6 object-contain hidden dark:block"
-              />
-              <span>Jimmi Jaggu Sister Brand →</span>
+              <span className="text-xs font-bold font-serif tracking-wide">
+                Explore Jimmi Jaggu (Baby & Care) →
+              </span>
             </Link>
             <Link
               to="/about"

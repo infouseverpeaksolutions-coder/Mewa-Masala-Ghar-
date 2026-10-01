@@ -31,12 +31,12 @@ export const HeroVideo: React.FC = () => {
       {/* 
         ========================================================================
         FULL SCREEN FIT HERO SECTION
-        - Height fitted to viewport: h-[calc(100vh-130px)] min-h-[520px] max-h-[880px]
-        - Centered grand typography and call-to-action
-        - Balanced cinematic overlay so text is crisp and orbiting video is prominent
+        - Dynamically fitted to viewport screen without overflowing below the fold
+        - Height responsive across mobile, tablet, laptop & desktop screens
+        - Video properly centered and contained with sharp typography
         ========================================================================
       */}
-      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden w-full h-[calc(100vh-130px)] min-h-[520px] max-h-[880px] flex items-center justify-center shadow-lg bg-[#1F4D2E]">
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden w-full h-[calc(100dvh-6rem)] sm:h-[calc(100dvh-6.5rem)] md:h-[calc(100dvh-7rem)] min-h-[380px] sm:min-h-[420px] md:min-h-[460px] max-h-[540px] sm:max-h-[620px] md:max-h-[700px] lg:max-h-[760px] flex items-center justify-center shadow-lg bg-[#1F4D2E]">
         {/* Full-bleed background video / poster fallback */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {reducedMotion || videoError ? (
@@ -87,26 +87,26 @@ export const HeroVideo: React.FC = () => {
           Centered Hero Content Layer:
           Grand serif headline, supporting line, and primary gold CTA.
         */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center justify-center text-center select-none">
-          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[52px] font-bold text-white leading-tight tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] max-w-3xl mx-auto">
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col items-center justify-center text-center select-none">
+          <h1 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] max-w-3xl mx-auto">
             <span>{HERO_CONTENT.headlineTop}</span>{' '}
             <span className="text-[#FAF6EC]">{HERO_CONTENT.headlineToBottom}</span>
           </h1>
 
-          <p className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-base lg:text-lg text-white/95 leading-relaxed font-sans max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] font-normal">
+          <p className="mt-2.5 sm:mt-3 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg text-white/95 leading-relaxed font-sans max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] font-normal line-clamp-3 sm:line-clamp-none">
             {HERO_CONTENT.supportingLine}
           </p>
 
-          <div className="mt-7 sm:mt-9 flex items-center justify-center">
+          <div className="mt-4 sm:mt-6 md:mt-7 flex items-center justify-center">
             <Link
               to={HERO_CONTENT.ctaLink}
-              className="group relative inline-flex items-center gap-3 pl-8 pr-3 py-3 rounded-full bg-[#1F4D2E] hover:bg-[#163821] text-[#FAF6EC] border border-[#D9A441] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_32px_rgba(217,164,65,0.35)] transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="group relative inline-flex items-center gap-2.5 sm:gap-3 pl-6 sm:pl-8 pr-2.5 sm:pr-3 py-2.5 sm:py-3 rounded-full bg-[#1F4D2E] hover:bg-[#163821] text-[#FAF6EC] border border-[#D9A441] shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_32px_rgba(217,164,65,0.35)] transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span className="font-serif text-sm sm:text-base font-semibold tracking-wide">
+              <span className="font-serif text-xs sm:text-sm md:text-base font-semibold tracking-wide">
                 {HERO_CONTENT.ctaText}
               </span>
-              <span className="w-8 h-8 rounded-full bg-[#D9A441] text-[#1F4D2E] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shadow-xs">
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#D9A441] text-[#1F4D2E] flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 shadow-xs">
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
               </span>
             </Link>
           </div>
