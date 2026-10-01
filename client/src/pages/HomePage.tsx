@@ -60,13 +60,16 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-10 sm:space-y-14 pb-16 bg-[#FAF6EC] dark:bg-[#111813] text-[#2B2B2B] dark:text-[#F3EFE6] transition-colors duration-300">
+    <div className="pb-16 bg-[#FAF6EC] dark:bg-[#111813] text-[#2B2B2B] dark:text-[#F3EFE6] transition-colors duration-300">
       {/* 
         ========================================================================
-        1. HERO VIDEO SECTION (Full-bleed edge-to-edge screen fit)
+        1. HERO VIDEO SECTION (100% full-bleed edge-to-edge, zero margin/padding)
         ========================================================================
       */}
       <HeroVideo />
+
+      {/* Remaining Homepage Sections with standard spacing */}
+      <div className="space-y-10 sm:space-y-14 mt-10 sm:mt-14">
 
 
       {/* 
@@ -599,6 +602,7 @@ export const HomePage: React.FC = () => {
           </div>
         )}
       </section>
+      </div>
     </div>
   );
 };
