@@ -37,7 +37,7 @@ export const MewaProductCard: React.FC<{ product: MockProduct }> = ({ product })
   return (
     <div className="group bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 sm:p-4 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between h-full relative hover:-translate-y-1">
       {/* Product Image */}
-      <Link to={product.link} className="block relative aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC]/70 dark:bg-[#111813]/60 mb-3 flex items-center justify-center p-2">
+      <Link to={product.link} className="block relative aspect-[4/5] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC]/70 dark:bg-[#111813]/60 mb-3 flex items-center justify-center p-2">
         <img
           src={product.image}
           alt={product.name}

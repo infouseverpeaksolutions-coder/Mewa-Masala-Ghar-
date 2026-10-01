@@ -22,6 +22,8 @@ interface ProductFormModalProps {
   onSuccess: () => void;
   productToEdit?: any | null;
   storesList: any[];
+  brandsList?: any[];
+  initialBrand?: string;
 }
 
 const DIETARY_OPTIONS = [
@@ -41,11 +43,22 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   onSuccess,
   productToEdit,
   storesList,
+  brandsList: propBrandsList = [],
+  initialBrand = 'mewa-masala-ghar',
 }) => {
   const isEditing = !!productToEdit;
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Brands State
+  const [brands, setBrands] = useState<any[]>(propBrandsList);
+  const [selectedBrandSlug, setSelectedBrandSlug] = useState<string>(initialBrand);
+  const [brandId, setBrandId] = useState<string>('');
+
+  // Image Upload State
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   // Form Fields
   const [storeId, setStoreId] = useState('');
@@ -87,9 +100,77 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     },
   ]);
 
+  // Sync Brands from prop or API
+  useEffect(() => {
+    if (propBrandsList && propBrandsList.length > 0) {
+      setBrands(propBrandsList);
+    } else {
+      api.get('/brands')
+        .then((res) => {
+          if (res.data?.data) setBrands(res.data.data);
+        })
+        .catch(() => {});
+    }
+  }, [propBrandsList, isOpen]);
+
+  // Categories dynamically filtered for the active brand
+  const activeBrandObj = brands.find((b) => b.slug === selectedBrandSlug);
+  const availableCategories: any[] = React.useMemo(() => {
+    if (activeBrandObj?.categories && activeBrandObj.categories.length > 0) {
+      return activeBrandObj.categories;
+    }
+    if (selectedBrandSlug === 'jimmi-jaggu') {
+      const babyStore = storesList.find((s) => s.slug === 'baby');
+      const careStore = storesList.find((s) => s.slug === 'care');
+      return [
+        ...(babyStore?.categories || []),
+        ...(careStore?.categories || []),
+      ];
+    } else {
+      const foodsStore = storesList.find((s) => s.slug === 'foods');
+      return foodsStore?.categories || storesList.flatMap((s) => s.categories || []);
+    }
+  }, [activeBrandObj, selectedBrandSlug, storesList]);
+
+  // Handle switching between the 2 brands in the form
+  const handleBrandChange = (brandSlug: string) => {
+    setSelectedBrandSlug(brandSlug);
+    const targetBrand = brands.find((b) => b.slug === brandSlug);
+    if (targetBrand) {
+      setBrandId(targetBrand.id);
+      const bCats = targetBrand.categories || [];
+      if (bCats.length > 0) {
+        setCategoryId(bCats[0].id);
+        if (bCats[0].storeId) {
+          setStoreId(bCats[0].storeId);
+        }
+      }
+    } else {
+      if (brandSlug === 'jimmi-jaggu') {
+        const babyStore = storesList.find((s) => s.slug === 'baby') || storesList.find((s) => s.slug === 'care');
+        if (babyStore) {
+          setStoreId(babyStore.id);
+          if (babyStore.categories?.length > 0) setCategoryId(babyStore.categories[0].id);
+        }
+      } else {
+        const foodsStore = storesList.find((s) => s.slug === 'foods');
+        if (foodsStore) {
+          setStoreId(foodsStore.id);
+          if (foodsStore.categories?.length > 0) setCategoryId(foodsStore.categories[0].id);
+        }
+      }
+    }
+  };
+
   // Sync state on open or productToEdit change
   useEffect(() => {
     if (productToEdit) {
+      const pBrandSlug =
+        productToEdit.brand?.slug ||
+        (productToEdit.brandId === brands.find((b) => b.slug === 'jimmi-jaggu')?.id ? 'jimmi-jaggu' : 'mewa-masala-ghar');
+
+      setSelectedBrandSlug(pBrandSlug);
+      setBrandId(productToEdit.brandId || productToEdit.brand?.id || '');
       setStoreId(productToEdit.storeId || '');
       setCategoryId(productToEdit.categoryId || '');
       setName(productToEdit.name || '');
@@ -99,8 +180,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setShortDescription(productToEdit.shortDescription || '');
       setDescription(productToEdit.description || '');
       setIngredients(productToEdit.ingredients || '');
-      setStorageInfo(productToEdit.storageInfo || '');
-      setShelfLife(productToEdit.shelfLife || '');
+      setStorageInfo(productToEdit.storageInfo || 'Store in airtight container in a cool, dry place.');
+      setShelfLife(productToEdit.shelfLife || '9 Months from packaging date');
       setIsFeatured(Boolean(productToEdit.isFeatured));
       setIsBestSeller(Boolean(productToEdit.isBestSeller));
       setIsActive(productToEdit.isActive !== undefined ? Boolean(productToEdit.isActive) : true);
@@ -139,16 +220,27 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       }
     } else {
       // Default new product
-      if (storesList && storesList.length > 0) {
+      const startBrand = initialBrand === 'jimmi-jaggu' ? 'jimmi-jaggu' : 'mewa-masala-ghar';
+      setSelectedBrandSlug(startBrand);
+      const bObj = brands.find((b) => b.slug === startBrand);
+      if (bObj) {
+        setBrandId(bObj.id);
+        const bCats = bObj.categories || [];
+        if (bCats.length > 0) {
+          setCategoryId(bCats[0].id);
+          if (bCats[0].storeId) setStoreId(bCats[0].storeId);
+        }
+      } else if (storesList && storesList.length > 0) {
         setStoreId(storesList[0].id);
         if (storesList[0].categories?.length > 0) {
           setCategoryId(storesList[0].categories[0].id);
         }
       }
+
       setName('');
       setSlug('');
-      setHsnCode('0801');
-      setGstRate(12);
+      setHsnCode(startBrand === 'jimmi-jaggu' ? '3304' : '0801');
+      setGstRate(startBrand === 'jimmi-jaggu' ? 18 : 12);
       setShortDescription('');
       setDescription('');
       setIngredients('');
@@ -157,25 +249,25 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setIsFeatured(false);
       setIsBestSeller(false);
       setIsActive(true);
-      setDietaryTags(['Vegan', '100% Organic']);
+      setDietaryTags(startBrand === 'jimmi-jaggu' ? ['100% Organic', 'Cruelty-Free', 'Preservative-Free'] : ['Vegan', '100% Organic']);
       setMetaTitle('');
       setMetaDescription('');
       setImages([
         {
-          url: 'https://images.unsplash.com/photo-1508061252445-5350f3777130?auto=format&fit=crop&w=800&q=80',
+          url: startBrand === 'jimmi-jaggu' ? '/jimmi-jaggu/cat_care.png' : 'https://images.unsplash.com/photo-1508061252445-5350f3777130?auto=format&fit=crop&w=800&q=80',
           altText: 'Product primary front photo',
           isPrimary: true,
         },
       ]);
       setVariants([
         {
-          name: '250g Pouch',
-          weightGrams: 250,
+          name: startBrand === 'jimmi-jaggu' ? '200g Eco Jar' : '250g Pouch',
+          weightGrams: startBrand === 'jimmi-jaggu' ? 200 : 250,
           packQty: 1,
-          sku: `MMG-${Date.now().toString().slice(-6)}-1`,
-          mrp: 350,
-          price: 299,
-          gstPercent: 12,
+          sku: `${startBrand === 'jimmi-jaggu' ? 'JJ' : 'MMG'}-${Date.now().toString().slice(-6)}-1`,
+          mrp: 399,
+          price: 349,
+          gstPercent: startBrand === 'jimmi-jaggu' ? 18 : 12,
           stockQty: 50,
           isDefault: true,
           isActive: true,
@@ -183,7 +275,39 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       ]);
     }
     setErrorMessage(null);
-  }, [productToEdit, isOpen, storesList]);
+  }, [productToEdit, isOpen, storesList, brands, initialBrand]);
+
+  // Handle Image File Upload directly via /api/upload
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (res.data?.data?.url) {
+        const uploadedUrl = res.data.data.url;
+        setImages((prev) => [
+          ...prev,
+          {
+            url: uploadedUrl,
+            altText: `${name || 'Product'} view ${prev.length + 1}`,
+            isPrimary: prev.length === 0,
+          },
+        ]);
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to upload image file. Please verify file format and size.');
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   // Auto slug generation on name change
   const handleNameChange = (val: string) => {
@@ -195,14 +319,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
       setSlug(generated);
-      setMetaTitle(`${val} | Buy Online | Mewa Masala Ghar`);
-      setMetaDescription(`Order premium quality ${val} fresh from Mewa Masala Ghar. FSSAI certified, stone-ground purity with fast India-wide delivery.`);
+      const brandName = selectedBrandSlug === 'jimmi-jaggu' ? 'Jimmi Jaggu' : 'Mewa Masala Ghar';
+      setMetaTitle(`${val} | Buy Online | ${brandName}`);
+      setMetaDescription(`Order authentic ${val} fresh from ${brandName}. Purity guaranteed with fast India-wide delivery.`);
     }
   };
-
-  // Categories under selected store
-  const availableCategories =
-    storesList?.find((s) => s.id === storeId)?.categories || [];
 
   // Toggle dietary tag
   const toggleDietaryTag = (tag: string) => {
@@ -350,7 +471,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setErrorMessage('Product title is required.');
       return;
     }
-    if (!storeId || !categoryId) {
+
+    const finalCategoryId = categoryId || availableCategories[0]?.id;
+    const finalStoreId = storeId || availableCategories.find(c => c.id === finalCategoryId)?.storeId || storesList[0]?.id;
+
+    if (!finalStoreId || !finalCategoryId) {
       setErrorMessage('Please select both a Store and a Category.');
       return;
     }
@@ -363,8 +488,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
     try {
       const payload = {
-        storeId,
-        categoryId,
+        brandId: brandId || undefined,
+        storeId: finalStoreId,
+        categoryId: finalCategoryId,
         name: name.trim(),
         slug: slug.trim() || undefined,
         hsnCode,
@@ -428,7 +554,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               {isEditing ? `Edit SKU: ${productToEdit.name}` : 'Create New Catalog Product'}
             </h2>
             <p className="text-xs text-[#8C7B65]">
-              Configure multi-pack variants, inventory, Cloudinary images, GST, and SEO tags.
+              Configure brand association, multi-pack variants, inventory, 4:5 image gallery, GST, and SEO tags.
             </p>
           </div>
           <button
@@ -447,39 +573,105 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         )}
 
         <div className="space-y-6 text-xs">
-          {/* Section 1: Department & Category Hierarchy */}
-          <div className="bg-white p-5 rounded-2xl border border-[#E6DEC8] shadow-xs">
-            <h3 className="font-serif font-bold text-sm text-[#2F5D3A] mb-3">1. Department & Classification</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Store Department *</label>
-                <select
-                  value={storeId}
-                  onChange={(e) => {
-                    setStoreId(e.target.value);
-                    const cats = storesList?.find((s) => s.id === e.target.value)?.categories || [];
-                    if (cats.length > 0) setCategoryId(cats[0].id);
-                  }}
-                  className="w-full px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl font-medium"
+          {/* Section 1: Brand & Classification (2 Options for Both Brands) */}
+          <div className="bg-white p-5 rounded-2xl border border-[#E6DEC8] shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif font-bold text-sm text-[#2F5D3A]">1. Brand & Category Classification</h3>
+              <span className="text-[11px] text-[#8C7B65] font-medium">Select Brand to see brand-specific categories</span>
+            </div>
+
+            {/* Brand Selection: 2 Distinct Options */}
+            <div>
+              <label className="block font-bold text-gray-700 mb-2">Select Brand *</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Brand Option 1: Mewa Masala Ghar */}
+                <button
+                  type="button"
+                  onClick={() => handleBrandChange('mewa-masala-ghar')}
+                  className={`p-3.5 rounded-2xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                    selectedBrandSlug === 'mewa-masala-ghar'
+                      ? 'bg-emerald-50/80 border-[#2F5D3A] ring-2 ring-[#2F5D3A]/25 shadow-xs'
+                      : 'bg-[#FAF6EC] border-[#E6DEC8] hover:border-emerald-300 opacity-75 hover:opacity-100'
+                  }`}
                 >
-                  {storesList?.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.slug})
+                  <div className="w-10 h-10 rounded-xl bg-[#2F5D3A] text-white flex items-center justify-center font-serif font-bold text-base shrink-0 shadow-xs">
+                    🌿
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-gray-900 text-xs">Mewa Masala Ghar</span>
+                      {selectedBrandSlug === 'mewa-masala-ghar' && (
+                        <span className="px-1.5 py-0.2 bg-[#2F5D3A] text-white text-[9px] font-bold rounded-full">Active</span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-[#8C7B65] mt-0.5 leading-snug">
+                      Dry Fruits, Seeds, Makhana, Spices & Poshan
+                    </p>
+                  </div>
+                </button>
+
+                {/* Brand Option 2: Jimmi Jaggu */}
+                <button
+                  type="button"
+                  onClick={() => handleBrandChange('jimmi-jaggu')}
+                  className={`p-3.5 rounded-2xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                    selectedBrandSlug === 'jimmi-jaggu'
+                      ? 'bg-[#FBEAE4]/80 border-[#B97375] ring-2 ring-[#B97375]/25 shadow-xs'
+                      : 'bg-[#FAF6EC] border-[#E6DEC8] hover:border-[#B97375]/50 opacity-75 hover:opacity-100'
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#B97375] text-white flex items-center justify-center font-serif font-bold text-base shrink-0 shadow-xs">
+                    🍼
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-gray-900 text-xs">Jimmi Jaggu (Sub-brand)</span>
+                      {selectedBrandSlug === 'jimmi-jaggu' && (
+                        <span className="px-1.5 py-0.2 bg-[#B97375] text-white text-[9px] font-bold rounded-full">Active</span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-[#8C7B65] mt-0.5 leading-snug">
+                      Baby Care (Pratham Aahar), Multani Collection & Skincare
+                    </p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Category & Store Dropdowns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">
+                  Product Category * ({availableCategories.length} available)
+                </label>
+                <select
+                  value={categoryId}
+                  onChange={(e) => {
+                    const newCatId = e.target.value;
+                    setCategoryId(newCatId);
+                    const found = availableCategories.find((c: any) => c.id === newCatId);
+                    if (found?.storeId) setStoreId(found.storeId);
+                  }}
+                  className="w-full px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl font-medium text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2F5D3A]"
+                >
+                  {availableCategories.map((c: any) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Product Category *</label>
+                <label className="block font-bold text-gray-700 mb-1">Department / Store *</label>
                 <select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl font-medium"
+                  value={storeId}
+                  onChange={(e) => setStoreId(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl font-medium text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2F5D3A]"
                 >
-                  {availableCategories.map((c: any) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
+                  {storesList?.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.slug})
                     </option>
                   ))}
                 </select>
@@ -724,47 +916,110 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Section 4: Image Uploader & Reordering */}
+          {/* Section 4: Image Uploader & 4:5 Aspect Ratio Gallery */}
           <div className="bg-white p-5 rounded-2xl border border-[#E6DEC8] shadow-xs space-y-4">
-            <h3 className="font-serif font-bold text-sm text-[#2F5D3A]">4. Product Gallery (Cloudinary / Local)</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-serif font-bold text-sm text-[#2F5D3A]">4. Product Gallery & Images</h3>
+                  <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-200">
+                    Main Website 4:5 Ratio Display
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#8C7B65] mt-0.5">
+                  Upload image files directly or paste web URLs. Each product image displays in 4:5 aspect ratio across the storefront.
+                </p>
+              </div>
 
+              {/* Upload image button */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleImageFileUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingImage}
+                  className="px-3.5 py-2 bg-[#FAF6EC] border border-[#D9A441] text-[#2F5D3A] hover:bg-amber-100/60 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
+                >
+                  {isUploadingImage ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#2F5D3A]" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-3.5 h-3.5 text-[#D9A441]" />
+                      <span>Upload Image File</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Paste URL Input */}
             <div className="flex gap-2">
               <input
                 type="url"
                 value={newImageUrl}
                 onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="Paste image URL (Unsplash or Cloudinary)..."
-                className="flex-1 px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddImageUrl();
+                  }
+                }}
+                placeholder="Or paste image URL (e.g. /foods/dry-fruits/almonds.jpg or https://...)..."
+                className="flex-1 px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#2F5D3A]"
               />
               <button
                 type="button"
                 onClick={handleAddImageUrl}
-                className="px-4 py-2 bg-[#2F5D3A] text-white rounded-xl font-bold hover:bg-[#23472C] flex items-center gap-1.5"
+                className="px-4 py-2 bg-[#2F5D3A] text-white rounded-xl font-bold hover:bg-[#23472C] flex items-center gap-1.5 cursor-pointer text-xs"
               >
                 <Plus className="w-4 h-4" />
-                <span>Add Image</span>
+                <span>Add URL</span>
               </button>
             </div>
 
             {images.length === 0 ? (
-              <div className="p-6 border-2 border-dashed border-[#E6DEC8] rounded-2xl text-center text-gray-400 flex flex-col items-center gap-2">
-                <ImageIcon className="w-8 h-8 text-gray-300" />
-                <span>No images added yet. Add at least one image URL above.</span>
+              <div className="p-8 border-2 border-dashed border-[#E6DEC8] rounded-2xl text-center text-gray-400 flex flex-col items-center gap-2">
+                <ImageIcon className="w-9 h-9 text-gray-300" />
+                <span className="font-semibold text-xs text-gray-600">No images added yet.</span>
+                <span className="text-[11px] text-gray-400">Click &quot;Upload Image File&quot; or paste an image URL above to preview.</span>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
                 {images.map((img, idx) => (
                   <div
                     key={idx}
-                    className={`relative bg-[#FAF6EC] p-2.5 rounded-2xl border ${
-                      img.isPrimary ? 'border-[#D9A441] ring-2 ring-[#D9A441]/20' : 'border-[#E6DEC8]'
+                    className={`relative bg-[#FAF6EC] p-2.5 rounded-2xl border transition-all ${
+                      img.isPrimary ? 'border-[#D9A441] ring-2 ring-[#D9A441]/25 shadow-xs' : 'border-[#E6DEC8]'
                     }`}
                   >
-                    <img
-                      src={img.url}
-                      alt={img.altText}
-                      className="w-full h-28 object-cover rounded-xl border border-gray-200"
-                    />
+                    {/* 4:5 Aspect Ratio Preview Container */}
+                    <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
+                      <img
+                        src={img.url}
+                        alt={img.altText}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80';
+                        }}
+                      />
+                      <span className="absolute bottom-1 right-1 bg-black/65 backdrop-blur-xs text-white text-[9px] font-mono font-bold px-1.5 py-0.5 rounded">
+                        4:5 Ratio
+                      </span>
+                      {img.isPrimary && (
+                        <span className="absolute top-1 left-1 bg-[#D9A441] text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs flex items-center gap-0.5">
+                          <Star className="w-2.5 h-2.5 fill-white" /> Primary
+                        </span>
+                      )}
+                    </div>
 
                     <div className="mt-2 space-y-1.5">
                       <input
@@ -775,21 +1030,21 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           updated[idx].altText = e.target.value;
                           setImages(updated);
                         }}
-                        placeholder="Alt text"
-                        className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                        placeholder="Alt description"
+                        className="w-full px-2 py-1 bg-white border border-gray-200 rounded-lg text-[11px] focus:outline-none focus:ring-1 focus:ring-[#2F5D3A]"
                       />
 
                       <div className="flex items-center justify-between text-gray-500 pt-1">
                         <button
                           type="button"
                           onClick={() => makeImagePrimary(idx)}
-                          className={`flex items-center gap-1 text-[10px] font-bold ${
+                          className={`flex items-center gap-1 text-[10px] font-bold cursor-pointer ${
                             img.isPrimary ? 'text-[#D9A441]' : 'hover:text-gray-900'
                           }`}
-                          title="Set as primary"
+                          title="Set as primary thumbnail"
                         >
                           <Star className={`w-3.5 h-3.5 ${img.isPrimary ? 'fill-[#D9A441]' : ''}`} />
-                          <span>{img.isPrimary ? 'Primary' : 'Set Star'}</span>
+                          <span>{img.isPrimary ? 'Primary' : 'Make Star'}</span>
                         </button>
 
                         <div className="flex items-center gap-1">
@@ -797,7 +1052,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             type="button"
                             onClick={() => moveImage(idx, 'up')}
                             disabled={idx === 0}
-                            className="p-1 hover:text-gray-900 disabled:opacity-30"
+                            className="p-1 hover:text-gray-900 disabled:opacity-30 cursor-pointer"
+                            title="Move earlier"
                           >
                             <ArrowUp className="w-3.5 h-3.5" />
                           </button>
@@ -805,14 +1061,16 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                             type="button"
                             onClick={() => moveImage(idx, 'down')}
                             disabled={idx === images.length - 1}
-                            className="p-1 hover:text-gray-900 disabled:opacity-30"
+                            className="p-1 hover:text-gray-900 disabled:opacity-30 cursor-pointer"
+                            title="Move later"
                           >
                             <ArrowDown className="w-3.5 h-3.5" />
                           </button>
                           <button
                             type="button"
                             onClick={() => removeImage(idx)}
-                            className="p-1 hover:text-red-600"
+                            className="p-1 hover:text-red-600 cursor-pointer"
+                            title="Remove image"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

@@ -78,7 +78,7 @@ export const ProductDetailPage: React.FC = () => {
     return (
       <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
-          <div className="aspect-square bg-amber-50/60 rounded-3xl border border-[#E7E0D0]" />
+          <div className="aspect-[4/5] bg-amber-50/60 rounded-3xl border border-[#E7E0D0]" />
           <div className="space-y-4">
             <div className="h-6 bg-amber-100/60 rounded-full w-1/4" />
             <div className="h-10 bg-amber-100/60 rounded-xl w-3/4" />
@@ -194,7 +194,7 @@ export const ProductDetailPage: React.FC = () => {
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHoveringImage(true)}
             onMouseLeave={() => setIsHoveringImage(false)}
-            className="aspect-square rounded-3xl overflow-hidden bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-soft relative cursor-crosshair group"
+            className="aspect-[4/5] rounded-3xl overflow-hidden bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-soft relative cursor-crosshair group"
           >
             <img
               src={currentImage}
@@ -264,7 +264,7 @@ export const ProductDetailPage: React.FC = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedImageIndex(idx)}
-                  className={`w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all shrink-0 bg-white dark:bg-[#18221B] ${
+                  className={`w-16 aspect-[4/5] rounded-2xl overflow-hidden border-2 transition-all shrink-0 bg-white dark:bg-[#18221B] ${
                     selectedImageIndex === idx
                       ? 'border-[#2F5D3A] dark:border-[#65B77E] shadow-md scale-102 ring-2 ring-[#2F5D3A]/20'
                       : 'border-[#E7E0D0] dark:border-[#2A3B2F] opacity-70 hover:opacity-100'

@@ -25,6 +25,7 @@ export const ProductsPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Filters
+  const [selectedBrand, setSelectedBrand] = useState<'all' | 'mewa-masala-ghar' | 'jimmi-jaggu'>('mewa-masala-ghar');
   const [selectedStore, setSelectedStore] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [stockFilter, setStockFilter] = useState<string>('all');
@@ -44,6 +45,15 @@ export const ProductsPage: React.FC = () => {
   const [importLoading, setImportLoading] = useState(false);
   const [importReport, setImportReport] = useState<any | null>(null);
 
+  // Fetch Brands for 2-Brand Options
+  const { data: brandsList = [] } = useQuery({
+    queryKey: ['admin-brands-list'],
+    queryFn: async () => {
+      const res = await api.get('/brands');
+      return res.data?.data || [];
+    },
+  });
+
   // Fetch Stores for filtering
   const { data: storesList = [] } = useQuery({
     queryKey: ['admin-stores-list'],
@@ -55,7 +65,7 @@ export const ProductsPage: React.FC = () => {
 
   // Fetch Categories for filtering
   const { data: categoriesList = [] } = useQuery({
-    queryKey: ['admin-categories-list', selectedStore],
+    queryKey: ['admin-categories-list', selectedBrand, selectedStore],
     queryFn: async () => {
       let url = '/admin/categories';
       if (selectedStore !== 'all') {
@@ -63,16 +73,27 @@ export const ProductsPage: React.FC = () => {
         if (s) url += `?storeId=${s.id}`;
       }
       const res = await api.get(url);
-      return res.data?.data || [];
+      const allCats = res.data?.data || [];
+      if (selectedBrand === 'mewa-masala-ghar') {
+        return allCats.filter(
+          (c: any) => c.brand?.slug === 'mewa-masala-ghar' || !c.brandId || c.store?.slug === 'foods'
+        );
+      }
+      if (selectedBrand === 'jimmi-jaggu') {
+        return allCats.filter(
+          (c: any) => c.brand?.slug === 'jimmi-jaggu' || c.store?.slug === 'baby' || c.store?.slug === 'care'
+        );
+      }
+      return allCats;
     },
-    enabled: storesList.length > 0,
   });
 
-  // Fetch Products
+  // Fetch Products with Brand Filter
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ['admin-products', selectedStore, selectedCategory, statusFilter, search],
+    queryKey: ['admin-products', selectedBrand, selectedStore, selectedCategory, statusFilter, search],
     queryFn: async () => {
-      let url = '/admin/products?limit=100';
+      let url = '/admin/products?limit=150';
+      if (selectedBrand !== 'all') url += `&brand=${selectedBrand}`;
       if (selectedStore !== 'all') url += `&store=${selectedStore}`;
       if (selectedCategory !== 'all') url += `&category=${selectedCategory}`;
       if (statusFilter !== 'all') url += `&active=${statusFilter === 'active'}`;
@@ -86,6 +107,17 @@ export const ProductsPage: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/admin/products/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-brands-list'] });
+    },
+  });
+
+  // Quick toggle active mutation
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
+      await api.put(`/admin/products/${id}`, { isActive });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
@@ -104,6 +136,7 @@ export const ProductsPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-brands-list'] });
       setSelectedProductIds([]);
     },
   });
@@ -189,6 +222,11 @@ export const ProductsPage: React.FC = () => {
     }
   };
 
+  const mewaBrandData = brandsList.find((b: any) => b.slug === 'mewa-masala-ghar');
+  const jimmiBrandData = brandsList.find((b: any) => b.slug === 'jimmi-jaggu');
+  const mewaCount = mewaBrandData?._count?.products ?? 20;
+  const jimmiCount = jimmiBrandData?._count?.products ?? 4;
+
   return (
     <div className="space-y-6">
       {/* Top Title & Primary Actions */}
@@ -196,14 +234,14 @@ export const ProductsPage: React.FC = () => {
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#2B2B2B]">Products Catalog</h1>
           <p className="text-xs text-[#8C7B65] mt-0.5">
-            Manage multi-pack variants, Cloudinary gallery, HSN/GST tax codes, and SEO metadata.
+            Manage multi-brand catalog (Mewa Masala Ghar & Jimmi Jaggu), 4:5 image ratio, variants, and stock.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2B2B2B] text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2B2B2B] text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             title="Download full catalog CSV"
           >
             <Download className="w-3.5 h-3.5 text-[#2F5D3A]" />
@@ -216,7 +254,7 @@ export const ProductsPage: React.FC = () => {
               setImportReport(null);
               setImportModalOpen(true);
             }}
-            className="px-3.5 py-2 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2B2B2B] text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2B2B2B] text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
           >
             <Upload className="w-3.5 h-3.5 text-[#D9A441]" />
             <span>Import CSV</span>
@@ -227,12 +265,185 @@ export const ProductsPage: React.FC = () => {
               setEditingProduct(null);
               setFormModalOpen(true);
             }}
-            className="px-4 py-2 bg-[#2F5D3A] hover:bg-[#23472C] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#2F5D3A] hover:bg-[#23472C] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add Product</span>
           </button>
         </div>
+      </div>
+
+      {/* Brand Selection: 2 Distinct Brand Options + All Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+        {/* Option 1: Mewa Masala Ghar */}
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedBrand('mewa-masala-ghar');
+            setSelectedCategory('all');
+          }}
+          className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex items-center justify-between cursor-pointer ${
+            selectedBrand === 'mewa-masala-ghar'
+              ? 'bg-[#2F5D3A] text-white border-[#2F5D3A] shadow-md ring-2 ring-[#2F5D3A]/30'
+              : 'bg-white hover:bg-[#FAF6EC] border-[#E6DEC8] text-gray-800'
+          }`}
+        >
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0 shadow-2xs ${
+                selectedBrand === 'mewa-masala-ghar'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-[#2F5D3A]/10 text-[#2F5D3A]'
+              }`}
+            >
+              🌿
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif font-bold text-sm">Mewa Masala Ghar</span>
+                {selectedBrand === 'mewa-masala-ghar' && (
+                  <span className="px-1.5 py-0.2 bg-[#D9A441] text-[#2B2B2B] text-[9px] font-bold rounded-full">
+                    Active
+                  </span>
+                )}
+              </div>
+              <p
+                className={`text-[11px] mt-0.5 line-clamp-1 ${
+                  selectedBrand === 'mewa-masala-ghar' ? 'text-emerald-100' : 'text-[#8C7B65]'
+                }`}
+              >
+                Dry Fruits, Seeds, Makhana, Spices & Poshan
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <span
+              className={`font-mono font-bold text-xs px-2.5 py-1 rounded-full ${
+                selectedBrand === 'mewa-masala-ghar'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-emerald-50 text-[#2F5D3A] border border-emerald-200'
+              }`}
+            >
+              {mewaCount} Items
+            </span>
+          </div>
+        </button>
+
+        {/* Option 2: Jimmi Jaggu */}
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedBrand('jimmi-jaggu');
+            setSelectedCategory('all');
+          }}
+          className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex items-center justify-between cursor-pointer ${
+            selectedBrand === 'jimmi-jaggu'
+              ? 'bg-[#B97375] text-white border-[#B97375] shadow-md ring-2 ring-[#B97375]/30'
+              : 'bg-white hover:bg-[#FAF6EC] border-[#E6DEC8] text-gray-800'
+          }`}
+        >
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0 shadow-2xs ${
+                selectedBrand === 'jimmi-jaggu'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-[#B97375]/10 text-[#B97375]'
+              }`}
+            >
+              🍼
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif font-bold text-sm">Jimmi Jaggu</span>
+                <span
+                  className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full ${
+                    selectedBrand === 'jimmi-jaggu' ? 'bg-white/25 text-white' : 'bg-rose-100 text-[#B97375]'
+                  }`}
+                >
+                  Sub-brand
+                </span>
+                {selectedBrand === 'jimmi-jaggu' && (
+                  <span className="px-1.5 py-0.2 bg-white text-[#B97375] text-[9px] font-bold rounded-full">
+                    Active
+                  </span>
+                )}
+              </div>
+              <p
+                className={`text-[11px] mt-0.5 line-clamp-1 ${
+                  selectedBrand === 'jimmi-jaggu' ? 'text-rose-100' : 'text-[#8C7B65]'
+                }`}
+              >
+                Baby Food (Pratham Aahar), Multani Clays & Skincare
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <span
+              className={`font-mono font-bold text-xs px-2.5 py-1 rounded-full ${
+                selectedBrand === 'jimmi-jaggu'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-rose-50 text-[#B97375] border border-rose-200'
+              }`}
+            >
+              {jimmiCount} Items
+            </span>
+          </div>
+        </button>
+
+        {/* Option 3: All Brands Overview */}
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedBrand('all');
+            setSelectedCategory('all');
+          }}
+          className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex items-center justify-between cursor-pointer ${
+            selectedBrand === 'all'
+              ? 'bg-[#2B2B2B] text-white border-[#2B2B2B] shadow-md ring-2 ring-gray-600/30'
+              : 'bg-white hover:bg-[#FAF6EC] border-[#E6DEC8] text-gray-800'
+          }`}
+        >
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg shrink-0 shadow-2xs ${
+                selectedBrand === 'all' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              🏪
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif font-bold text-sm">All Brands Combined</span>
+                {selectedBrand === 'all' && (
+                  <span className="px-1.5 py-0.2 bg-white text-gray-900 text-[9px] font-bold rounded-full">
+                    Active
+                  </span>
+                )}
+              </div>
+              <p
+                className={`text-[11px] mt-0.5 line-clamp-1 ${
+                  selectedBrand === 'all' ? 'text-gray-300' : 'text-[#8C7B65]'
+                }`}
+              >
+                Full inventory across MMG and Jimmi Jaggu
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <span
+              className={`font-mono font-bold text-xs px-2.5 py-1 rounded-full ${
+                selectedBrand === 'all'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-gray-100 text-gray-800 border border-gray-200'
+              }`}
+            >
+              {mewaCount + jimmiCount} Total
+            </span>
+          </div>
+        </button>
       </div>
 
       {/* Filter Toolbar */}
@@ -253,13 +464,15 @@ export const ProductsPage: React.FC = () => {
             <option value="care">Personal Care & Clays</option>
           </select>
 
-          {/* Category select */}
+          {/* Category select (Filtered by Brand) */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-3 py-1.5 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs font-semibold text-gray-800"
           >
-            <option value="all">All Categories</option>
+            <option value="all">
+              All Categories {selectedBrand !== 'all' ? `(${selectedBrand === 'jimmi-jaggu' ? 'Jimmi Jaggu' : 'Mewa Masala'})` : ''}
+            </option>
             {categoriesList.map((cat: any) => (
               <option key={cat.id} value={cat.slug}>
                 {cat.name}
@@ -297,7 +510,7 @@ export const ProductsPage: React.FC = () => {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by title or SKU..."
+            placeholder="Search by title, SKU, or brand..."
             className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A]"
           />
           <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -402,16 +615,33 @@ export const ProductsPage: React.FC = () => {
                       </td>
 
                       <td className="p-3.5 flex items-center gap-3">
-                        <img
-                          src={primaryImg}
-                          alt={p.name}
-                          className="w-12 h-12 object-cover rounded-xl border border-[#E6DEC8] shrink-0 bg-white"
-                        />
+                        <div className="w-12 sm:w-14 aspect-[4/5] rounded-xl overflow-hidden border border-[#E6DEC8] shrink-0 bg-white shadow-2xs relative">
+                          <img
+                            src={primaryImg}
+                            alt={p.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src =
+                                'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80';
+                            }}
+                          />
+                        </div>
                         <div>
                           <strong className="text-gray-900 block font-serif font-bold text-xs hover:text-[#2F5D3A]">
                             {p.name}
                           </strong>
-                          <span className="text-gray-400 font-mono text-[11px] block">{p.slug}</span>
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            {p.brand?.slug === 'jimmi-jaggu' ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FBEAE4] text-[#B97375] border border-[#B97375]/30 shadow-2xs">
+                                🍼 Jimmi Jaggu
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-[#2F5D3A] border border-emerald-200 shadow-2xs">
+                                🌿 Mewa Masala
+                              </span>
+                            )}
+                            <span className="text-gray-400 font-mono text-[10px]">{p.slug}</span>
+                          </div>
                         </div>
                       </td>
 
@@ -460,13 +690,18 @@ export const ProductsPage: React.FC = () => {
                       </td>
 
                       <td className="p-3.5">
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            p.isActive !== false ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-600'
+                        <button
+                          type="button"
+                          onClick={() => toggleActiveMutation.mutate({ id: p.id, isActive: p.isActive === false })}
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                            p.isActive !== false
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                              : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
                           }`}
+                          title="Click to toggle publish status"
                         >
-                          {p.isActive !== false ? 'Active' : 'Draft'}
-                        </span>
+                          {p.isActive !== false ? '● Active' : '○ Draft'}
+                        </button>
                       </td>
 
                       <td className="p-3.5 text-right space-x-1 whitespace-nowrap">
@@ -474,7 +709,7 @@ export const ProductsPage: React.FC = () => {
                           href={`http://localhost:5173/products/${p.slug}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-1.5 text-gray-400 hover:text-[#2F5D3A] rounded-lg hover:bg-gray-100 inline-block"
+                          className="p-1.5 text-gray-400 hover:text-[#2F5D3A] rounded-lg hover:bg-gray-100 inline-block cursor-pointer"
                           title="View on storefront"
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -485,8 +720,8 @@ export const ProductsPage: React.FC = () => {
                             setEditingProduct(p);
                             setFormModalOpen(true);
                           }}
-                          className="p-1.5 text-gray-400 hover:text-amber-600 rounded-lg hover:bg-gray-100"
-                          title="Edit product"
+                          className="p-1.5 text-gray-400 hover:text-amber-600 rounded-lg hover:bg-gray-100 cursor-pointer"
+                          title="Edit product, variants & images"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
@@ -497,7 +732,7 @@ export const ProductsPage: React.FC = () => {
                               deleteMutation.mutate(p.id);
                             }
                           }}
-                          className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100"
+                          className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100 cursor-pointer"
                           title="Delete product"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -521,9 +756,12 @@ export const ProductsPage: React.FC = () => {
         }}
         onSuccess={() => {
           queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+          queryClient.invalidateQueries({ queryKey: ['admin-brands-list'] });
         }}
         productToEdit={editingProduct}
         storesList={storesList}
+        brandsList={brandsList}
+        initialBrand={selectedBrand === 'jimmi-jaggu' ? 'jimmi-jaggu' : 'mewa-masala-ghar'}
       />
 
       {/* CSV Import Modal */}

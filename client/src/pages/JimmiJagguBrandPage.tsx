@@ -27,6 +27,42 @@ interface FeaturedProduct {
 
 const FEATURED_PRODUCTS: FeaturedProduct[] = [
   {
+    id: 'jj-prod-pratham-aahar',
+    name: 'Pratham Aahar Baby Food (Sprouted Porridge)',
+    price: 349,
+    rating: 4.9,
+    reviewsCount: 184,
+    image: '/jimmi-jaggu/cat_baby_bottle.jpg',
+    slug: 'pratham-aahar-baby-food',
+  },
+  {
+    id: 'jj-prod-dead-sea-mud',
+    name: 'Dead Sea Mud Mineral Purifying Pack',
+    price: 499,
+    rating: 4.8,
+    reviewsCount: 142,
+    image: '/jimmi-jaggu/prod_face_cream.png',
+    slug: 'dead-sea-mud-pack',
+  },
+  {
+    id: 'jj-prod-pink-multani-mitti',
+    name: 'Pink Multani Mitti Glow Clay',
+    price: 399,
+    rating: 4.9,
+    reviewsCount: 210,
+    image: '/jimmi-jaggu/cat_care.png',
+    slug: 'pink-multani-mitti',
+  },
+  {
+    id: 'jj-prod-premium-multani-mitti',
+    name: 'Premium Ayurvedic Multani Mitti (Triple-Sifted)',
+    price: 279,
+    rating: 5.0,
+    reviewsCount: 320,
+    image: '/jimmi-jaggu/cat_ayurvedic_powder.jpg',
+    slug: 'premium-ayurvedic-multani-mitti',
+  },
+  {
     id: 'jj-prod-1',
     name: 'Baby Moisturizing Cream',
     price: 499,
@@ -43,33 +79,6 @@ const FEATURED_PRODUCTS: FeaturedProduct[] = [
     reviewsCount: 98,
     image: '/jimmi-jaggu/prod_massage_oil.png',
     slug: 'natural-baby-massage-oil',
-  },
-  {
-    id: 'jj-prod-3',
-    name: 'Gentle Face Cream (for Sensitive Skin)',
-    price: 599,
-    rating: 4.9,
-    reviewsCount: 156,
-    image: '/jimmi-jaggu/prod_face_cream.png',
-    slug: 'gentle-face-cream-sensitive-skin',
-  },
-  {
-    id: 'jj-prod-4',
-    name: 'Pregnancy Nutritional Powder',
-    price: 799,
-    rating: 4.6,
-    reviewsCount: 87,
-    image: '/jimmi-jaggu/prod_nutrition_powder.png',
-    slug: 'pregnancy-nutritional-powder',
-  },
-  {
-    id: 'jj-prod-5',
-    name: 'Natural Sunscreen (for Kids & Adults)',
-    price: 649,
-    rating: 4.7,
-    reviewsCount: 112,
-    image: '/jimmi-jaggu/prod_sunscreen.png',
-    slug: 'natural-sunscreen-kids-adults',
   },
 ];
 
@@ -564,7 +573,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
               >
                 <div>
                   {/* Product Image */}
-                  <div className="w-full aspect-square rounded-xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3 flex items-center justify-center p-2">
+                  <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3 flex items-center justify-center p-2">
                     <img
                       src={prod.image}
                       alt={prod.name}

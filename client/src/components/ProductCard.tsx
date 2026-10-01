@@ -112,7 +112,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         {/* Product Image */}
         <Link
           to={`/product/${product.slug}`}
-          className="relative block aspect-square rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center mb-3"
+          className="relative block aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center mb-3"
         >
           <img
             src={primaryImage}

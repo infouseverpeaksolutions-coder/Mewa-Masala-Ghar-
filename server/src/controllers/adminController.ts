@@ -325,14 +325,17 @@ async function generateUniqueProductSlug(baseName: string, existingId?: string):
 
 export const getAdminProducts = async (req: Request, res: Response) => {
   try {
-    const { store, category, search, active, page = '1', limit = '50' } = req.query;
+    const { store, category, brand, search, active, page = '1', limit = '100' } = req.query;
     const pageNum = parseInt(page as string, 10) || 1;
-    const take = parseInt(limit as string, 10) || 50;
+    const take = parseInt(limit as string, 10) || 100;
     const skip = (pageNum - 1) * take;
 
     const where: any = {};
-    if (store) where.store = { slug: String(store) };
-    if (category) where.category = { slug: String(category) };
+    if (store && store !== 'all') where.store = { slug: String(store) };
+    if (category && category !== 'all') where.category = { slug: String(category) };
+    if (brand && brand !== 'all') {
+      where.brand = { slug: String(brand) };
+    }
     if (active !== undefined && active !== '') where.isActive = active === 'true';
 
     if (search) {
@@ -350,6 +353,7 @@ export const getAdminProducts = async (req: Request, res: Response) => {
         where,
         include: {
           store: { select: { id: true, name: true, slug: true } },
+          brand: { select: { id: true, name: true, slug: true, primaryColor: true, accentColor: true } },
           category: { select: { id: true, name: true, slug: true } },
           variants: { orderBy: { price: 'asc' } },
           images: { orderBy: { displayOrder: 'asc' } },
@@ -385,6 +389,7 @@ export const getAdminProductById = async (req: Request, res: Response) => {
       where: { id },
       include: {
         store: true,
+        brand: true,
         category: true,
         variants: { orderBy: { price: 'asc' } },
         images: { orderBy: { displayOrder: 'asc' } },
@@ -405,6 +410,7 @@ export const createProduct = async (req: Request, res: Response) => {
   try {
     const {
       storeId,
+      brandId,
       categoryId,
       name,
       slug: customSlug,
@@ -437,6 +443,7 @@ export const createProduct = async (req: Request, res: Response) => {
     const product = await prisma.product.create({
       data: {
         storeId,
+        ...(brandId && { brandId }),
         categoryId,
         name: name.trim(),
         slug: finalSlug,
@@ -518,6 +525,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       where: { id },
       data: {
         ...(data.storeId && { storeId: data.storeId }),
+        ...(data.brandId !== undefined && { brandId: data.brandId }),
         ...(data.categoryId && { categoryId: data.categoryId }),
         ...(data.name && { name: data.name.trim() }),
         ...(slug && { slug }),

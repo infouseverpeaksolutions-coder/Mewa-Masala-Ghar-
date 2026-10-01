@@ -52,7 +52,9 @@ export interface Product {
   reviewCount: number;
   images: Array<{ id?: string; url: string; isPrimary: boolean; altText?: string }>;
   variants: ProductVariant[];
+  brandId?: string;
   store?: { id: string; name: string; slug: string };
+  brand?: { id: string; name: string; slug: string; primaryColor?: string; accentColor?: string };
   category?: { id: string; name: string; slug: string };
 }
 
