@@ -6,7 +6,45 @@ import { HERO_CONTENT } from '../data/mockData';
 export const HeroVideo: React.FC = () => {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [heroHeight, setHeroHeight] = useState<string>('calc(100vh - 110px)');
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Exact viewport height calculation to fit all screen sizes and resolutions with 0px gap
+  useEffect(() => {
+    const updateExactHeight = () => {
+      const header = document.querySelector('header');
+      const headerBottom = header ? header.getBoundingClientRect().bottom : 110;
+
+      // On mobile screens (< 768px), check if fixed bottom nav exists
+      const bottomNav = document.querySelector('nav.fixed.bottom-0');
+      const bottomNavHeight =
+        bottomNav && window.innerWidth < 768
+          ? bottomNav.getBoundingClientRect().height
+          : 0;
+
+      // Exact pixel height from the bottom of header to the bottom of visible viewport
+      const exactHeight = Math.max(340, window.innerHeight - Math.max(0, headerBottom) - bottomNavHeight);
+      setHeroHeight(`${exactHeight}px`);
+    };
+
+    updateExactHeight();
+    window.addEventListener('resize', updateExactHeight);
+    window.addEventListener('orientationchange', updateExactHeight);
+
+    // Observe header resize dynamically (e.g. mobile search toggle, zoom/scaling changes)
+    const header = document.querySelector('header');
+    let ro: ResizeObserver | null = null;
+    if (header && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => updateExactHeight());
+      ro.observe(header);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateExactHeight);
+      window.removeEventListener('orientationchange', updateExactHeight);
+      if (ro) ro.disconnect();
+    };
+  }, []);
 
   // Respect prefers-reduced-motion
   useEffect(() => {
@@ -27,7 +65,10 @@ export const HeroVideo: React.FC = () => {
   }, [reducedMotion, videoError]);
 
   return (
-    <section className="relative w-full overflow-hidden border-b border-[#E7E0D0] dark:border-[#243529] h-[calc(100dvh-152px)] sm:h-[calc(100dvh-116px)] min-h-[460px] sm:min-h-[540px] flex items-center justify-center bg-[#13301D] select-none">
+    <section
+      style={{ height: heroHeight }}
+      className="relative w-full m-0 p-0 rounded-none overflow-hidden flex items-center justify-center bg-[#13301D] select-none transition-[height] duration-75"
+    >
       {/* Full-bleed background video / poster fallback */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
         {reducedMotion || videoError ? (
