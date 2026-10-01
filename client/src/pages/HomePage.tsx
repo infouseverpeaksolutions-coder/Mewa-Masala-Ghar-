@@ -63,12 +63,10 @@ export const HomePage: React.FC = () => {
     <div className="space-y-10 sm:space-y-14 pb-16 bg-[#FAF6EC] dark:bg-[#111813] text-[#2B2B2B] dark:text-[#F3EFE6] transition-colors duration-300">
       {/* 
         ========================================================================
-        1. HERO VIDEO SECTION (Two-column desktop / full-bleed mobile)
+        1. HERO VIDEO SECTION (Full-bleed edge-to-edge screen fit)
         ========================================================================
       */}
-      <div className="pt-2 sm:pt-4">
-        <HeroVideo />
-      </div>
+      <HeroVideo />
 
 
       {/* 
