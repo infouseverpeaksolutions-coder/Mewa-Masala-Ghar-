@@ -12,10 +12,13 @@ import {
   Heart,
   Leaf,
   ShieldCheck,
+  Wheat,
+  Trophy,
 } from 'lucide-react';
 import { HeroVideo } from '../components/HeroVideo';
 import { MewaProductCard } from '../components/MewaProductCard';
-import { BestsellerHorizontalCard } from '../components/BestsellerHorizontalCard';
+import { SeedsAataaCard } from '../components/SeedsAataaCard';
+import { BestsellerRankedCard } from '../components/BestsellerRankedCard';
 import {
   SectionLeaf,
   BranchFlourishLeft,
@@ -34,6 +37,15 @@ import {
 import api from '../services/api';
 
 export const HomePage: React.FC = () => {
+  // Category filter state for Seeds & Aataa
+  const [seedsAataaFilter, setSeedsAataaFilter] = useState<'all' | 'seeds' | 'aataa'>('all');
+
+  const filteredSeedsAataa = SEEDS_AATAA_PRODUCTS.filter((prod) => {
+    if (seedsAataaFilter === 'seeds') return prod.category.toLowerCase().includes('seed');
+    if (seedsAataaFilter === 'aataa') return prod.category.toLowerCase().includes('aata') || prod.category.toLowerCase().includes('flour');
+    return true;
+  });
+
   // Newsletter state
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState<
@@ -240,88 +252,167 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        7. SEEDS & AATAA ROW (7 products in bordered container)
+        7. SEEDS & AATAA SECTION (Interactive Filter Tabs, 4:5 Cards, Purity Ribbon)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center">
-            <span>Seeds & Aataa</span>
-            <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
-          </h2>
-          <Link
-            to="/shop?category=seeds-mixes"
-            className="text-xs sm:text-sm font-semibold text-[#1F4D2E] dark:text-[#E5B85C] hover:text-[#D9A441] transition-colors"
-          >
-            View All →
-          </Link>
-        </div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
+          <div>
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center gap-1.5">
+              <span>Seeds & Aataa</span>
+              <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
+            </h2>
+            <p className="text-xs sm:text-[13px] text-[#7A6B58] dark:text-[#C5BCAD] mt-0.5">
+              100% natural raw super seeds and fresh traditional stone-chakki ground flours.
+            </p>
+          </div>
 
-        <div className="border border-[#E7E0D0] dark:border-[#2A3B2F] rounded-2xl bg-white dark:bg-[#18221B] py-5 px-3 sm:px-5 shadow-soft overflow-x-auto">
-          <div className="flex min-w-max lg:min-w-0 lg:grid lg:grid-cols-7">
-            {SEEDS_AATAA_PRODUCTS.map((prod, idx) => (
-              <Link
-                key={prod.id}
-                to={prod.link}
-                className={`group flex flex-col items-center text-center w-[115px] sm:w-[125px] lg:w-auto shrink-0 px-2 sm:px-3 py-1 ${
-                  idx < SEEDS_AATAA_PRODUCTS.length - 1 ? 'lg:border-r lg:border-[#E7E0D0]/60 dark:lg:border-[#2A3B2F]/60' : ''
+          <div className="flex items-center gap-2">
+            {/* Filter Tabs */}
+            <div className="inline-flex p-1 rounded-xl bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-2xs">
+              <button
+                onClick={() => setSeedsAataaFilter('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  seedsAataaFilter === 'all'
+                    ? 'bg-[#1F4D2E] text-white dark:bg-[#284F33] shadow-xs'
+                    : 'text-[#7A6B58] hover:text-[#1F4D2E] dark:text-[#C5BCAD] dark:hover:text-white'
                 }`}
               >
-                {/* 4:5 aspect ratio image container */}
-                <div className="w-[80px] h-[100px] sm:w-[90px] sm:h-[112px] lg:w-[95px] lg:h-[118px] rounded-lg overflow-hidden bg-[#FAF6EC]/40 dark:bg-[#111813]/60 flex items-center justify-center p-1.5 mb-2.5">
-                  <img
-                    src={prod.image}
-                    alt={prod.name}
-                    loading="eager"
-                    decoding="async"
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                    onError={(e) => { e.currentTarget.src = '/foods/foods_dryfruits.jpg'; }}
-                  />
-                </div>
-                <h3 className="font-serif text-xs sm:text-[13px] font-semibold text-[#2B2B2B] dark:text-[#E2DDD3] group-hover:text-[#D9A441] dark:group-hover:text-[#E5B85C] transition-colors leading-tight mb-1">
-                  {prod.name}
-                </h3>
-                <div className="font-bold text-sm sm:text-base text-[#1F4D2E] dark:text-white tracking-tight">
-                  ₹ {prod.price}
-                </div>
-              </Link>
-            ))}
+                All (7)
+              </button>
+              <button
+                onClick={() => setSeedsAataaFilter('seeds')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  seedsAataaFilter === 'seeds'
+                    ? 'bg-[#1F4D2E] text-white dark:bg-[#284F33] shadow-xs'
+                    : 'text-[#7A6B58] hover:text-[#1F4D2E] dark:text-[#C5BCAD] dark:hover:text-white'
+                }`}
+              >
+                Super Seeds (5)
+              </button>
+              <button
+                onClick={() => setSeedsAataaFilter('aataa')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  seedsAataaFilter === 'aataa'
+                    ? 'bg-[#1F4D2E] text-white dark:bg-[#284F33] shadow-xs'
+                    : 'text-[#7A6B58] hover:text-[#1F4D2E] dark:text-[#C5BCAD] dark:hover:text-white'
+                }`}
+              >
+                Specialty Aataa (2)
+              </button>
+            </div>
+
+            <Link
+              to="/shop?category=seeds-mixes"
+              className="hidden md:inline-flex text-xs sm:text-sm font-semibold text-[#1F4D2E] dark:text-[#E5B85C] hover:text-[#D9A441] transition-colors ml-2"
+            >
+              View All →
+            </Link>
+          </div>
+        </div>
+
+        {/* Product Cards Grid */}
+        <div
+          className={`grid gap-3 sm:gap-4 ${
+            seedsAataaFilter === 'all'
+              ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-7'
+              : seedsAataaFilter === 'seeds'
+              ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'
+              : 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto'
+          }`}
+        >
+          {filteredSeedsAataa.map((prod) => (
+            <SeedsAataaCard key={prod.id} product={prod} />
+          ))}
+        </div>
+
+        {/* Quality & Traditional Milling Assurance Banner */}
+        <div className="mt-5 p-4 sm:p-5 rounded-2xl bg-white/70 dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-2xs grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] dark:bg-[#111813] text-[#1F4D2E] dark:text-[#8ED9A0] flex items-center justify-center shrink-0 border border-[#E7E0D0]/60 dark:border-[#2A3B2F]">
+              <Wheat className="w-5 h-5 text-[#2F5D3A] dark:text-[#8ED9A0]" />
+            </div>
+            <div>
+              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">
+                100% Whole Grain
+              </h4>
+              <p className="text-[11px] text-[#7A6B58] dark:text-[#C5BCAD] leading-tight">
+                Naturally unpolished, rich in essential minerals & dietary fiber
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] dark:bg-[#111813] text-[#D9A441] flex items-center justify-center shrink-0 border border-[#E7E0D0]/60 dark:border-[#2A3B2F]">
+              <Sparkles className="w-5 h-5 text-[#D9A441]" />
+            </div>
+            <div>
+              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">
+                Cold Stone-Chakki Ground
+              </h4>
+              <p className="text-[11px] text-[#7A6B58] dark:text-[#C5BCAD] leading-tight">
+                Slow-milled to retain live wheat germ nutrients & nutty aroma
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] dark:bg-[#111813] text-[#1F4D2E] dark:text-[#8ED9A0] flex items-center justify-center shrink-0 border border-[#E7E0D0]/60 dark:border-[#2A3B2F]">
+              <ShieldCheck className="w-5 h-5 text-[#2F5D3A] dark:text-[#8ED9A0]" />
+            </div>
+            <div>
+              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">
+                Triple Cleaned & Pure
+              </h4>
+              <p className="text-[11px] text-[#7A6B58] dark:text-[#C5BCAD] leading-tight">
+                Machine-sorted, sun-dried, 0% chemicals or artificial polish
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 
         ========================================================================
-        8. BESTSELLERS (2x2 grid of horizontal product cards)
+        8. BESTSELLERS (6 Flagship Ranked Cards with Gold Badges & 4:5 Showcase)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center">
-            <span>Bestsellers</span>
-            <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
-          </h2>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-5">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#D9A441] uppercase tracking-wider mb-1">
+              <Trophy className="w-3.5 h-3.5" />
+              <span>India's Most Loved</span>
+            </div>
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center gap-1.5">
+              <span>Bestsellers</span>
+              <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
+            </h2>
+            <p className="text-xs sm:text-[13px] text-[#7A6B58] dark:text-[#C5BCAD] mt-0.5">
+              Handpicked customer favorites loved by 50,000+ happy households across India.
+            </p>
+          </div>
           <Link
             to="/shop?featured=true"
             className="text-xs sm:text-sm font-semibold text-[#1F4D2E] dark:text-[#E5B85C] hover:text-[#D9A441] transition-colors"
           >
-            View All →
+            View All Bestsellers →
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-          {BESTSELLERS_PRODUCTS.map((prod) => (
-            <BestsellerHorizontalCard key={prod.id} product={prod} />
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+          {BESTSELLERS_PRODUCTS.map((prod, idx) => (
+            <BestsellerRankedCard key={prod.id} product={prod} rank={idx + 1} />
           ))}
         </div>
       </section>
 
       {/* 
         ========================================================================
-        9. JIMMI JAGGU SHOWCASE BANNER (Single Banner • Pure Logo Gradient • No Photos)
-        - Pure CSS gradient using Jimmi Jaggu logo colors (#78363A, #B97375, #C47D68, #6D8B74, #D9A441)
+        9. JIMMI JAGGU SHOWCASE BANNER (Theme-Adaptive Jimmi Jaggu Palette • No Photos)
+        - Seamless Jimmi Jaggu brand colors tailored for both Dark mode & Light mode
         - Interactive navigation to Jimmi Jaggu page using official brand logo
-        - Unique showcase featuring the 3 core pillars: Baby Nutrition (Pratham Aahar), Multani Clays, Maternal Care
+        - Unique showcase featuring the 3 core pillars: Baby Nutrition (Pratham Aahar), Multani Clays, Maternal Poshan
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
@@ -343,31 +434,27 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Single Premium Showcase Banner */}
+        {/* Single Premium Showcase Banner - Adaptive to Light & Dark Theme */}
         <div
-          className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 lg:p-12 text-white border border-[#E4B5AF]/40 transition-all duration-300"
-          style={{
-            background:
-              'linear-gradient(135deg, #62282D 0%, #7E373D 25%, #9E4D54 50%, #B86762 75%, #CB7F74 100%)',
-          }}
+          className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 lg:p-12 text-white border border-[#E8C5BC]/60 dark:border-[#7A363E]/60 transition-all duration-300 bg-gradient-to-br from-[#68262C] via-[#85343B] via-[#A0454E] to-[#B75B5F] dark:from-[#230D10] dark:via-[#351419] dark:via-[#471C23] dark:to-[#57222B]"
         >
-          {/* Luminous Ambient Glows using Jimmi Jaggu Logo Palette (Gold & Sage Eucalyptus) */}
+          {/* Luminous Ambient Glows using Jimmi Jaggu Palette (Champagne Gold & Eucalyptus Sage) */}
           <div
-            className="absolute -top-24 -right-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-35 blur-3xl"
+            className="absolute -top-24 -right-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-30 dark:opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(circle, #D9A441 0%, transparent 70%)' }}
           />
           <div
-            className="absolute -bottom-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-30 blur-3xl"
-            style={{ background: 'radial-gradient(circle, #6D8B74 0%, transparent 70%)' }}
+            className="absolute -bottom-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-25 dark:opacity-30 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #4A6D54 0%, transparent 70%)' }}
           />
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-15 dark:opacity-10"
             style={{
               background: 'radial-gradient(ellipse at center, rgba(255,240,235,0.25) 0%, transparent 70%)',
             }}
           />
 
-          {/* Subtle Decorative Botanical Vector Flourish (No image file) */}
+          {/* Subtle Decorative Botanical Vector Flourish */}
           <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-36 sm:w-48 h-36 sm:h-48 pointer-events-none opacity-15">
             <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-white">
               <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -380,10 +467,10 @@ export const HomePage: React.FC = () => {
 
           <div className="relative z-10">
             {/* 1. Direct Navigation to Jimmi Jaggu using the Official Logo */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-white/20">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-white/20 dark:border-white/10">
               <Link
                 to="/jimmi-jaggu"
-                className="group inline-flex items-center gap-3.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 border border-white/30 backdrop-blur-md shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-3.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white/15 dark:bg-black/35 hover:bg-white/25 dark:hover:bg-black/50 border border-white/30 dark:border-white/15 backdrop-blur-md shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                 title="Navigate to Jimmi Jaggu Page"
               >
                 <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-white p-1.5 shadow-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
@@ -398,33 +485,33 @@ export const HomePage: React.FC = () => {
                     <span className="font-serif text-base sm:text-lg font-bold tracking-tight text-white group-hover:text-[#FDEBE6] transition-colors">
                       Jimmi Jaggu
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF6EC] text-[#7A3338] font-extrabold uppercase tracking-wider shadow-xs">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF6EC] dark:bg-[#1A0B0E] text-[#7A3338] dark:text-[#E8A598] font-extrabold uppercase tracking-wider shadow-xs border border-transparent dark:border-[#7A3338]/40">
                       Official Sister Brand
                     </span>
                   </div>
-                  <p className="text-xs text-white/85 font-medium flex items-center gap-1 group-hover:text-white transition-colors">
-                    <span>Visit Jimmi Jaggu Page</span>
+                  <p className="text-xs text-white/85 dark:text-white/75 font-medium flex items-center gap-1 group-hover:text-white transition-colors">
+                    <span>Visit Jimmi Jaggu Store</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </p>
                 </div>
               </Link>
 
-              <div className="flex items-center gap-2 text-white/90 text-xs sm:text-sm font-medium">
+              <div className="flex items-center gap-2 text-white/90 dark:text-white/80 text-xs sm:text-sm font-medium">
                 <span className="w-2 h-2 rounded-full bg-[#D9A441] animate-pulse" />
-                <span>Presented with Love by <strong>Mewa Masala Ghar</strong></span>
+                <span>Presented with Care by <strong>Mewa Masala Ghar</strong></span>
               </div>
             </div>
 
             {/* 2. Headline & Mission */}
             <div className="mt-5 sm:mt-7 max-w-2xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs border border-white/30 text-white text-[11px] sm:text-xs font-semibold mb-2.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 dark:bg-black/30 backdrop-blur-xs border border-white/30 dark:border-white/15 text-white text-[11px] sm:text-xs font-semibold mb-2.5">
                 <Sparkles className="w-3.5 h-3.5 text-[#D9A441]" />
                 <span>Pure Botanicals & Ayurvedic Living</span>
               </div>
               <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-white leading-tight drop-shadow-sm">
                 Gentle Care for Little Ones, Radiant Skin & Maternal Poshan
               </h3>
-              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm md:text-base text-white/90 leading-relaxed font-sans max-w-xl">
+              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm md:text-base text-white/90 dark:text-white/80 leading-relaxed font-sans max-w-xl">
                 Rooted in timeless Indian wisdom — from sprouted multi-grain baby food and soothing massage oils to triple-sifted earthen multani clays and nurturing postpartum care.
               </p>
             </div>
@@ -434,23 +521,23 @@ export const HomePage: React.FC = () => {
               {/* Pillar 1: Baby Nutrition & Care */}
               <Link
                 to="/jimmi-jaggu?category=baby-nutrition"
-                className="group relative rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 hover:border-white/40 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-white/15 dark:bg-black/30 hover:bg-white/25 dark:hover:bg-black/45 border border-white/25 dark:border-white/12 hover:border-white/40 dark:hover:border-white/25 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
-                    <Baby className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-white/10 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
+                    <Baby className="w-5 h-5 text-[#E5B85C]" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 dark:text-[#E8A598] block">
                     Baby Care & Nutrition
                   </span>
                   <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
                     Pratham Aahar & Baby Food
                   </h4>
-                  <p className="mt-2 text-xs text-white/85 leading-relaxed font-normal">
+                  <p className="mt-2 text-xs text-white/85 dark:text-white/75 leading-relaxed font-normal">
                     100% natural sprouted multi-grain porridge, nourishing infant massage oils, and soothing baby creams.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs font-semibold text-[#FAF6EC]">
+                <div className="mt-4 pt-3 border-t border-white/15 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#FAF6EC] dark:text-[#E8A598]">
                   <span>Shop Baby Care</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -459,23 +546,23 @@ export const HomePage: React.FC = () => {
               {/* Pillar 2: Personal Care & Multani Mitti */}
               <Link
                 to="/jimmi-jaggu?category=multani-collection"
-                className="group relative rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 hover:border-white/40 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-white/15 dark:bg-black/30 hover:bg-white/25 dark:hover:bg-black/45 border border-white/25 dark:border-white/12 hover:border-white/40 dark:hover:border-white/25 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
-                    <Sparkles className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-white/10 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
+                    <Sparkles className="w-5 h-5 text-[#F4A7A0]" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 dark:text-[#E8A598] block">
                     Personal Care & Skincare
                   </span>
                   <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
                     Multani Collection & Clays
                   </h4>
-                  <p className="mt-2 text-xs text-white/85 leading-relaxed font-normal">
+                  <p className="mt-2 text-xs text-white/85 dark:text-white/75 leading-relaxed font-normal">
                     300-Mesh triple-sifted Fuller’s Earth, Dead Sea mineral mud packs, and Pink Glow Clay for chemical-free detox.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs font-semibold text-[#FAF6EC]">
+                <div className="mt-4 pt-3 border-t border-white/15 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#FAF6EC] dark:text-[#E8A598]">
                   <span>Shop Multani Clays</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -484,23 +571,23 @@ export const HomePage: React.FC = () => {
               {/* Pillar 3: Pregnancy & Maternal Poshan */}
               <Link
                 to="/jimmi-jaggu?category=pregnancy-care"
-                className="group relative rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 hover:border-white/40 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-white/15 dark:bg-black/30 hover:bg-white/25 dark:hover:bg-black/45 border border-white/25 dark:border-white/12 hover:border-white/40 dark:hover:border-white/25 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
-                    <Heart className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-white/10 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
+                    <Heart className="w-5 h-5 text-[#8ED9A0]" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 dark:text-[#E8A598] block">
                     Pregnancy & Maternity
                   </span>
                   <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
                     Maternal & Family Poshan
                   </h4>
-                  <p className="mt-2 text-xs text-white/85 leading-relaxed font-normal">
+                  <p className="mt-2 text-xs text-white/85 dark:text-white/75 leading-relaxed font-normal">
                     Ayurvedic prenatal and postpartum nourishment formulated with ancient Indian wisdom for mothers.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs font-semibold text-[#FAF6EC]">
+                <div className="mt-4 pt-3 border-t border-white/15 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#FAF6EC] dark:text-[#E8A598]">
                   <span>Shop Maternal Care</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -508,17 +595,17 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* 4. Footer Strip: Trust Badges & Grand Action Button */}
-            <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/20 flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-5">
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-[11px] sm:text-xs font-semibold text-white/95">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/20">
+            <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/20 dark:border-white/10 flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-5">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-[11px] sm:text-xs font-semibold text-white/95 dark:text-white/85">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-xs border border-white/20 dark:border-white/10">
                   <Leaf className="w-3.5 h-3.5 text-[#8ED9A0]" />
                   <span>100% Ayurvedic Heritage</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/20">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-xs border border-white/20 dark:border-white/10">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#D9A441]" />
                   <span>Zero Harsh Chemicals</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xs border border-white/20">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-xs border border-white/20 dark:border-white/10">
                   <Sparkles className="w-3.5 h-3.5 text-[#FBEAE4]" />
                   <span>Pediatrician & Derm Verified</span>
                 </div>
@@ -526,10 +613,10 @@ export const HomePage: React.FC = () => {
 
               <Link
                 to="/jimmi-jaggu"
-                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-[#FAF6EC] hover:bg-white text-[#78363A] font-serif font-bold text-xs sm:text-sm tracking-wide shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 shrink-0 group"
+                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-[#FAF6EC] hover:bg-white text-[#68262C] dark:bg-gradient-to-r dark:from-[#FAF6EC] dark:to-[#FBEAE4] dark:text-[#3B1217] dark:hover:from-white dark:hover:to-[#FFF0EB] font-serif font-bold text-xs sm:text-sm tracking-wide shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 shrink-0 group"
               >
                 <span>Explore Jimmi Jaggu Collection</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#78363A]" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#68262C] dark:text-[#3B1217]" />
               </Link>
             </div>
           </div>
