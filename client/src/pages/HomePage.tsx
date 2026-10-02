@@ -20,6 +20,7 @@ import {
   SectionLeaf,
   BranchFlourishLeft,
   BranchFlourishRight,
+  RajasthaniDivider,
 } from '../components/ui/Icons';
 import {
   CATEGORIES_DATA,
@@ -69,7 +70,7 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="pb-16 bg-[#FAF6EC] dark:bg-[#111813] text-[#2B2B2B] dark:text-[#F3EFE6] transition-colors duration-300">
+    <div className="text-[#2B2B2B] dark:text-[#F3EFE6] transition-colors duration-300">
       {/* 
         ========================================================================
         1. HERO VIDEO SECTION (100% full-bleed edge-to-edge, zero margin/padding)
@@ -77,8 +78,13 @@ export const HomePage: React.FC = () => {
       */}
       <HeroVideo />
 
-      {/* Remaining Homepage Sections with standard spacing */}
-      <div className="space-y-10 sm:space-y-14 mt-10 sm:mt-14">
+      {/* 
+        ========================================================================
+        ALL SECTIONS BELOW HERO - ROYAL RAJASTHANI HERITAGE BACKGROUND THEME
+        Authentic Marwar / Jodhpur / Jaisalmer Palace Sandstone & Jali Lattice
+        ========================================================================
+      */}
+      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pt-10 sm:pt-14 pb-16">
 
 
       {/* 
@@ -88,13 +94,13 @@ export const HomePage: React.FC = () => {
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] tracking-tight flex items-center">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center">
             <span>Shop by Category</span>
-            <SectionLeaf className="w-4 h-4 text-[#2F5D3A]" color="#2F5D3A" />
+            <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
           </h2>
           <Link
             to="/shop"
-            className="text-xs sm:text-sm font-semibold text-[#1F4D2E] hover:text-[#D9A441] transition-colors"
+            className="text-xs sm:text-sm font-semibold text-[#1F4D2E] dark:text-[#E5B85C] hover:text-[#D9A441] transition-colors"
           >
             View All →
           </Link>
@@ -247,6 +253,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <RajasthaniDivider />
+
       {/* 
         ========================================================================
         7. SEEDS & AATAA SECTION (Interactive Filter Tabs, 4:5 Cards, Purity Ribbon)
@@ -324,6 +332,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <RajasthaniDivider />
+
       {/* 
         ========================================================================
         8. BESTSELLERS (6 Flagship Ranked Cards with Gold Badges & 4:5 Showcase)
@@ -358,6 +368,8 @@ export const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
+
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================
@@ -561,7 +573,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================

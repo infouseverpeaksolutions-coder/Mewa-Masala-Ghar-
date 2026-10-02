@@ -345,3 +345,22 @@ export const SectionLeaf: React.FC<{ className?: string; color?: string }> = ({
   </svg>
 );
 
+// Authentic Rajasthani Royal Section Divider (Lotus & Gold Filigree Accents)
+export const RajasthaniDivider: React.FC<{ className?: string }> = ({ className = 'my-2 sm:my-4' }) => (
+  <div className={`flex items-center justify-center gap-3 px-4 ${className} select-none pointer-events-none`}>
+    <div className="h-px flex-1 max-w-[70px] sm:max-w-[140px] bg-gradient-to-r from-transparent via-[#D9A441]/30 to-[#D9A441]/75" />
+    <div className="flex items-center gap-2 text-[#D9A441]">
+      <span className="w-1 h-1 rounded-full bg-[#D9A441]/60" />
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#D9A441] bg-[#D9A441]/20" />
+      {/* Royal 8-point star / Lotus rosette */}
+      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#D9A441]" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <polygon points="12,2 14.5,8 21,9.5 16,14.5 17.5,21 12,17.5 6.5,21 8,14.5 3,9.5 9.5,8" fill="currentColor" fillOpacity="0.25" />
+        <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+      </svg>
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#D9A441] bg-[#D9A441]/20" />
+      <span className="w-1 h-1 rounded-full bg-[#D9A441]/60" />
+    </div>
+    <div className="h-px flex-1 max-w-[70px] sm:max-w-[140px] bg-gradient-to-l from-transparent via-[#D9A441]/30 to-[#D9A441]/75" />
+  </div>
+);
+
