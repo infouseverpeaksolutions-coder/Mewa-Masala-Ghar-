@@ -17,15 +17,15 @@ export interface CompanySettings {
 }
 
 const DEFAULT_SETTINGS: CompanySettings = {
-  company_name: 'Mewa Masala Ghar Private Limited',
+  company_name: 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)',
   tagline: 'Pure Indian Goodness, Rooted in Tradition',
-  phone: '+91 98200 12345',
-  email: 'care@mewamasalaghar.com',
-  address: 'Shop 14, APMC Grain Market, Sector 19, Vashi, Navi Mumbai, Maharashtra 400703',
-  gstin: '27AABCM1234F1Z5',
+  phone: '+91 70717 04506',
+  email: 'mewamasalaghar26@gmail.com',
+  address: 'HANWANT COLONY GANDHIPURA Balotra -344022',
+  gstin: '08AABCM1234F1Z5',
   fssai: '10021051000123',
-  state_code: '27',
-  state_name: 'Maharashtra',
+  state_code: '08',
+  state_name: 'Rajasthan',
   free_shipping_threshold: 499,
   standard_delivery_fee: 49,
   cod_charge: 0,

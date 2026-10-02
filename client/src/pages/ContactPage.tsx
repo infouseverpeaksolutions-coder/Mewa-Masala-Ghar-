@@ -39,7 +39,7 @@ export const ContactPage: React.FC = () => {
     setSubmitted(true);
   };
 
-  const whatsappUrl = `https://wa.me/91${settings.phone?.replace(/\D/g, '') || '9820012345'}?text=Hi%20Mewa%20Masala%20Ghar,%20I%20have%20an%20inquiry%20regarding%20my%20order/products`;
+  const whatsappUrl = `https://wa.me/91${settings.phone?.replace(/\D/g, '') || '7071704506'}?text=Hi%20Mewa%20Masala%20Ghar,%20I%20have%20an%20inquiry%20regarding%20my%20order/products`;
 
   return (
     <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-10 sm:py-14 space-y-14 pb-20">
@@ -52,7 +52,7 @@ export const ContactPage: React.FC = () => {
           We're Here to Assist You
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-xl mx-auto">
-          Have questions regarding dry fruit grading, baby food suitability, corporate gifting, or current orders? Our dedicated APMC team is ready to help.
+          Have questions regarding dry fruit grading, baby food suitability, corporate gifting, or current orders? Our dedicated team is ready to help.
         </p>
       </div>
 
@@ -119,7 +119,7 @@ export const ContactPage: React.FC = () => {
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-xs text-gray-500 font-medium block">APMC Packaging Depot</span>
+                <span className="text-xs text-gray-500 font-medium block">Registered Office & Depot</span>
                 <p className="font-semibold text-xs text-gray-800 leading-relaxed mt-0.5">
                   {settings.address}
                 </p>

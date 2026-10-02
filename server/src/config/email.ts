@@ -78,8 +78,8 @@ export const sendVerificationEmail = async (to: string, name: string, token: str
         </p>
       </div>
       <div style="text-align: center; margin-top: 24px; color: #8C7B65; font-size: 12px;">
-        <p style="margin: 4px 0;">FSSAI Lic. No.: 10021051000123 • GSTIN: 27AABCM1234F1Z5</p>
-        <p style="margin: 4px 0;">APMC Grain Market, Sector 19, Vashi, Navi Mumbai 400703</p>
+        <p style="margin: 4px 0;">FSSAI Lic. No.: 10021051000123 • GSTIN: 08AABCM1234F1Z5</p>
+        <p style="margin: 4px 0;">JAGRITI TRADING COMPANY ( MEWAMASALAGHAR) • HANWANT COLONY GANDHIPURA Balotra -344022</p>
       </div>
     </div>
   `;
@@ -113,7 +113,7 @@ export const sendPasswordResetEmail = async (to: string, name: string, token: st
         </p>
       </div>
       <div style="text-align: center; margin-top: 24px; color: #8C7B65; font-size: 12px;">
-        <p style="margin: 4px 0;">Customer Support: care@mewamasalaghar.com • +91 98200 12345</p>
+        <p style="margin: 4px 0;">Customer Support: mewamasalaghar26@gmail.com • +91 70717 04506</p>
       </div>
     </div>
   `;

@@ -82,29 +82,7 @@ const FEATURED_PRODUCTS: FeaturedProduct[] = [
   },
 ];
 
-const TESTIMONIALS = [
-  {
-    id: 1,
-    quote: 'The baby cream is so gentle and natural. My little one\'s skin has never been better!',
-    name: 'Priya S.',
-    avatar: '/jimmi-jaggu/avatar_priya.png',
-    rating: 5,
-  },
-  {
-    id: 2,
-    quote: 'I love the quality and purity of their skincare products. I feel safe using them on my skin.',
-    name: 'Neha K.',
-    avatar: '/jimmi-jaggu/avatar_neha.png',
-    rating: 5,
-  },
-  {
-    id: 3,
-    quote: 'Excellent products and fast delivery. A wonderful brand for every mom and baby!',
-    name: 'Anjali R.',
-    avatar: '/jimmi-jaggu/avatar_anjali.png',
-    rating: 5,
-  },
-];
+
 
 interface HeroSlide {
   id: string;
@@ -750,64 +728,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 
-        ========================================================================
-        6. WHAT OUR CUSTOMERS SAY (3 Testimonials with Avatars)
-        ========================================================================
-      */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#2B2321] dark:text-white tracking-tight">
-              What Our Customers Say
-            </h2>
-            <div className="w-12 sm:w-16 h-[1.5px] bg-[#D8CFC4] dark:bg-[#3E5244] hidden sm:block" />
-          </div>
-          <Link
-            to="/shop?store=baby"
-            className="text-xs sm:text-sm font-semibold text-[#8C6D37] dark:text-[#E5B85C] hover:underline flex items-center gap-1"
-          >
-            <span>View All</span>
-            <span className="text-xs">→</span>
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          {TESTIMONIALS.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-5 sm:p-6 shadow-soft flex flex-col justify-between"
-            >
-              <div>
-                {/* Quotation Icon */}
-                <span className="font-serif text-4xl text-[#C47D76]/40 leading-none block mb-2">“</span>
-                <p className="text-xs sm:text-[13px] text-[#5B504B] dark:text-gray-300 leading-relaxed italic mb-6">
-                  "{item.quote}"
-                </p>
-              </div>
-
-              {/* Customer Avatar & Stars */}
-              <div className="flex items-center gap-3 pt-2 border-t border-[#F2ECE4] dark:border-white/5">
-                <img
-                  src={item.avatar}
-                  alt={item.name}
-                  className="w-10 h-10 rounded-full object-cover border border-[#EAE1D5] shadow-xs shrink-0"
-                />
-                <div>
-                  <h4 className="text-xs font-bold text-[#2B2321] dark:text-white">
-                    {item.name}
-                  </h4>
-                  <div className="flex items-center gap-0.5 mt-0.5">
-                    {[...Array(item.rating)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 fill-[#D9A441] text-[#D9A441]" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* 
         ========================================================================

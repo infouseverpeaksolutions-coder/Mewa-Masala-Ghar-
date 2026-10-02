@@ -423,29 +423,4 @@ export const SISTER_BRAND_BANNER = {
   image: '/banners/jimmi_jaggu_baby_banner.png',
 };
 
-export const CUSTOMER_REVIEWS: MockReview[] = [
-  {
-    id: 'rev-1',
-    name: 'Neha S.',
-    city: 'Mumbai',
-    comment: 'The quality is amazing and packaging is so good. Highly recommended!',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80',
-  },
-  {
-    id: 'rev-2',
-    name: 'Rohit K.',
-    city: 'Pune',
-    comment: 'Fresh, tasty and healthy. My family loves it!',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80',
-  },
-  {
-    id: 'rev-3',
-    name: 'Priya M.',
-    city: 'Bengaluru',
-    comment: 'Great quality and fast delivery. Will definitely order again.',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-  },
-];
+

@@ -121,21 +121,22 @@ export const Footer: React.FC = () => {
               <ul className="space-y-2.5 text-xs text-white/80">
                 <li className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
-                  <a href="tel:+919876543210" className="hover:text-white transition-colors">
-                    +91 98765 43210
+                  <a href="tel:+917071704506" className="hover:text-white transition-colors font-medium">
+                    +91 70717 04506
                   </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
-                  <a href="mailto:care@jimmijaggu.com" className="hover:text-white transition-colors truncate">
-                    care@jimmijaggu.com
+                  <a href="mailto:mewamasalaghar26@gmail.com" className="hover:text-white transition-colors truncate font-medium">
+                    mewamasalaghar26@gmail.com
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
-                  <span className="leading-tight text-white/70">
-                    Srinagar, Jammu & Kashmir
-                  </span>
+                  <div className="leading-tight text-white/80">
+                    <span className="font-semibold block text-white/95">JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)</span>
+                    <span className="text-white/70 block mt-0.5">HANWANT COLONY GANDHIPURA Balotra -344022</span>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -279,26 +280,31 @@ export const Footer: React.FC = () => {
                 <li className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
                   <a
-                    href={`tel:${(settings.phone || '+91 98200 12345').replace(/\s+/g, '')}`}
-                    className="hover:text-white transition-colors"
+                    href="tel:+917071704506"
+                    className="hover:text-white transition-colors font-medium"
                   >
-                    {settings.phone || '+91 98200 12345'}
+                    {settings.phone || '+91 70717 04506'}
                   </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
                   <a
-                    href={`mailto:${settings.email || 'care@mewamasalaghar.com'}`}
-                    className="hover:text-white transition-colors truncate"
+                    href="mailto:mewamasalaghar26@gmail.com"
+                    className="hover:text-white transition-colors truncate font-medium"
                   >
-                    {settings.email || 'care@mewamasalaghar.com'}
+                    {settings.email || 'mewamasalaghar26@gmail.com'}
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
-                  <span className="leading-tight text-white/70">
-                    {settings.address || 'APMC Grain Market, Vashi, Navi Mumbai, India'}
-                  </span>
+                  <div className="leading-tight text-white/80">
+                    <span className="font-semibold block text-white/95">
+                      {settings.company_name || 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)'}
+                    </span>
+                    <span className="text-white/70 block mt-0.5">
+                      {settings.address || 'HANWANT COLONY GANDHIPURA Balotra -344022'}
+                    </span>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -307,7 +313,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Strip */}
         <div className="pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-white/60 gap-4">
-          <p>© 2026 {isJimmiJaggu ? 'Jimmi Jaggu' : 'Mewa Masala Ghar'}. All rights reserved.</p>
+          <p>© 2026 {isJimmiJaggu ? 'Jimmi Jaggu' : 'Mewa Masala Ghar'} · JAGRITI TRADING COMPANY. All rights reserved.</p>
 
           {/* Social icons */}
           <div className="flex items-center gap-4 text-white/80">

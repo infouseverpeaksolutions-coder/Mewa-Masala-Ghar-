@@ -40,57 +40,8 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
 }) => {
   const { user } = useAuth();
 
-  // Reviews state with authentic verified customer reviews
-  const [reviews, setReviews] = useState<ReviewItem[]>([
-    {
-      id: 'rev-1',
-      userName: 'Ananya Deshmukh',
-      city: 'Pune',
-      rating: 5,
-      title: 'Exceptional freshness & crunch!',
-      comment:
-        'Delivered within 2 days in solid nitrogen-flushed packaging. Zero broken pieces or moisture. The aroma when opened was authentic and pure. Will definitely reorder monthly.',
-      date: '2 days ago',
-      isVerified: true,
-      helpfulCount: 19,
-    },
-    {
-      id: 'rev-2',
-      userName: 'Rajesh Kothari',
-      city: 'Mumbai',
-      rating: 5,
-      title: 'Real APMC direct quality',
-      comment:
-        'Finally a brand that provides unpolished, unadulterated quality without fake chemical shine. You can immediately taste the natural sweetness and oils. Outstanding quality.',
-      date: '1 week ago',
-      isVerified: true,
-      helpfulCount: 14,
-    },
-    {
-      id: 'rev-3',
-      userName: 'Pooja Iyer',
-      city: 'Bengaluru',
-      rating: 5,
-      title: 'Kids loved it — healthy & pure',
-      comment:
-        'Our whole family enjoys this as a guilt-free evening snack. The natural crunch and clean flavor make it superior to market brands. Truly crafted by nature.',
-      date: '2 weeks ago',
-      isVerified: true,
-      helpfulCount: 11,
-    },
-    {
-      id: 'rev-4',
-      userName: 'Dr. Sameer Patel',
-      city: 'Ahmedabad',
-      rating: 4,
-      title: 'Very good quality and hygienic packing',
-      comment:
-        'Recommended for anyone conscious about clean nutrition and heart health. Quality is top-notch and vacuum-sealed for long shelf life.',
-      date: '3 weeks ago',
-      isVerified: true,
-      helpfulCount: 8,
-    },
-  ]);
+  // Reviews state - starts empty; genuine reviews fetched from API or user-submitted
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
 
   // Form state
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -515,7 +466,18 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
 
       {/* Customer Reviews List */}
       <div className="space-y-4 pt-2">
-        {filteredReviews.length === 0 ? (
+        {reviews.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 dark:text-gray-400">
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">No customer reviews yet.</p>
+            <p className="text-xs text-gray-400 mt-1">Have you tried {productName}? Be the first to share your experience!</p>
+            <button
+              onClick={() => setShowReviewForm(true)}
+              className="mt-3.5 px-5 py-2 rounded-full bg-[#1F4D2E] hover:bg-[#163821] dark:bg-[#284F33] dark:hover:bg-[#346643] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+            >
+              Write First Review
+            </button>
+          </div>
+        ) : filteredReviews.length === 0 ? (
           <div className="py-12 text-center text-gray-500 dark:text-gray-400">
             <p className="text-sm">No reviews matching the selected filter.</p>
             <button

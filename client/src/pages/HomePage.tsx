@@ -10,7 +10,6 @@ import {
   Baby,
   Sparkles,
   Heart,
-  Leaf,
   ShieldCheck,
   Wheat,
   Trophy,
@@ -434,29 +433,29 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Single Premium Showcase Banner - Adaptive to Light & Dark Theme */}
+        {/* Single Premium Showcase Banner - Off-White & Pearl White Matte Gradient */}
         <div
-          className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-8 md:p-10 lg:p-12 text-white border border-[#E8C5BC]/60 dark:border-[#7A363E]/60 transition-all duration-300 bg-gradient-to-br from-[#68262C] via-[#85343B] via-[#A0454E] to-[#B75B5F] dark:from-[#230D10] dark:via-[#351419] dark:via-[#471C23] dark:to-[#57222B]"
+          className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_12px_45px_-12px_rgba(60,40,30,0.08)] dark:shadow-[0_12px_45px_-12px_rgba(0,0,0,0.5)] p-5 sm:p-8 md:p-10 lg:p-12 border border-[#E2D9CC] dark:border-[#3E3533] transition-all duration-300 bg-gradient-to-br from-[#FDFBF7] via-[#F5EFE6] to-[#ECE4D6] dark:from-[#211D1C] dark:via-[#272220] dark:to-[#1B1817]"
         >
-          {/* Luminous Ambient Glows using Jimmi Jaggu Palette (Champagne Gold & Eucalyptus Sage) */}
+          {/* Soft Matte Ambient Accents */}
           <div
-            className="absolute -top-24 -right-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-30 dark:opacity-20 blur-3xl"
+            className="absolute -top-24 -right-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-20 dark:opacity-10 blur-3xl"
             style={{ background: 'radial-gradient(circle, #D9A441 0%, transparent 70%)' }}
           />
           <div
-            className="absolute -bottom-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-25 dark:opacity-30 blur-3xl"
-            style={{ background: 'radial-gradient(circle, #4A6D54 0%, transparent 70%)' }}
+            className="absolute -bottom-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-15 dark:opacity-15 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #78363A 0%, transparent 70%)' }}
           />
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-15 dark:opacity-10"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-30 dark:opacity-5"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(255,240,235,0.25) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.7) 0%, transparent 75%)',
             }}
           />
 
           {/* Subtle Decorative Botanical Vector Flourish */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-36 sm:w-48 h-36 sm:h-48 pointer-events-none opacity-15">
-            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-white">
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-36 sm:w-48 h-36 sm:h-48 pointer-events-none opacity-10 dark:opacity-15">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#78363A] dark:text-[#E8A598]">
               <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
               <path d="M100 95 C 115 80, 140 85, 145 100 C 135 110, 110 105, 100 95 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
@@ -467,13 +466,13 @@ export const HomePage: React.FC = () => {
 
           <div className="relative z-10">
             {/* 1. Direct Navigation to Jimmi Jaggu using the Official Logo */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-white/20 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-[#E2D9CC] dark:border-white/10">
               <Link
                 to="/jimmi-jaggu"
-                className="group inline-flex items-center gap-3.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white/15 dark:bg-black/35 hover:bg-white/25 dark:hover:bg-black/50 border border-white/30 dark:border-white/15 backdrop-blur-md shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-3.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60 border border-[#DED5C6] dark:border-white/15 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
                 title="Navigate to Jimmi Jaggu Page"
               >
-                <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-white p-1.5 shadow-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-white p-1.5 shadow-xs border border-[#EDE5D8] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
                   <img
                     src="/brands/jimmi_jaggu_logo.png"
                     alt="Jimmi Jaggu Official Logo"
@@ -482,36 +481,32 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-serif text-base sm:text-lg font-bold tracking-tight text-white group-hover:text-[#FDEBE6] transition-colors">
+                    <span className="font-serif text-base sm:text-lg font-bold tracking-tight text-[#2C1D20] dark:text-[#FAF6EC] group-hover:text-[#78363A] dark:group-hover:text-[#E8A598] transition-colors">
                       Jimmi Jaggu
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FAF6EC] dark:bg-[#1A0B0E] text-[#7A3338] dark:text-[#E8A598] font-extrabold uppercase tracking-wider shadow-xs border border-transparent dark:border-[#7A3338]/40">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#78363A] text-white dark:bg-[#FAF6EC] dark:text-[#78363A] font-extrabold uppercase tracking-wider shadow-xs">
                       Official Sister Brand
                     </span>
                   </div>
-                  <p className="text-xs text-white/85 dark:text-white/75 font-medium flex items-center gap-1 group-hover:text-white transition-colors">
+                  <p className="text-xs text-[#63524E] dark:text-white/70 font-medium flex items-center gap-1 group-hover:text-[#78363A] dark:group-hover:text-white transition-colors">
                     <span>Visit Jimmi Jaggu Store</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </p>
                 </div>
               </Link>
 
-              <div className="flex items-center gap-2 text-white/90 dark:text-white/80 text-xs sm:text-sm font-medium">
+              <div className="flex items-center gap-2 text-[#63524E] dark:text-white/80 text-xs sm:text-sm font-medium">
                 <span className="w-2 h-2 rounded-full bg-[#D9A441] animate-pulse" />
-                <span>Presented with Care by <strong>Mewa Masala Ghar</strong></span>
+                <span>Presented with Care by <strong className="text-[#2C1D20] dark:text-white font-semibold">Mewa Masala Ghar</strong></span>
               </div>
             </div>
 
             {/* 2. Headline & Mission */}
             <div className="mt-5 sm:mt-7 max-w-2xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 dark:bg-black/30 backdrop-blur-xs border border-white/30 dark:border-white/15 text-white text-[11px] sm:text-xs font-semibold mb-2.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#D9A441]" />
-                <span>Pure Botanicals & Ayurvedic Living</span>
-              </div>
-              <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-white leading-tight drop-shadow-sm">
+              <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-[#2C1D20] dark:text-[#FAF6EC] leading-tight drop-shadow-xs">
                 Gentle Care for Little Ones, Radiant Skin & Maternal Poshan
               </h3>
-              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm md:text-base text-white/90 dark:text-white/80 leading-relaxed font-sans max-w-xl">
+              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm md:text-base text-[#5C4B47] dark:text-[#C7BCB8] leading-relaxed font-sans max-w-xl">
                 Rooted in timeless Indian wisdom — from sprouted multi-grain baby food and soothing massage oils to triple-sifted earthen multani clays and nurturing postpartum care.
               </p>
             </div>
@@ -521,23 +516,23 @@ export const HomePage: React.FC = () => {
               {/* Pillar 1: Baby Nutrition & Care */}
               <Link
                 to="/jimmi-jaggu?category=baby-nutrition"
-                className="group relative rounded-2xl bg-white/15 dark:bg-black/30 hover:bg-white/25 dark:hover:bg-black/45 border border-white/25 dark:border-white/12 hover:border-white/40 dark:hover:border-white/25 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-white/85 dark:bg-[#181514]/75 hover:bg-white dark:hover:bg-[#181514] border border-[#E0D7C8] dark:border-[#38302E] hover:border-[#CFBFA9] dark:hover:border-[#524643] p-4 sm:p-5 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-white/10 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
-                    <Baby className="w-5 h-5 text-[#E5B85C]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#FAF2EB] dark:bg-white/10 text-[#A66038] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-[#78363A] group-hover:text-white transition-all duration-300 shadow-xs">
+                    <Baby className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 dark:text-[#E8A598] block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8F4349] dark:text-[#E8A598] block">
                     Baby Care & Nutrition
                   </span>
-                  <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-[#2C1D20] dark:text-[#FAF6EC] mt-1 group-hover:text-[#78363A] dark:group-hover:text-[#FAF6EC] transition-colors">
                     Pratham Aahar & Baby Food
                   </h4>
-                  <p className="mt-2 text-xs text-white/85 dark:text-white/75 leading-relaxed font-normal">
+                  <p className="mt-2 text-xs text-[#5C4B47] dark:text-[#B3A6A2] leading-relaxed font-normal">
                     100% natural sprouted multi-grain porridge, nourishing infant massage oils, and soothing baby creams.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/15 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#FAF6EC] dark:text-[#E8A598]">
+                <div className="mt-4 pt-3 border-t border-[#EAE3D6] dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#78363A] dark:text-[#E8A598] group-hover:text-[#5E272B] dark:group-hover:text-[#FAF6EC] transition-colors">
                   <span>Shop Baby Care</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -546,23 +541,23 @@ export const HomePage: React.FC = () => {
               {/* Pillar 2: Personal Care & Multani Mitti */}
               <Link
                 to="/jimmi-jaggu?category=multani-collection"
-                className="group relative rounded-2xl bg-white/15 dark:bg-black/30 hover:bg-white/25 dark:hover:bg-black/45 border border-white/25 dark:border-white/12 hover:border-white/40 dark:hover:border-white/25 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-white/85 dark:bg-[#181514]/75 hover:bg-white dark:hover:bg-[#181514] border border-[#E0D7C8] dark:border-[#38302E] hover:border-[#CFBFA9] dark:hover:border-[#524643] p-4 sm:p-5 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-white/10 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
-                    <Sparkles className="w-5 h-5 text-[#F4A7A0]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#FDF0EE] dark:bg-white/10 text-[#C0606B] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-[#78363A] group-hover:text-white transition-all duration-300 shadow-xs">
+                    <Sparkles className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 dark:text-[#E8A598] block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8F4349] dark:text-[#E8A598] block">
                     Personal Care & Skincare
                   </span>
-                  <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-[#2C1D20] dark:text-[#FAF6EC] mt-1 group-hover:text-[#78363A] dark:group-hover:text-[#FAF6EC] transition-colors">
                     Multani Collection & Clays
                   </h4>
-                  <p className="mt-2 text-xs text-white/85 dark:text-white/75 leading-relaxed font-normal">
+                  <p className="mt-2 text-xs text-[#5C4B47] dark:text-[#B3A6A2] leading-relaxed font-normal">
                     300-Mesh triple-sifted Fuller’s Earth, Dead Sea mineral mud packs, and Pink Glow Clay for chemical-free detox.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/15 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#FAF6EC] dark:text-[#E8A598]">
+                <div className="mt-4 pt-3 border-t border-[#EAE3D6] dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#78363A] dark:text-[#E8A598] group-hover:text-[#5E272B] dark:group-hover:text-[#FAF6EC] transition-colors">
                   <span>Shop Multani Clays</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -571,52 +566,42 @@ export const HomePage: React.FC = () => {
               {/* Pillar 3: Pregnancy & Maternal Poshan */}
               <Link
                 to="/jimmi-jaggu?category=pregnancy-care"
-                className="group relative rounded-2xl bg-white/15 dark:bg-black/30 hover:bg-white/25 dark:hover:bg-black/45 border border-white/25 dark:border-white/12 hover:border-white/40 dark:hover:border-white/25 p-4 sm:p-5 backdrop-blur-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-white/85 dark:bg-[#181514]/75 hover:bg-white dark:hover:bg-[#181514] border border-[#E0D7C8] dark:border-[#38302E] hover:border-[#CFBFA9] dark:hover:border-[#524643] p-4 sm:p-5 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-white/10 text-[#FAF6EC] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-white group-hover:text-[#7A3338] transition-all duration-300 shadow-sm">
-                    <Heart className="w-5 h-5 text-[#8ED9A0]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#F0F5ED] dark:bg-white/10 text-[#4E7D58] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-[#78363A] group-hover:text-white transition-all duration-300 shadow-xs">
+                    <Heart className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FAF6EC]/80 dark:text-[#E8A598] block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8F4349] dark:text-[#E8A598] block">
                     Pregnancy & Maternity
                   </span>
-                  <h4 className="font-serif text-base sm:text-lg font-bold text-white mt-1 group-hover:text-[#FAF6EC]">
+                  <h4 className="font-serif text-base sm:text-lg font-bold text-[#2C1D20] dark:text-[#FAF6EC] mt-1 group-hover:text-[#78363A] dark:group-hover:text-[#FAF6EC] transition-colors">
                     Maternal & Family Poshan
                   </h4>
-                  <p className="mt-2 text-xs text-white/85 dark:text-white/75 leading-relaxed font-normal">
+                  <p className="mt-2 text-xs text-[#5C4B47] dark:text-[#B3A6A2] leading-relaxed font-normal">
                     Ayurvedic prenatal and postpartum nourishment formulated with ancient Indian wisdom for mothers.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-white/15 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#FAF6EC] dark:text-[#E8A598]">
+                <div className="mt-4 pt-3 border-t border-[#EAE3D6] dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#78363A] dark:text-[#E8A598] group-hover:text-[#5E272B] dark:group-hover:text-[#FAF6EC] transition-colors">
                   <span>Shop Maternal Care</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             </div>
 
-            {/* 4. Footer Strip: Trust Badges & Grand Action Button */}
-            <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/20 dark:border-white/10 flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-5">
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-[11px] sm:text-xs font-semibold text-white/95 dark:text-white/85">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-xs border border-white/20 dark:border-white/10">
-                  <Leaf className="w-3.5 h-3.5 text-[#8ED9A0]" />
-                  <span>100% Ayurvedic Heritage</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-xs border border-white/20 dark:border-white/10">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#D9A441]" />
-                  <span>Zero Harsh Chemicals</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 dark:bg-black/30 backdrop-blur-xs border border-white/20 dark:border-white/10">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FBEAE4]" />
-                  <span>Pediatrician & Derm Verified</span>
-                </div>
+            {/* 4. Footer Strip: Tagline & Grand Action Button (Trust badges removed) */}
+            <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#E2D9CC] dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-[#63524E] dark:text-[#C7BCB8]">
+                <span className="w-2 h-2 rounded-full bg-[#78363A] dark:bg-[#E8A598]" />
+                <span>Wholesome nutrition & earthen skin wellness for every generation</span>
               </div>
 
               <Link
                 to="/jimmi-jaggu"
-                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-[#FAF6EC] hover:bg-white text-[#68262C] dark:bg-gradient-to-r dark:from-[#FAF6EC] dark:to-[#FBEAE4] dark:text-[#3B1217] dark:hover:from-white dark:hover:to-[#FFF0EB] font-serif font-bold text-xs sm:text-sm tracking-wide shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 shrink-0 group"
+                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-[#78363A] hover:bg-[#62282D] text-[#FAF8F5] dark:bg-[#8F3E44] dark:hover:bg-[#78363A] font-serif font-bold text-xs sm:text-sm tracking-wide shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 shrink-0 group"
               >
                 <span>Explore Jimmi Jaggu Collection</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#68262C] dark:text-[#3B1217]" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#FAF8F5]" />
               </Link>
             </div>
           </div>
