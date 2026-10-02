@@ -23,6 +23,11 @@ import {
   RajasthaniDivider,
 } from '../components/ui/Icons';
 import {
+  RajasthaniArchFrieze,
+  RoyalMarwarElephant,
+  RajasthaniMandanaWatermark,
+} from '../components/ui/RajasthaniHeritage';
+import {
   CATEGORIES_DATA,
   DRY_FRUITS_PRODUCTS,
   COMBO_PACKS_BANNER,
@@ -84,7 +89,30 @@ export const HomePage: React.FC = () => {
         Authentic Marwar / Jodhpur / Jaisalmer Palace Sandstone & Jali Lattice
         ========================================================================
       */}
-      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pt-10 sm:pt-14 pb-16">
+      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pb-16 overflow-hidden">
+        {/* Ornate Rajasthani Palace Arch Frieze immediately under Hero */}
+        <RajasthaniArchFrieze />
+
+        {/* Flanking Royal Marwar Elephants in the background (Top sections) */}
+        <div className="hidden xl:block absolute left-2 top-24 pointer-events-none z-0">
+          <RoyalMarwarElephant className="w-44 h-40" />
+        </div>
+        <div className="hidden xl:block absolute right-2 top-24 pointer-events-none z-0">
+          <RoyalMarwarElephant className="w-44 h-40" flip />
+        </div>
+
+        {/* Flanking Royal Marwar Elephants in the background (Mid sections) */}
+        <div className="hidden xl:block absolute left-2 top-[1250px] pointer-events-none z-0">
+          <RoyalMarwarElephant className="w-44 h-40" />
+        </div>
+        <div className="hidden xl:block absolute right-2 top-[1250px] pointer-events-none z-0">
+          <RoyalMarwarElephant className="w-44 h-40" flip />
+        </div>
+
+        {/* Floating Sacred Mandana Lotus Medallion behind Bestsellers */}
+        <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-[1750px] pointer-events-none z-0 opacity-20">
+          <RajasthaniMandanaWatermark className="w-[420px] h-[420px]" />
+        </div>
 
 
       {/* 
