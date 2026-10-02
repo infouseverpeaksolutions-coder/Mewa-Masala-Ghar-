@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle2, ShieldCheck, MessageCircle, ChevronDown } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle2, ShieldCheck, ChevronDown } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 
 const QUICK_FAQS = [
@@ -13,7 +13,7 @@ const QUICK_FAQS = [
   },
   {
     q: 'Can I get custom corporate or festive gifting hampers?',
-    a: 'Absolutely. We provide personalized dry fruit and makhana boxes for Diwali, weddings, and corporate occasions. Reach out via WhatsApp or email for custom quotes.',
+    a: 'Absolutely. We provide personalized dry fruit and makhana boxes for Diwali, weddings, and corporate occasions. Reach out via email or phone for custom quotes.',
   },
   {
     q: 'What makes your infant porridge 100% clean label?',
@@ -39,8 +39,6 @@ export const ContactPage: React.FC = () => {
     setSubmitted(true);
   };
 
-  const whatsappUrl = `https://wa.me/91${settings.phone?.replace(/\D/g, '') || '7071704506'}?text=Hi%20Mewa%20Masala%20Ghar,%20I%20have%20an%20inquiry%20regarding%20my%20order/products`;
-
   return (
     <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-10 sm:py-14 space-y-14 pb-20">
       {/* Header */}
@@ -64,17 +62,6 @@ export const ContactPage: React.FC = () => {
             <h3 className="font-serif text-xl font-bold text-gray-900 border-b border-gray-100 pb-3">
               Get in Touch Directly
             </h3>
-
-            {/* WhatsApp Quick Connect Button */}
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3.5 px-5 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-full font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-md transition-all active:scale-98"
-            >
-              <MessageCircle className="w-5 h-5 fill-white" />
-              <span>Chat with Us on WhatsApp</span>
-            </a>
 
             {/* Phone */}
             <div className="flex items-start gap-4">

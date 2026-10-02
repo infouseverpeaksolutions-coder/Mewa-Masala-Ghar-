@@ -81,7 +81,7 @@ export const ReturnsPolicyPage: React.FC = () => {
           </p>
           <ol className="list-decimal pl-5 space-y-2 text-gray-600">
             <li>Take 1-2 clear photographs showing the shipping label, batch number, and condition of the affected item.</li>
-            <li>Email our support team at <a href={`mailto:${settings.email}`} className="text-[#2F5D3A] underline font-bold">{settings.email}</a> or connect via WhatsApp at <a href={`tel:${settings.phone}`} className="text-[#2F5D3A] underline font-bold">{settings.phone}</a> with your Order ID.</li>
+            <li>Email our support team at <a href={`mailto:${settings.email}`} className="text-[#2F5D3A] underline font-bold">{settings.email}</a> or call our support helpline at <a href={`tel:${settings.phone}`} className="text-[#2F5D3A] underline font-bold">{settings.phone}</a> with your Order ID.</li>
             <li>Our operations team will verify the claim and dispatch a replacement package within 24 hours at zero additional cost.</li>
           </ol>
         </section>
