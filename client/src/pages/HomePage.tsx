@@ -10,8 +10,6 @@ import {
   Baby,
   Sparkles,
   Heart,
-  ShieldCheck,
-  Wheat,
   Trophy,
 } from 'lucide-react';
 import { HeroVideo } from '../components/HeroVideo';
@@ -323,51 +321,6 @@ export const HomePage: React.FC = () => {
           {filteredSeedsAataa.map((prod) => (
             <SeedsAataaCard key={prod.id} product={prod} />
           ))}
-        </div>
-
-        {/* Quality & Traditional Milling Assurance Banner */}
-        <div className="mt-5 p-4 sm:p-5 rounded-2xl bg-white/70 dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-2xs grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] dark:bg-[#111813] text-[#1F4D2E] dark:text-[#8ED9A0] flex items-center justify-center shrink-0 border border-[#E7E0D0]/60 dark:border-[#2A3B2F]">
-              <Wheat className="w-5 h-5 text-[#2F5D3A] dark:text-[#8ED9A0]" />
-            </div>
-            <div>
-              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">
-                100% Whole Grain
-              </h4>
-              <p className="text-[11px] text-[#7A6B58] dark:text-[#C5BCAD] leading-tight">
-                Naturally unpolished, rich in essential minerals & dietary fiber
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] dark:bg-[#111813] text-[#D9A441] flex items-center justify-center shrink-0 border border-[#E7E0D0]/60 dark:border-[#2A3B2F]">
-              <Sparkles className="w-5 h-5 text-[#D9A441]" />
-            </div>
-            <div>
-              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">
-                Cold Stone-Chakki Ground
-              </h4>
-              <p className="text-[11px] text-[#7A6B58] dark:text-[#C5BCAD] leading-tight">
-                Slow-milled to retain live wheat germ nutrients & nutty aroma
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] dark:bg-[#111813] text-[#1F4D2E] dark:text-[#8ED9A0] flex items-center justify-center shrink-0 border border-[#E7E0D0]/60 dark:border-[#2A3B2F]">
-              <ShieldCheck className="w-5 h-5 text-[#2F5D3A] dark:text-[#8ED9A0]" />
-            </div>
-            <div>
-              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">
-                Triple Cleaned & Pure
-              </h4>
-              <p className="text-[11px] text-[#7A6B58] dark:text-[#C5BCAD] leading-tight">
-                Machine-sorted, sun-dried, 0% chemicals or artificial polish
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
