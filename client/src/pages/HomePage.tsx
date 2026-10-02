@@ -23,6 +23,11 @@ import {
   RajasthaniDivider,
 } from '../components/ui/Icons';
 import {
+  RoyalJharokhaArch,
+  RoyalRajasthaniBorders,
+  RoyalFortDivider,
+} from '../components/ui/RajasthaniBespokeTheme';
+import {
   CATEGORIES_DATA,
   DRY_FRUITS_PRODUCTS,
   COMBO_PACKS_BANNER,
@@ -80,11 +85,16 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        ALL SECTIONS BELOW HERO - ROYAL RAJASTHANI HERITAGE BACKGROUND THEME
-        User-Uploaded Authentic Royal Rajasthani Jharokha, Fort & Parchment Design
+        ALL SECTIONS BELOW HERO - ROYAL RAJASTHANI BESPOKE HERITAGE THEME
+        Crisp Vector Jali, Royal Jharokha Arch, Hanging Bells & Marwar Borders
         ========================================================================
       */}
-      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pt-12 sm:pt-20 lg:pt-28 pb-20 overflow-hidden">
+      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pb-20 overflow-hidden">
+        {/* Left & Right Royal Rajasthani Border Trims */}
+        <RoyalRajasthaniBorders />
+
+        {/* Handcrafted Royal Jharokha Arch with Hanging Brass Bells & Lamps */}
+        <RoyalJharokhaArch />
 
 
       {/* 
@@ -332,7 +342,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RajasthaniDivider />
+      <RoyalFortDivider title="Royal Selection • Handcrafted In Marwar" />
 
       {/* 
         ========================================================================
@@ -369,7 +379,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RajasthaniDivider />
+      <RoyalFortDivider title="Ayurvedic Heritage • Pure Living" />
 
       {/* 
         ========================================================================
@@ -573,7 +583,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RajasthaniDivider />
+      <RoyalFortDivider title="Mewa Masala Ghar • Royal Patronage" />
 
       {/* 
         ========================================================================
