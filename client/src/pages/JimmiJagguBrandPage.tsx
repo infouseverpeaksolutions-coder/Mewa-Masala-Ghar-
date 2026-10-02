@@ -5,12 +5,8 @@ import {
   ChevronRight,
   Star,
   Mail,
-  Leaf,
-  Heart,
-  ShieldCheck,
   Check,
   ArrowRight,
-  Sparkles,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
@@ -41,7 +37,7 @@ const FEATURED_PRODUCTS: FeaturedProduct[] = [
     price: 499,
     rating: 4.8,
     reviewsCount: 142,
-    image: '/jimmi-jaggu/prod_face_cream.png',
+    image: '/jimmi-jaggu/prod_dead_sea_mud.jpg',
     slug: 'dead-sea-mud-pack',
   },
   {
@@ -68,7 +64,7 @@ const FEATURED_PRODUCTS: FeaturedProduct[] = [
     price: 499,
     rating: 4.8,
     reviewsCount: 124,
-    image: '/jimmi-jaggu/prod_baby_cream.png',
+    image: '/jimmi-jaggu/prod_baby_cream.jpg',
     slug: 'baby-moisturizing-cream',
   },
   {
@@ -77,7 +73,7 @@ const FEATURED_PRODUCTS: FeaturedProduct[] = [
     price: 449,
     rating: 4.7,
     reviewsCount: 98,
-    image: '/jimmi-jaggu/prod_massage_oil.png',
+    image: '/jimmi-jaggu/prod_massage_oil.jpg',
     slug: 'natural-baby-massage-oil',
   },
 ];
@@ -603,70 +599,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
       {/* 
         ========================================================================
-        4. 4 VALUE / TRUST BADGES (Horizontal Card with dividers)
-        ========================================================================
-      */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
-        <div className="bg-[#FAF4EC] dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-6 sm:p-8 shadow-xs">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E7DEC8] dark:divide-[#2A3B2F]">
-            {/* 1: Natural Ingredients */}
-            <div className="flex flex-col items-center text-center p-3 sm:p-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2.5 text-[#C47D76]">
-                <Leaf className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <h4 className="font-serif font-bold text-sm sm:text-base text-[#2B2321] dark:text-white">
-                Natural Ingredients
-              </h4>
-              <p className="text-xs text-[#7A6D68] dark:text-gray-400 mt-0.5">
-                Pure & plant-based goodness
-              </p>
-            </div>
-
-            {/* 2: Gentle & Safe */}
-            <div className="flex flex-col items-center text-center p-3 sm:p-4 pt-4 sm:pt-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2.5 text-[#C47D76]">
-                <Heart className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <h4 className="font-serif font-bold text-sm sm:text-base text-[#2B2321] dark:text-white">
-                Gentle & Safe
-              </h4>
-              <p className="text-xs text-[#7A6D68] dark:text-gray-400 mt-0.5">
-                For your little ones & you
-              </p>
-            </div>
-
-            {/* 3: FSSAI Compliant */}
-            <div className="flex flex-col items-center text-center p-3 sm:p-4 pt-4 sm:pt-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2.5 text-[#C47D76]">
-                <ShieldCheck className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <h4 className="font-serif font-bold text-sm sm:text-base text-[#2B2321] dark:text-white">
-                FSSAI Compliant
-              </h4>
-              <p className="text-xs text-[#7A6D68] dark:text-gray-400 mt-0.5">
-                Quality you can trust
-              </p>
-            </div>
-
-            {/* 4: Made with Care */}
-            <div className="flex flex-col items-center text-center p-3 sm:p-4 pt-4 sm:pt-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2.5 text-[#C47D76]">
-                <Sparkles className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <h4 className="font-serif font-bold text-sm sm:text-base text-[#2B2321] dark:text-white">
-                Made with Care
-              </h4>
-              <p className="text-xs text-[#7A6D68] dark:text-gray-400 mt-0.5">
-                Because your family matters
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 
-        ========================================================================
-        5. SUB-BRAND STORY / HIGHLIGHT BANNER
+        4. SUB-BRAND STORY / HIGHLIGHT BANNER
         ========================================================================
       */}
       <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
