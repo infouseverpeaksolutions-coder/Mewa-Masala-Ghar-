@@ -304,7 +304,7 @@ export const FoodsStorePage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* FSSAI & Free Shipping Footer */}
+                    {/* Quality & Free Shipping Footer */}
                     <div
                       className={`pt-2 sm:pt-3 flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-medium ${
                         isTerracotta
@@ -318,7 +318,7 @@ export const FoodsStorePage: React.FC = () => {
                             isTerracotta ? 'text-[#FFD56B]' : 'text-[#2F5D3A]'
                           }`}
                         />
-                        FSSAI Lic. No. {settings.fssai}
+                        100% Authentic Quality
                       </span>
                       <span>•</span>
                       <span>Free Shipping Above ₹{settings.free_shipping_threshold}</span>

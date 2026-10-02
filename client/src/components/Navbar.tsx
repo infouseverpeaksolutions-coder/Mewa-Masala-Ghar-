@@ -103,7 +103,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                 <span className="text-white/40">•</span>
                 <span>100% Safe & Gentle</span>
                 <span className="text-white/40 hidden sm:inline">•</span>
-                <span className="hidden sm:inline">FSSAI Certified</span>
+                <span className="hidden sm:inline">Pure Botanicals</span>
                 <span className="text-white/60">›</span>
               </>
             ) : (
@@ -113,7 +113,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
                 <span className="text-white/40">•</span>
                 <span>100% Veg</span>
                 <span className="text-white/40 hidden sm:inline">•</span>
-                <span className="hidden sm:inline">FSSAI Certified</span>
+                <span className="hidden sm:inline">Authentic & Pure</span>
                 <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
               </>
             )}

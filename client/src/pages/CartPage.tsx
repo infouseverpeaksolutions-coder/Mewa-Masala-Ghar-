@@ -232,11 +232,11 @@ export const CartPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Mandi Direct Fresh Assurance Banner */}
+          {/* Direct Fresh Assurance Banner */}
           <div className="flex items-center gap-3 bg-[#FAF6EC] border border-[#E7E0D0] rounded-2xl p-4 text-xs text-gray-700 shadow-xs">
             <ShieldCheck className="w-5 h-5 text-[#2F5D3A] shrink-0" />
             <span>
-              <strong className="font-bold text-gray-900">FSSAI Certified Nitrogen Pouching:</strong> All dry fruits, seeds, and infant blends are vacuum-sealed to preserve natural harvest crunch and aroma without chemical fumigation.
+              <strong className="font-bold text-gray-900">Direct Fresh Assurance:</strong> All dry fruits, seeds, and infant blends are vacuum-sealed to preserve natural harvest crunch and aroma without chemical fumigation.
             </span>
           </div>
         </div>

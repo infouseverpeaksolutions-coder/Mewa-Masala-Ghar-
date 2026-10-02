@@ -59,10 +59,10 @@ export const TermsPage: React.FC = () => {
         <section className="space-y-3">
           <h2 className="font-serif text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2.5">
             <CheckCircle2 className="w-5 h-5 text-[#2F5D3A]" />
-            <span>2. Product Pricing & GST Compliance</span>
+            <span>2. Product Pricing & Tax Compliance</span>
           </h2>
           <p>
-            All prices listed on the platform are in Indian Rupees (INR) and are inclusive of Goods and Services Tax (GST) at statutory rates. {settings.company_name} operates under GSTIN <strong className="text-gray-900 font-semibold">{settings.gstin}</strong>. Official GST invoices are generated for every completed purchase.
+            All prices listed on the platform are in Indian Rupees (INR) and are inclusive of Goods and Services Tax (GST) at statutory rates. {settings.company_name} complies with all applicable commercial taxation guidelines. Official tax invoices are generated for every completed purchase.
           </p>
         </section>
 
@@ -75,7 +75,7 @@ export const TermsPage: React.FC = () => {
             The products offered across our three stores are traditional agricultural commodities, dietary infant blends, and natural mineral clays:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-gray-600">
-            <li><strong className="text-gray-900">Mewa & Healthy Foods:</strong> Packed under FSSAI License {settings.fssai}. May contain tree nut allergens. Store in airtight jars.</li>
+            <li><strong className="text-gray-900">Mewa & Healthy Foods:</strong> Packed under strict hygienic standards. May contain tree nut allergens. Store in airtight jars.</li>
             <li><strong className="text-gray-900">Baby & Family Nutrition:</strong> Intended as complementary solid food weaning. Not a replacement for mother's milk. Consult a certified pediatrician before introduction.</li>
             <li><strong className="text-gray-900">Personal Care & Clays:</strong> External cosmetic use only. Perform a behind-the-ear patch test before full application.</li>
           </ul>

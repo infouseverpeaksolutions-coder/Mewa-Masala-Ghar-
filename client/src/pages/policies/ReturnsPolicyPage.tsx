@@ -52,7 +52,7 @@ export const ReturnsPolicyPage: React.FC = () => {
             <span>1. Perishable Food & Hygiene Standards</span>
           </h2>
           <p>
-            Due to the hygienic nature of food items (dry fruits, nuts, makhana, spices, and infant baby nutrition) and cosmetic clays, products once delivered and unsealed cannot be returned for resale under Indian Food Safety & Standards (FSSAI) guidelines.
+            Due to the hygienic nature of food items (dry fruits, nuts, makhana, spices, and infant baby nutrition) and cosmetic clays, products once delivered and unsealed cannot be returned for resale under statutory food safety and consumer hygiene guidelines.
           </p>
         </section>
 

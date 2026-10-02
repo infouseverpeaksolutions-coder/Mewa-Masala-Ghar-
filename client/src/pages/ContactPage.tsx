@@ -125,18 +125,6 @@ export const ContactPage: React.FC = () => {
                 </p>
               </div>
             </div>
-
-            {/* Regulatory FSSAI & GSTIN */}
-            <div className="border-t border-gray-100 pt-4 space-y-2 text-xs text-gray-600 bg-[#FAF6EC]/60 p-4 rounded-2xl border border-[#E7E0D0]">
-              <div className="flex items-center justify-between">
-                <span>FSSAI License:</span>
-                <strong className="text-gray-900">{settings.fssai}</strong>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>GSTIN:</span>
-                <strong className="text-gray-900">{settings.gstin}</strong>
-              </div>
-            </div>
           </div>
         </div>
 

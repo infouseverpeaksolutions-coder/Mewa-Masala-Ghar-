@@ -155,9 +155,6 @@ export const Footer: React.FC = () => {
               <div className="text-[11px] text-[#D9A441] font-serif italic">
                 Pure • Natural • Wholesome
               </div>
-              <p className="text-[11px] text-white/50">
-                FSSAI Lic. No. <span className="font-mono text-white/80">{settings.fssai || '10021051000123'}</span>
-              </p>
             </div>
 
             {/* Col 2: Shop */}

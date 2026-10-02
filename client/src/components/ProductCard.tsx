@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Check, Heart, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Check, Heart } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -122,12 +122,6 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
               e.currentTarget.src = getFallbackImage();
             }}
           />
-
-          {/* FSSAI Mark in bottom right of image (as in mockup) */}
-          <div className="absolute bottom-2 right-2 bg-white/95 rounded px-1.5 py-0.5 flex items-center gap-1 shadow-xs border border-gray-100">
-            <ShieldCheck className="w-3 h-3 text-[#2F5D3A]" />
-            <span className="text-[9px] font-bold text-[#1F4D2E]">fssai</span>
-          </div>
         </Link>
       </div>
 

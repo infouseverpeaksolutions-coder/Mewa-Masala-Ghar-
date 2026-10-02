@@ -243,14 +243,6 @@ export const ProductDetailPage: React.FC = () => {
               </button>
             </div>
 
-            {/* FSSAI Badge on Image */}
-            {product.fssaiNumber && product.storeId !== 'care' && (
-              <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-[#18221B]/90 backdrop-blur-md text-[11px] font-semibold text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full border border-gray-200/80 dark:border-[#2A3B2F] flex items-center gap-1.5 shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#2F5D3A] dark:text-[#65B77E]" />
-                <span>FSSAI Lic. {product.fssaiNumber}</span>
-              </div>
-            )}
-
             {/* Hover Zoom hint for desktop */}
             <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs text-[10px] text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               <span>Roll over to zoom</span>
@@ -519,8 +511,8 @@ export const ProductDetailPage: React.FC = () => {
                 <Award className="w-4 h-4" />
               </div>
               <div className="text-[11px] leading-tight">
-                <strong className="block text-gray-900 dark:text-white">Certified</strong>
-                <span className="text-gray-500 dark:text-gray-400">FSSAI / AYUSH</span>
+                <strong className="block text-gray-900 dark:text-white">100% Pure</strong>
+                <span className="text-gray-500 dark:text-gray-400">Premium Quality</span>
               </div>
             </div>
           </div>
@@ -644,7 +636,7 @@ export const ProductDetailPage: React.FC = () => {
             <p>{product.howToUse || 'Store in a cool, dry place away from direct sunlight. Once opened, transfer to an airtight container to preserve authentic crunch.'}</p>
             <div className="p-4 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl text-xs text-emerald-900 dark:text-emerald-200 space-y-1">
               <strong className="block font-bold">Packaging & Shelf Life Guarantee:</strong>
-              <p>Best Before: 9 Months from date of packaging. Packed in an FSSAI certified hygienic facility with nitrogen flushing.</p>
+              <p>Best Before: 9 Months from date of packaging. Packed in a certified hygienic facility with nitrogen flushing.</p>
             </div>
           </div>
         )}

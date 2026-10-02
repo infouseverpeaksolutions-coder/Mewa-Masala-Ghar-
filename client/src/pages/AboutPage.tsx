@@ -267,21 +267,17 @@ export const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Corporate Compliance & Regulatory Badges */}
+      {/* Corporate Compliance & Registered Depot */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="bg-white rounded-3xl border border-[#E7E0D0] p-6 sm:p-8 shadow-soft text-center space-y-4">
           <ShieldCheck className="w-10 h-10 text-[#2F5D3A] mx-auto" />
           <h3 className="font-serif text-xl font-bold text-gray-900">
-            Registered Entity & Food Safety Licensing
+            Registered Commercial Entity
           </h3>
           <div className="flex flex-wrap justify-center gap-6 text-xs text-gray-600 pt-2">
             <div>
-              <span className="font-bold text-gray-900 block">FSSAI License:</span>
-              <span>{settings.fssai}</span>
-            </div>
-            <div className="sm:border-l border-gray-200 sm:pl-6">
-              <span className="font-bold text-gray-900 block">GSTIN:</span>
-              <span>{settings.gstin}</span>
+              <span className="font-bold text-gray-900 block">Company Name:</span>
+              <span>{settings.company_name}</span>
             </div>
             <div className="sm:border-l border-gray-200 sm:pl-6">
               <span className="font-bold text-gray-900 block">Registered Office:</span>

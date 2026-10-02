@@ -86,7 +86,7 @@ export const OrderSuccessPage: React.FC = () => {
           Thank You for Choosing Purity!
         </h1>
         <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto mb-8 leading-relaxed">
-          Your consignment <strong className="text-gray-900 font-bold">{order.orderNumber}</strong> is now reserved and being prepared in our FSSAI-certified APMC facility.
+          Your consignment <strong className="text-gray-900 font-bold">{order.orderNumber}</strong> is now reserved and being prepared in our certified hygienic facility.
         </p>
 
         {/* GST Invoice Callout Banner */}
