@@ -189,62 +189,81 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* =========================================================================
-   RAJASTHANI BESPOKE HERITAGE BACKGROUND THEME
-   Crisp Vector Jali Lattice, Handcrafted Palace Sandstone & Illuminated Trims
+   RAJASTHANI HERITAGE GLOBAL BACKGROUND LAYER
+   - Subtle, authentic Rajasthani artwork canvas behind all existing sections
+   - Jharokha arch and hanging lanterns frame the top under the hero
+   - Ornate traditional borders frame the page margins
+   - Fort, lake, camel & brass vessels anchor the lower portion
+   - Translucent warm ivory veil protects central content readability
    ========================================================================= */
 .rajasthani-theme-bg {
+  position: relative;
   background-color: #FAF5EA;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(217, 164, 65, 0.10) 0%, transparent 55%),
-    radial-gradient(circle at 10% 25%, rgba(143, 62, 68, 0.035) 0%, transparent 40%),
-    radial-gradient(circle at 90% 65%, rgba(47, 93, 58, 0.04) 0%, transparent 45%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23B8860B' stroke-width='1'%3E%3Cpath stroke-opacity='0.10' d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath stroke-opacity='0.13' stroke-width='1.1' d='M40 10 L70 40 L40 70 L10 40 Z'/%3E%3Crect x='26' y='26' width='28' height='28' stroke-opacity='0.11' stroke-width='1' fill='%23B8860B' fill-opacity='0.015'/%3E%3Ccircle cx='40' cy='40' r='8' stroke-opacity='0.14' fill='%23B8860B' fill-opacity='0.025'/%3E%3Ccircle cx='40' cy='40' r='3' fill='%23B8860B' fill-opacity='0.18' stroke='none'/%3E%3Cpath stroke-opacity='0.09' d='M40 0 Q40 20 20 20 Q40 20 40 40 Q40 20 60 20 Q40 20 40 0'/%3E%3Cpath stroke-opacity='0.09' d='M40 80 Q40 60 20 60 Q40 60 40 40 Q40 60 60 60 Q40 60 40 80'/%3E%3Ccircle cx='0' cy='0' r='6' stroke-opacity='0.11'/%3E%3Ccircle cx='80' cy='0' r='6' stroke-opacity='0.11'/%3E%3Ccircle cx='0' cy='80' r='6' stroke-opacity='0.11'/%3E%3Ccircle cx='80' cy='80' r='6' stroke-opacity='0.11'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-attachment: local;
+  isolation: isolate;
 }
 
+.rajasthani-theme-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    /* Layer 1: Subtle warm ivory translucent overlay: allows side borders, top arch, and bottom fort to softly frame the page while keeping central ecommerce content 100% clean, crisp, and high-contrast */
+    radial-gradient(ellipse 84% 100% at 50% 50%, rgba(250, 245, 234, 0.90) 0%, rgba(250, 245, 234, 0.82) 55%, rgba(250, 245, 234, 0.38) 88%, rgba(250, 245, 234, 0.12) 100%),
+    /* Layer 2: Top Jharokha arch with hanging lanterns & upper border */
+    url('/images/rajasthani-bg.jpg'),
+    /* Layer 3: Bottom Fort, lake, decorated camel, brass vessels & dry fruits */
+    url('/images/rajasthani-bg.jpg');
+  background-position:
+    center center,
+    center top,
+    center bottom;
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat;
+  background-size:
+    100% 100%,
+    100% auto,
+    100% auto;
+}
+
+/* Mobile & Tablet Responsiveness: proportionally adapt for 9:16 vertical canvas */
+@media (max-width: 768px) {
+  .rajasthani-theme-bg::before {
+    background-image:
+      radial-gradient(ellipse 92% 100% at 50% 50%, rgba(250, 245, 234, 0.92) 0%, rgba(250, 245, 234, 0.82) 65%, rgba(250, 245, 234, 0.35) 100%),
+      url('/images/rajasthani-bg.jpg'),
+      url('/images/rajasthani-bg.jpg');
+    background-size:
+      100% 100%,
+      cover,
+      contain;
+  }
+}
+
+/* Dark Mode: nocturnal royal palace ambience with emerald midnight tint */
 .dark .rajasthani-theme-bg {
   background-color: #0E1511;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(229, 184, 92, 0.12) 0%, transparent 60%),
-    radial-gradient(circle at 10% 25%, rgba(31, 77, 46, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 90% 65%, rgba(229, 184, 92, 0.06) 0%, transparent 50%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23E5B85C' stroke-width='1'%3E%3Cpath stroke-opacity='0.11' d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath stroke-opacity='0.14' stroke-width='1.1' d='M40 10 L70 40 L40 70 L10 40 Z'/%3E%3Crect x='26' y='26' width='28' height='28' stroke-opacity='0.12' stroke-width='1' fill='%23E5B85C' fill-opacity='0.02'/%3E%3Ccircle cx='40' cy='40' r='8' stroke-opacity='0.15' fill='%23E5B85C' fill-opacity='0.035'/%3E%3Ccircle cx='40' cy='40' r='3' fill='%23E5B85C' fill-opacity='0.20' stroke='none'/%3E%3Cpath stroke-opacity='0.10' d='M40 0 Q40 20 20 20 Q40 20 40 40 Q40 20 60 20 Q40 20 40 0'/%3E%3Cpath stroke-opacity='0.10' d='M40 80 Q40 60 20 60 Q40 60 40 40 Q40 60 60 60 Q40 60 40 80'/%3E%3Ccircle cx='0' cy='0' r='6' stroke-opacity='0.12'/%3E%3Ccircle cx='80' cy='0' r='6' stroke-opacity='0.12'/%3E%3Ccircle cx='0' cy='80' r='6' stroke-opacity='0.12'/%3E%3Ccircle cx='80' cy='80' r='6' stroke-opacity='0.12'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-attachment: local;
 }
 
-/* Royal Rajasthani Side Border Trim (Left & Right Margins) */
-.rajasthani-side-border-left {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 32px;
-  pointer-events: none;
-  z-index: 10;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='64' viewBox='0 0 32 64'%3E%3Cg fill='none'%3E%3Cline x1='31.5' y1='0' x2='31.5' y2='64' stroke='%23B8860B' stroke-width='1' stroke-opacity='0.32'/%3E%3Cline x1='28' y1='0' x2='28' y2='64' stroke='%23D9A441' stroke-width='0.75' stroke-opacity='0.22' stroke-dasharray='3 3'/%3E%3Cpath d='M8 0 Q22 16 8 32 Q22 48 8 64' stroke='%23B8860B' stroke-width='1.2' stroke-opacity='0.32'/%3E%3Cpath d='M14 16 C20 12 24 16 22 22 C18 22 15 19 14 16 Z' fill='%23D9A441' fill-opacity='0.32' stroke='%23B8860B' stroke-width='0.5' stroke-opacity='0.45'/%3E%3Ccircle cx='8' cy='32' r='3' fill='%238F3E44' fill-opacity='0.4' stroke='%23B8860B' stroke-width='0.5'/%3E%3Cpath d='M14 48 C20 44 24 48 22 54 C18 54 15 51 14 48 Z' fill='%232F5D3A' fill-opacity='0.32' stroke='%23B8860B' stroke-width='0.5' stroke-opacity='0.45'/%3E%3Ccircle cx='8' cy='64' r='3' fill='%238F3E44' fill-opacity='0.4' stroke='%23B8860B' stroke-width='0.5'/%3E%3Ccircle cx='4' cy='16' r='1.5' fill='%23D9A441' fill-opacity='0.32'/%3E%3Ccircle cx='4' cy='48' r='1.5' fill='%23D9A441' fill-opacity='0.32'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat-y;
-  background-position: left top;
+.dark .rajasthani-theme-bg::before {
+  background-image:
+    radial-gradient(ellipse 84% 100% at 50% 50%, rgba(14, 21, 17, 0.92) 0%, rgba(14, 21, 17, 0.84) 55%, rgba(14, 21, 17, 0.42) 88%, rgba(14, 21, 17, 0.18) 100%),
+    url('/images/rajasthani-bg.jpg'),
+    url('/images/rajasthani-bg.jpg');
+  opacity: 0.80;
+  filter: brightness(0.60) contrast(1.15);
 }
 
-.rajasthani-side-border-right {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 32px;
-  pointer-events: none;
-  z-index: 10;
-  transform: scaleX(-1);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='64' viewBox='0 0 32 64'%3E%3Cg fill='none'%3E%3Cline x1='31.5' y1='0' x2='31.5' y2='64' stroke='%23B8860B' stroke-width='1' stroke-opacity='0.32'/%3E%3Cline x1='28' y1='0' x2='28' y2='64' stroke='%23D9A441' stroke-width='0.75' stroke-opacity='0.22' stroke-dasharray='3 3'/%3E%3Cpath d='M8 0 Q22 16 8 32 Q22 48 8 64' stroke='%23B8860B' stroke-width='1.2' stroke-opacity='0.32'/%3E%3Cpath d='M14 16 C20 12 24 16 22 22 C18 22 15 19 14 16 Z' fill='%23D9A441' fill-opacity='0.32' stroke='%23B8860B' stroke-width='0.5' stroke-opacity='0.45'/%3E%3Ccircle cx='8' cy='32' r='3' fill='%238F3E44' fill-opacity='0.4' stroke='%23B8860B' stroke-width='0.5'/%3E%3Cpath d='M14 48 C20 44 24 48 22 54 C18 54 15 51 14 48 Z' fill='%232F5D3A' fill-opacity='0.32' stroke='%23B8860B' stroke-width='0.5' stroke-opacity='0.45'/%3E%3Ccircle cx='8' cy='64' r='3' fill='%238F3E44' fill-opacity='0.4' stroke='%23B8860B' stroke-width='0.5'/%3E%3Ccircle cx='4' cy='16' r='1.5' fill='%23D9A441' fill-opacity='0.32'/%3E%3Ccircle cx='4' cy='48' r='1.5' fill='%23D9A441' fill-opacity='0.32'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat-y;
-  background-position: left top;
-}
-
-.dark .rajasthani-side-border-left,
-.dark .rajasthani-side-border-right {
-  opacity: 0.6;
+@media (max-width: 768px) {
+  .dark .rajasthani-theme-bg::before {
+    background-image:
+      radial-gradient(ellipse 92% 100% at 50% 50%, rgba(14, 21, 17, 0.94) 0%, rgba(14, 21, 17, 0.86) 65%, rgba(14, 21, 17, 0.40) 100%),
+      url('/images/rajasthani-bg.jpg'),
+      url('/images/rajasthani-bg.jpg');
+  }
 }
 
 .rajasthani-footer-bg {

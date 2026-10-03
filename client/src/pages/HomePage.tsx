@@ -23,11 +23,6 @@ import {
   RajasthaniDivider,
 } from '../components/ui/Icons';
 import {
-  RoyalJharokhaArch,
-  RoyalRajasthaniBorders,
-  RoyalFortDivider,
-} from '../components/ui/RajasthaniBespokeTheme';
-import {
   CATEGORIES_DATA,
   DRY_FRUITS_PRODUCTS,
   COMBO_PACKS_BANNER,
@@ -85,16 +80,11 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        ALL SECTIONS BELOW HERO - ROYAL RAJASTHANI BESPOKE HERITAGE THEME
-        Crisp Vector Jali, Royal Jharokha Arch, Hanging Bells & Marwar Borders
+        ALL SECTIONS BELOW HERO - ROYAL RAJASTHANI HERITAGE BACKGROUND THEME
+        Global Heritage Background Layer with Warm Ivory Translucent Overlay
         ========================================================================
       */}
-      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pb-20 overflow-hidden">
-        {/* Left & Right Royal Rajasthani Border Trims */}
-        <RoyalRajasthaniBorders />
-
-        {/* Handcrafted Royal Jharokha Arch with Hanging Brass Bells & Lamps */}
-        <RoyalJharokhaArch />
+      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pt-6 sm:pt-10 lg:pt-14 pb-20 overflow-hidden">
 
 
       {/* 
@@ -342,7 +332,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RoyalFortDivider title="Royal Selection • Handcrafted In Marwar" />
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================
@@ -379,7 +369,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RoyalFortDivider title="Ayurvedic Heritage • Pure Living" />
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================
@@ -583,7 +573,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RoyalFortDivider title="Mewa Masala Ghar • Royal Patronage" />
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================
