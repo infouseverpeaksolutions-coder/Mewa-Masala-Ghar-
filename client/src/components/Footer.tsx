@@ -29,10 +29,10 @@ export const Footer: React.FC = () => {
               </p>
               {/* Social icons */}
               <div className="flex items-center gap-3.5 text-white/80 pt-1">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
+                <a href="https://www.instagram.com/mewamasalaghar?stkn=MWx0bnlzdzgzNmU3Yg==" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
                   <Instagram className="w-3.5 h-3.5" />
                 </a>
-                <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
+                <a href="https://www.facebook.com/share/1Dg1fCJAxf/" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
                   <Facebook className="w-3.5 h-3.5" />
                 </a>
                 <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
@@ -154,6 +154,18 @@ export const Footer: React.FC = () => {
               </p>
               <div className="text-[11px] text-[#D9A441] font-serif italic">
                 Pure • Natural • Wholesome
+              </div>
+              {/* Social icons */}
+              <div className="flex items-center gap-3.5 text-white/80 pt-1">
+                <a href="https://www.instagram.com/mewamasalaghar?stkn=MWx0bnlzdzgzNmU3Yg==" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
+                  <Instagram className="w-3.5 h-3.5" />
+                </a>
+                <a href="https://www.facebook.com/share/1Dg1fCJAxf/" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
+                  <Facebook className="w-3.5 h-3.5" />
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="hover:text-[#D9A441] transition-colors p-1.5 bg-white/5 rounded-full hover:bg-white/10">
+                  <Youtube className="w-3.5 h-3.5" />
+                </a>
               </div>
             </div>
 
@@ -314,10 +326,10 @@ export const Footer: React.FC = () => {
 
           {/* Social icons */}
           <div className="flex items-center gap-4 text-white/80">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#D9A441] transition-colors">
+            <a href="https://www.instagram.com/mewamasalaghar?stkn=MWx0bnlzdzgzNmU3Yg==" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#D9A441] transition-colors">
               <Instagram className="w-4 h-4" />
             </a>
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#D9A441] transition-colors">
+            <a href="https://www.facebook.com/share/1Dg1fCJAxf/" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#D9A441] transition-colors">
               <Facebook className="w-4 h-4" />
             </a>
             <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="hover:text-[#D9A441] transition-colors">

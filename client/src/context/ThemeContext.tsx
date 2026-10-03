@@ -20,7 +20,7 @@ export const STORE_THEMES: Record<StoreType, StoreThemeInfo> = {
     themeClass: 'theme-foods',
     primaryColor: '#2F5D3A', // Deep Forest Green
     accentColor: '#D9A441',  // Gold
-    bgColor: '#FAF6EC',      // Ivory
+    bgColor: '#F3E2C3',      // Rajasthani Parchment
   },
   baby: {
     slug: 'baby',

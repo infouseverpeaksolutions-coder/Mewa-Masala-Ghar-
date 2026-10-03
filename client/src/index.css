@@ -8,7 +8,7 @@
   --theme-primary-hover: #1F4D2E;
   --theme-accent: #D9A441;
   --theme-accent-hover: #C28E31;
-  --theme-bg: #FAF6EC;
+  --theme-bg: #F3E2C3;
   --theme-text: #2B2B2B;
   --theme-card: #FFFFFF;
   --theme-border: #E7E0D0;
@@ -26,7 +26,7 @@
   --theme-primary-hover: #1E6B86;
   --theme-accent: #F4A261;
   --theme-accent-hover: #DE8D4D;
-  --theme-bg: #FAF6EC; /* Keep ivory page canvas */
+  --theme-bg: #F3E2C3;
   --theme-text: #2B2B2B;
   --theme-card: #FFFFFF;
   --theme-border: #D8EBF3;
@@ -44,7 +44,7 @@
   --theme-primary-hover: #A84E5B;
   --theme-accent: #C7926B;
   --theme-accent-hover: #B17D56;
-  --theme-bg: #FAF6EC; /* Keep ivory page canvas */
+  --theme-bg: #F3E2C3;
   --theme-text: #2B2B2B;
   --theme-card: #FFFFFF;
   --theme-border: #F5DEE1;
@@ -131,7 +131,7 @@
 }
 
 body {
-  background-color: var(--theme-bg, #FAF6EC);
+  background-color: var(--theme-bg, #F3E2C3);
   color: var(--theme-text, #2B2B2B);
   font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
   margin: 0;
@@ -189,81 +189,136 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* =========================================================================
-   RAJASTHANI HERITAGE GLOBAL BACKGROUND LAYER
-   - Subtle, authentic Rajasthani artwork canvas behind all existing sections
-   - Jharokha arch and hanging lanterns frame the top under the hero
-   - Ornate traditional borders frame the page margins
-   - Fort, lake, camel & brass vessels anchor the lower portion
-   - Translucent warm ivory veil protects central content readability
+   RAJASTHANI HERITAGE BACKGROUND THEME
+   Palette:
+   - Main parchment: #F3E2C3
+   - Light areas: #F7E8CC
+   - Deep Green: #2F5D3A
+   - Terracotta: #A6533B
+   - Deep Red: #963F2F
+   - Mustard Gold: #C69232
+   - Heritage Brown: #5A3825
+   - Brand Gold: #D9A441
    ========================================================================= */
 .rajasthani-theme-bg {
   position: relative;
-  background-color: #FAF5EA;
+  background-color: #F3E2C3;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, #FAF1DE 0%, #F7E8CC 35%, #F3E2C3 75%, #ECD9B6 100%),
+    /* Very subtle antique paper texture & traditional block-print watermark */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%235A3825' stroke-width='0.8' stroke-opacity='0.035'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3Cpath d='M50 15 C58 28 65 35 78 35 C65 35 58 42 50 55 C42 42 35 35 22 35 C35 35 42 28 50 15 Z' fill='%23A6533B' fill-opacity='0.02'/%3E%3Ccircle cx='50' cy='35' r='4' fill='%23D9A441' fill-opacity='0.025' stroke='none'/%3E%3Ccircle cx='50' cy='50' r='1.5' fill='%239B3F2F' fill-opacity='0.03' stroke='none'/%3E%3Ccircle cx='0' cy='0' r='5' stroke-opacity='0.025'/%3E%3Ccircle cx='100' cy='0' r='5' stroke-opacity='0.025'/%3E%3Ccircle cx='0' cy='100' r='5' stroke-opacity='0.025'/%3E%3Ccircle cx='100' cy='100' r='5' stroke-opacity='0.025'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
   isolation: isolate;
 }
 
-.rajasthani-theme-bg::before {
-  content: "";
+/* Continuous Rajasthani Textile Block-Print Border (Top Edge) */
+.rajasthani-page-border-top {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 18px;
   pointer-events: none;
-  background-image:
-    /* Layer 1: Subtle warm ivory translucent overlay: allows side borders, top arch, and bottom fort to softly frame the page while keeping central ecommerce content 100% clean, crisp, and high-contrast */
-    radial-gradient(ellipse 84% 100% at 50% 50%, rgba(250, 245, 234, 0.90) 0%, rgba(250, 245, 234, 0.82) 55%, rgba(250, 245, 234, 0.38) 88%, rgba(250, 245, 234, 0.12) 100%),
-    /* Layer 2: Top Jharokha arch with hanging lanterns & upper border */
-    url('/images/rajasthani-bg.jpg'),
-    /* Layer 3: Bottom Fort, lake, decorated camel, brass vessels & dry fruits */
+  z-index: 15;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='18' viewBox='0 0 44 18'%3E%3Cg fill='none'%3E%3Crect x='0' y='0' width='44' height='18' fill='%23F7E8CC' fill-opacity='0.7'/%3E%3Cline x1='0' y1='0.5' x2='44' y2='0.5' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.4'/%3E%3Cline x1='0' y1='2.5' x2='44' y2='2.5' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.35' stroke-dasharray='2 2'/%3E%3Cline x1='0' y1='17.5' x2='44' y2='17.5' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.4'/%3E%3Cline x1='0' y1='15.5' x2='44' y2='15.5' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.35' stroke-dasharray='2 2'/%3E%3Cpath d='M0 9 L11 3.5 L22 9 L33 3.5 L44 9' stroke='%23963F2F' stroke-width='1.2' stroke-opacity='0.7'/%3E%3Cpath d='M0 9 L11 14.5 L22 9 L33 14.5 L44 9' stroke='%232F5D3A' stroke-width='1.0' stroke-opacity='0.6'/%3E%3Ccircle cx='11' cy='9' r='2' fill='%23D9A441' fill-opacity='0.9'/%3E%3Ccircle cx='33' cy='9' r='2' fill='%23D9A441' fill-opacity='0.9'/%3E%3Ccircle cx='22' cy='3.5' r='1.3' fill='%23A6533B' fill-opacity='0.8'/%3E%3Ccircle cx='22' cy='14.5' r='1.3' fill='%23C69232' fill-opacity='0.8'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: left top;
+}
+
+/* Continuous Rajasthani Textile Block-Print Border (Bottom Edge) */
+.rajasthani-page-border-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 18px;
+  pointer-events: none;
+  z-index: 15;
+  transform: scaleY(-1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='18' viewBox='0 0 44 18'%3E%3Cg fill='none'%3E%3Crect x='0' y='0' width='44' height='18' fill='%23F7E8CC' fill-opacity='0.7'/%3E%3Cline x1='0' y1='0.5' x2='44' y2='0.5' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.4'/%3E%3Cline x1='0' y1='2.5' x2='44' y2='2.5' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.35' stroke-dasharray='2 2'/%3E%3Cline x1='0' y1='17.5' x2='44' y2='17.5' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.4'/%3E%3Cline x1='0' y1='15.5' x2='44' y2='15.5' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.35' stroke-dasharray='2 2'/%3E%3Cpath d='M0 9 L11 3.5 L22 9 L33 3.5 L44 9' stroke='%23963F2F' stroke-width='1.2' stroke-opacity='0.7'/%3E%3Cpath d='M0 9 L11 14.5 L22 9 L33 14.5 L44 9' stroke='%232F5D3A' stroke-width='1.0' stroke-opacity='0.6'/%3E%3Ccircle cx='11' cy='9' r='2' fill='%23D9A441' fill-opacity='0.9'/%3E%3Ccircle cx='33' cy='9' r='2' fill='%23D9A441' fill-opacity='0.9'/%3E%3Ccircle cx='22' cy='3.5' r='1.3' fill='%23A6533B' fill-opacity='0.8'/%3E%3Ccircle cx='22' cy='14.5' r='1.3' fill='%23C69232' fill-opacity='0.8'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+/* Continuous Rajasthani Textile Block-Print Horizontal Divider Band */
+.rajasthani-horizontal-band {
+  width: 100%;
+  height: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='14' viewBox='0 0 44 14'%3E%3Cg fill='none'%3E%3Crect x='0' y='0' width='44' height='14' fill='%23F7E8CC' fill-opacity='0.6'/%3E%3Cline x1='0' y1='0.5' x2='44' y2='0.5' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.45'/%3E%3Cline x1='0' y1='2' x2='44' y2='2' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.35' stroke-dasharray='2 2'/%3E%3Cline x1='0' y1='13.5' x2='44' y2='13.5' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.45'/%3E%3Cline x1='0' y1='12' x2='44' y2='12' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.35' stroke-dasharray='2 2'/%3E%3Cpath d='M0 7 L11 2.5 L22 7 L33 2.5 L44 7' stroke='%23963F2F' stroke-width='1.1' stroke-opacity='0.75'/%3E%3Cpath d='M0 7 L11 11.5 L22 7 L33 11.5 L44 7' stroke='%232F5D3A' stroke-width='0.9' stroke-opacity='0.65'/%3E%3Ccircle cx='11' cy='7' r='1.8' fill='%23D9A441' fill-opacity='0.95'/%3E%3Ccircle cx='33' cy='7' r='1.8' fill='%23D9A441' fill-opacity='0.95'/%3E%3Ccircle cx='22' cy='2.5' r='1.2' fill='%23A6533B' fill-opacity='0.8'/%3E%3Ccircle cx='22' cy='11.5' r='1.2' fill='%23C69232' fill-opacity='0.8'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* Continuous Rajasthani Textile Block-Print Border (Left & Right Margins) */
+.rajasthani-page-border-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  pointer-events: none;
+  z-index: 15;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='44' viewBox='0 0 22 44'%3E%3Cg fill='none'%3E%3Crect x='0' y='0' width='22' height='44' fill='%23F7E8CC' fill-opacity='0.55'/%3E%3Cline x1='21.5' y1='0' x2='21.5' y2='44' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.35'/%3E%3Cline x1='19' y1='0' x2='19' y2='44' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.3' stroke-dasharray='2 2'/%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='44' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.35'/%3E%3Cline x1='2.5' y1='0' x2='2.5' y2='44' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.3' stroke-dasharray='2 2'/%3E%3Cpath d='M4 0 L11 11 L4 22 L11 33 L4 44' stroke='%23963F2F' stroke-width='1.1' stroke-opacity='0.6'/%3E%3Cpath d='M16 0 L9 11 L16 22 L9 33 L16 44' stroke='%232F5D3A' stroke-width='0.9' stroke-opacity='0.5'/%3E%3Ccircle cx='10' cy='11' r='1.8' fill='%23D9A441' fill-opacity='0.85'/%3E%3Ccircle cx='10' cy='33' r='1.8' fill='%23D9A441' fill-opacity='0.85'/%3E%3Ccircle cx='4.5' cy='22' r='1.4' fill='%23A6533B' fill-opacity='0.75'/%3E%3Ccircle cx='15.5' cy='22' r='1.4' fill='%23C69232' fill-opacity='0.75'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-y;
+  background-position: left top;
+}
+
+.rajasthani-page-border-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  pointer-events: none;
+  z-index: 15;
+  transform: scaleX(-1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='44' viewBox='0 0 22 44'%3E%3Cg fill='none'%3E%3Crect x='0' y='0' width='22' height='44' fill='%23F7E8CC' fill-opacity='0.55'/%3E%3Cline x1='21.5' y1='0' x2='21.5' y2='44' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.35'/%3E%3Cline x1='19' y1='0' x2='19' y2='44' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.3' stroke-dasharray='2 2'/%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='44' stroke='%235A3825' stroke-width='0.75' stroke-opacity='0.35'/%3E%3Cline x1='2.5' y1='0' x2='2.5' y2='44' stroke='%23A6533B' stroke-width='0.5' stroke-opacity='0.3' stroke-dasharray='2 2'/%3E%3Cpath d='M4 0 L11 11 L4 22 L11 33 L4 44' stroke='%23963F2F' stroke-width='1.1' stroke-opacity='0.6'/%3E%3Cpath d='M16 0 L9 11 L16 22 L9 33 L16 44' stroke='%232F5D3A' stroke-width='0.9' stroke-opacity='0.5'/%3E%3Ccircle cx='10' cy='11' r='1.8' fill='%23D9A441' fill-opacity='0.85'/%3E%3Ccircle cx='10' cy='33' r='1.8' fill='%23D9A441' fill-opacity='0.85'/%3E%3Ccircle cx='4.5' cy='22' r='1.4' fill='%23A6533B' fill-opacity='0.75'/%3E%3Ccircle cx='15.5' cy='22' r='1.4' fill='%23C69232' fill-opacity='0.75'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat-y;
+  background-position: left top;
+}
+
+/* Lower Rajasthani Heritage Scene & Food Atmosphere */
+.rajasthani-lower-heritage-scene {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 650px;
+  pointer-events: none;
+  z-index: 1;
+  background-image: 
+    linear-gradient(to top, rgba(243, 226, 195, 0.15) 0%, rgba(243, 226, 195, 0.70) 45%, #F3E2C3 100%),
     url('/images/rajasthani-bg.jpg');
-  background-position:
-    center center,
-    center top,
-    center bottom;
-  background-repeat:
-    no-repeat,
-    no-repeat,
-    no-repeat;
-  background-size:
-    100% 100%,
-    100% auto,
-    100% auto;
+  background-position: center bottom;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  opacity: 0.42;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 100%);
 }
 
-/* Mobile & Tablet Responsiveness: proportionally adapt for 9:16 vertical canvas */
-@media (max-width: 768px) {
-  .rajasthani-theme-bg::before {
-    background-image:
-      radial-gradient(ellipse 92% 100% at 50% 50%, rgba(250, 245, 234, 0.92) 0%, rgba(250, 245, 234, 0.82) 65%, rgba(250, 245, 234, 0.35) 100%),
-      url('/images/rajasthani-bg.jpg'),
-      url('/images/rajasthani-bg.jpg');
-    background-size:
-      100% 100%,
-      cover,
-      contain;
-  }
-}
-
-/* Dark Mode: nocturnal royal palace ambience with emerald midnight tint */
+/* Dark Mode Theme Adaptation */
 .dark .rajasthani-theme-bg {
   background-color: #0E1511;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(20, 31, 23, 0.95) 0%, rgba(14, 21, 17, 0.85) 60%, #0B110D 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23E5B85C' stroke-width='0.8' stroke-opacity='0.045'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3Ccircle cx='50' cy='35' r='4' fill='%23E5B85C' fill-opacity='0.035' stroke='none'/%3E%3Ccircle cx='50' cy='50' r='1.5' fill='%23E5B85C' fill-opacity='0.045' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-.dark .rajasthani-theme-bg::before {
-  background-image:
-    radial-gradient(ellipse 84% 100% at 50% 50%, rgba(14, 21, 17, 0.92) 0%, rgba(14, 21, 17, 0.84) 55%, rgba(14, 21, 17, 0.42) 88%, rgba(14, 21, 17, 0.18) 100%),
-    url('/images/rajasthani-bg.jpg'),
+.dark .rajasthani-page-border-top,
+.dark .rajasthani-page-border-bottom,
+.dark .rajasthani-page-border-left,
+.dark .rajasthani-page-border-right {
+  opacity: 0.55;
+  filter: brightness(0.85) contrast(1.1);
+}
+
+.dark .rajasthani-lower-heritage-scene {
+  background-image: 
+    linear-gradient(to top, rgba(14, 21, 17, 0.3) 0%, rgba(14, 21, 17, 0.85) 45%, #0E1511 100%),
     url('/images/rajasthani-bg.jpg');
-  opacity: 0.80;
-  filter: brightness(0.60) contrast(1.15);
-}
-
-@media (max-width: 768px) {
-  .dark .rajasthani-theme-bg::before {
-    background-image:
-      radial-gradient(ellipse 92% 100% at 50% 50%, rgba(14, 21, 17, 0.94) 0%, rgba(14, 21, 17, 0.86) 65%, rgba(14, 21, 17, 0.40) 100%),
-      url('/images/rajasthani-bg.jpg'),
-      url('/images/rajasthani-bg.jpg');
-  }
+  opacity: 0.25;
+  filter: brightness(0.65) contrast(1.2);
 }
 
 .rajasthani-footer-bg {
