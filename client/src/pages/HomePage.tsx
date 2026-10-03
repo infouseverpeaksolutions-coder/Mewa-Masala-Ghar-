@@ -22,7 +22,6 @@ import {
   BranchFlourishRight,
   RajasthaniDivider,
 } from '../components/ui/Icons';
-import { RajasthaniHeritageBackground } from '../components/ui/RajasthaniHeritageBackground';
 import {
   CATEGORIES_DATA,
   DRY_FRUITS_PRODUCTS,
@@ -81,13 +80,10 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        ALL SECTIONS BELOW HERO - ROYAL RAJASTHANI HERITAGE BACKGROUND THEME
-        Global Heritage Background Layer with Warm Ivory / Sandstone Palette
+        ALL SECTIONS BELOW HERO - CLEAN PLAIN WHITE BACKGROUND
         ========================================================================
       */}
-      <div className="rajasthani-theme-bg relative space-y-10 sm:space-y-14 pt-8 sm:pt-12 lg:pt-16 pb-20 overflow-hidden">
-        {/* Full Decorative Heritage Canvas: Continuous Borders, Arches, Silhouettes & Atmosphere */}
-        <RajasthaniHeritageBackground />
+      <div className="bg-white dark:bg-[#111813] relative space-y-10 sm:space-y-14 pt-8 sm:pt-12 pb-20 overflow-hidden">
 
 
       {/* 
@@ -256,7 +252,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RajasthaniDivider variant="woman-camels" />
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================
@@ -335,7 +331,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RajasthaniDivider variant="caravan-fort" />
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================
@@ -372,7 +368,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <RajasthaniDivider variant="camels-fort" />
+      <RajasthaniDivider />
 
       {/* 
         ========================================================================

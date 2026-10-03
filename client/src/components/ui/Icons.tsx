@@ -1,10 +1,4 @@
 import React from 'react';
-import {
-  CaravanCamelsSilhouette,
-  FortPalaceSilhouette,
-  RajasthaniWomanSilhouette,
-  DecoratedCamelsPair,
-} from './RajasthaniHeritageBackground';
 
 export const LeafIcon: React.FC<{ className?: string; color?: string }> = ({ className = 'w-4 h-4', color = 'currentColor' }) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -351,72 +345,23 @@ export const SectionLeaf: React.FC<{ className?: string; color?: string }> = ({
   </svg>
 );
 
-export interface RajasthaniDividerProps {
-  className?: string;
-  variant?: 'caravan-fort' | 'woman-camels' | 'camels-fort' | 'simple';
-}
-
-// Authentic Royal Rajasthani Section Divider with Horizontal Textile Band & Resting Silhouettes
-export const RajasthaniDivider: React.FC<RajasthaniDividerProps> = ({
-  className = 'my-8 sm:my-10 pt-4',
-  variant = 'simple',
-}) => {
-  let leftElement: React.ReactNode = null;
-  let rightElement: React.ReactNode = null;
-
-  if (variant === 'caravan-fort') {
-    leftElement = <CaravanCamelsSilhouette className="h-8 sm:h-9 w-auto" />;
-    rightElement = <FortPalaceSilhouette className="h-9 sm:h-10 w-auto" />;
-  } else if (variant === 'woman-camels') {
-    leftElement = <RajasthaniWomanSilhouette className="h-9 sm:h-11 w-auto" />;
-    rightElement = <DecoratedCamelsPair className="h-8 sm:h-9 w-auto" />;
-  } else if (variant === 'camels-fort') {
-    leftElement = <DecoratedCamelsPair className="h-8 sm:h-9 w-auto" />;
-    rightElement = <FortPalaceSilhouette className="h-9 sm:h-10 w-auto" />;
-  }
-
-  return (
-    <div className={`relative w-full px-2 sm:px-6 lg:px-8 select-none pointer-events-none ${className}`}>
-      {/* Silhouettes resting directly on top of the horizontal textile band */}
-      <div className="relative flex items-center justify-between">
-        {leftElement && (
-          <div className="hidden sm:block absolute left-4 sm:left-8 lg:left-12 bottom-[14px] z-10 drop-shadow-xs">
-            {leftElement}
-          </div>
-        )}
-        {rightElement && (
-          <div className="hidden sm:block absolute right-4 sm:right-8 lg:right-12 bottom-[14px] z-10 drop-shadow-xs">
-            {rightElement}
-          </div>
-        )}
-      </div>
-
-      {/* Continuous Rajasthani Textile Block-Print Band */}
-      <div className="relative flex items-center justify-center">
-        <div className="rajasthani-horizontal-band rounded-sm" />
-
-        {/* Center Royal Medallion */}
-        <div className="absolute bg-[#FAF1DE] dark:bg-[#18221B] px-3 sm:px-4 py-0.5 rounded-full border border-[#D9A441]/50 flex items-center gap-1.5 sm:gap-2 shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />
-          <span className="w-1.5 h-1.5 rotate-45 border border-[#5A3825] bg-[#D9A441]" />
-          {/* 8-Point Lotus Star Medallion */}
-          <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#963F2F]" fill="none">
-            <polygon
-              points="12,2 14.8,7.8 21,8.8 16.5,13.2 17.5,19.5 12,16.5 6.5,19.5 7.5,13.2 3,8.8 9.2,7.8"
-              fill="#D9A441"
-              fillOpacity="0.5"
-              stroke="#5A3825"
-              strokeWidth="0.8"
-            />
-            <circle cx="12" cy="12" r="3" fill="#963F2F" />
-            <circle cx="12" cy="12" r="1.3" fill="#FAF1DE" />
-          </svg>
-          <span className="w-1.5 h-1.5 rotate-45 border border-[#5A3825] bg-[#D9A441]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />
-        </div>
-      </div>
+// Authentic Royal Section Divider (Lotus & Gold Filigree Accents)
+export const RajasthaniDivider: React.FC<{ className?: string }> = ({ className = 'my-4 sm:my-6' }) => (
+  <div className={`flex items-center justify-center gap-3 px-4 ${className} select-none pointer-events-none`}>
+    <div className="h-px flex-1 max-w-[70px] sm:max-w-[140px] bg-gradient-to-r from-transparent via-[#D9A441]/30 to-[#D9A441]/75" />
+    <div className="flex items-center gap-2 text-[#D9A441]">
+      <span className="w-1 h-1 rounded-full bg-[#D9A441]/60" />
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#D9A441] bg-[#D9A441]/20" />
+      {/* Royal 8-point star / Lotus rosette */}
+      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#D9A441]" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <polygon points="12,2 14.5,8 21,9.5 16,14.5 17.5,21 12,17.5 6.5,21 8,14.5 3,9.5 9.5,8" fill="currentColor" fillOpacity="0.25" />
+        <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+      </svg>
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#D9A441] bg-[#D9A441]/20" />
+      <span className="w-1 h-1 rounded-full bg-[#D9A441]/60" />
     </div>
-  );
-};
+    <div className="h-px flex-1 max-w-[70px] sm:max-w-[140px] bg-gradient-to-l from-transparent via-[#D9A441]/30 to-[#D9A441]/75" />
+  </div>
+);
 
 

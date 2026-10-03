@@ -8,7 +8,7 @@
   --theme-primary-hover: #1F4D2E;
   --theme-accent: #D9A441;
   --theme-accent-hover: #C28E31;
-  --theme-bg: #F3E2C3;
+  --theme-bg: #FFFFFF;
   --theme-text: #2B2B2B;
   --theme-card: #FFFFFF;
   --theme-border: #E7E0D0;
@@ -26,7 +26,7 @@
   --theme-primary-hover: #1E6B86;
   --theme-accent: #F4A261;
   --theme-accent-hover: #DE8D4D;
-  --theme-bg: #F3E2C3;
+  --theme-bg: #FFFFFF;
   --theme-text: #2B2B2B;
   --theme-card: #FFFFFF;
   --theme-border: #D8EBF3;
@@ -44,7 +44,7 @@
   --theme-primary-hover: #A84E5B;
   --theme-accent: #C7926B;
   --theme-accent-hover: #B17D56;
-  --theme-bg: #F3E2C3;
+  --theme-bg: #FFFFFF;
   --theme-text: #2B2B2B;
   --theme-card: #FFFFFF;
   --theme-border: #F5DEE1;
@@ -131,7 +131,7 @@
 }
 
 body {
-  background-color: var(--theme-bg, #F3E2C3);
+  background-color: var(--theme-bg, #FFFFFF);
   color: var(--theme-text, #2B2B2B);
   font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
   margin: 0;
