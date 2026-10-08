@@ -40,7 +40,6 @@ const NAV_ITEMS = [
   { label: 'Homepage Manager', path: '/homepage-manager', icon: Home },
   { label: 'Content Pages', path: '/pages', icon: FileText },
   { label: 'Analytics & Reports', path: '/reports', icon: BarChart3 },
-  { label: 'Staff & Roles', path: '/staff-roles', icon: UserCheck },
   { label: 'Store Settings', path: '/settings', icon: Settings },
 ];
 
@@ -140,7 +139,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
             <div className="hidden xl:flex items-center gap-2 text-xs font-medium text-[#2F5D3A] bg-[#2F5D3A]/10 px-3 py-1 rounded-full border border-[#2F5D3A]/20">
               <ShieldCheck className="w-3.5 h-3.5 text-[#2F5D3A]" />
-              <span>FSSAI: 10021051000123 • GSTIN: 27AABCM1234F1Z5</span>
+              <span>FSSAI: 10021051000123 • GSTIN: 08BVFPR9012N1Z0</span>
             </div>
           </div>
 
@@ -151,11 +150,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-gray-100 transition-colors"
             >
               <div className="text-right hidden sm:block">
-                <span className="text-xs font-bold text-gray-900 block leading-tight">Super Administrator</span>
-                <span className="text-[11px] text-[#2F5D3A] font-semibold">super_admin@mewamasalaghar.com</span>
+                <span className="text-xs font-bold text-gray-900 block leading-tight">Administrator</span>
+                <span className="text-[11px] text-[#2F5D3A] font-semibold">admin@mewamasalaghar.com</span>
               </div>
               <div className="w-9 h-9 rounded-xl bg-[#183B23] text-[#FAF6EC] flex items-center justify-center font-bold text-sm border border-[#D9A441]">
-                SA
+                AD
               </div>
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </button>

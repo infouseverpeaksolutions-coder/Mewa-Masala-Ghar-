@@ -39,6 +39,7 @@ import {
 import { getCoupons, createCoupon } from '../controllers/couponController';
 import { getSettings, updateSettings } from '../controllers/settingController';
 import { adminGetOrders, adminGetOrderDetail, adminUpdateOrderStatus } from '../controllers/webhookController';
+import { shipOrderWithShiprocket } from '../controllers/shippingController';
 import { authenticate, requireAdmin, requireStaffPermission } from '../middleware/auth';
 import { upload } from '../config/upload';
 
@@ -54,6 +55,7 @@ router.get('/dashboard', getDashboardStats);
 router.get('/orders', requireStaffPermission('orders'), adminGetOrders);
 router.get('/orders/:id', requireStaffPermission('orders'), adminGetOrderDetail);
 router.put('/orders/:id/status', requireStaffPermission('orders'), adminUpdateOrderStatus);
+router.post('/orders/:id/ship-shiprocket', requireStaffPermission('orders'), shipOrderWithShiprocket);
 
 // Stores CRUD (Products module)
 router.get('/stores', requireStaffPermission('products'), getAdminStores);

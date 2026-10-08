@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
   const isJimmiJaggu = location.pathname.startsWith('/jimmi-jaggu');
 
   return (
-    <footer className="rajasthani-footer-bg text-white pt-12 pb-20 md:pb-12 border-t border-[#D9A441]/25 relative">
+    <footer className="bg-[#1F4D2E] dark:bg-[#111813] text-white pt-12 pb-20 md:pb-12 border-t border-white/10 relative">
       <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         {isJimmiJaggu ? (
           /* Jimmi Jaggu Specific Footer Layout Matching Mockup */

@@ -160,19 +160,6 @@ export const App: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/staff-roles"
-        element={
-          <ProtectedRoute>
-            <ComingSoonPage
-              title="Staff Accounts & Module Permissions"
-              description="Assign granular access control to dispatch operators, catalog managers, and customer support representatives."
-              icon={UserCheck}
-              phase="Phase 4"
-            />
-          </ProtectedRoute>
-        }
-      />
 
       <Route
         path="/settings"

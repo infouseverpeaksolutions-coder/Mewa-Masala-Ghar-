@@ -345,23 +345,109 @@ export const SectionLeaf: React.FC<{ className?: string; color?: string }> = ({
   </svg>
 );
 
-// Authentic Royal Section Divider (Lotus & Gold Filigree Accents)
-export const RajasthaniDivider: React.FC<{ className?: string }> = ({ className = 'my-4 sm:my-6' }) => (
-  <div className={`flex items-center justify-center gap-3 px-4 ${className} select-none pointer-events-none`}>
-    <div className="h-px flex-1 max-w-[70px] sm:max-w-[140px] bg-gradient-to-r from-transparent via-[#D9A441]/30 to-[#D9A441]/75" />
-    <div className="flex items-center gap-2 text-[#D9A441]">
-      <span className="w-1 h-1 rounded-full bg-[#D9A441]/60" />
-      <span className="w-1.5 h-1.5 rotate-45 border border-[#D9A441] bg-[#D9A441]/20" />
-      {/* Royal 8-point star / Lotus rosette */}
-      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#D9A441]" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <polygon points="12,2 14.5,8 21,9.5 16,14.5 17.5,21 12,17.5 6.5,21 8,14.5 3,9.5 9.5,8" fill="currentColor" fillOpacity="0.25" />
-        <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+// Authentic Royal Section Divider (Jaali lattice wings with royal medallion from screenshot)
+export const RajasthaniDivider: React.FC<{ className?: string; color?: string }> = ({
+  className = 'my-8 sm:my-10',
+  color = '#C9962C',
+}) => (
+  <div
+    className={`relative w-full flex items-center justify-center px-4 sm:px-8 select-none pointer-events-none ${className}`}
+    aria-hidden="true"
+  >
+    {/* Left Jaali lattice wing with fading line and diamond notches */}
+    <div className="flex-1 max-w-xs sm:max-w-md h-3 relative overflow-hidden">
+      <svg
+        viewBox="0 0 300 12"
+        preserveAspectRatio="none"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-full h-full"
+      >
+        <defs>
+          <linearGradient id="jaaliFadeLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={color} stopOpacity="0" />
+            <stop offset="50%" stopColor={color} stopOpacity="0.4" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.95" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M 0 6 L 300 6"
+          stroke="url(#jaaliFadeLeft)"
+          strokeWidth="1.2"
+        />
+        {/* Diamond micro notches */}
+        {[60, 110, 160, 210, 250, 280].map((x) => (
+          <polygon
+            key={`L-${x}`}
+            points={`${x},3 ${x + 4},6 ${x},9 ${x - 4},6`}
+            stroke={color}
+            strokeWidth="0.8"
+            fill="none"
+            strokeOpacity="0.7"
+          />
+        ))}
       </svg>
-      <span className="w-1.5 h-1.5 rotate-45 border border-[#D9A441] bg-[#D9A441]/20" />
-      <span className="w-1 h-1 rounded-full bg-[#D9A441]/60" />
     </div>
-    <div className="h-px flex-1 max-w-[70px] sm:max-w-[140px] bg-gradient-to-l from-transparent via-[#D9A441]/30 to-[#D9A441]/75" />
+
+    {/* Central Royal Medallion (Rajasthani 8-Point Star & Lotus Rosette) */}
+    <div className="flex items-center gap-2 sm:gap-2.5 px-3 py-1 bg-[#FAF4E8] dark:bg-[#16212B] rounded-full border border-[#C9962C]/60 shadow-xs">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#1B4D6B]" />
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#C9962C] bg-[#B5472B]" />
+
+      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#C9962C]" fill="none" stroke="currentColor">
+        {/* 8-point royal star */}
+        <polygon
+          points="12,2 14.8,7.8 21,8.8 16.5,13.2 17.5,19.5 12,16.5 6.5,19.5 7.5,13.2 3,8.8 9.2,7.8"
+          fill="#C9962C"
+          fillOpacity="0.3"
+          stroke="#C9962C"
+          strokeWidth="1.2"
+        />
+        {/* Terracotta center gem */}
+        <circle cx="12" cy="12" r="3" fill="#B5472B" />
+        <circle cx="12" cy="12" r="1.2" fill="#FAF4E8" />
+      </svg>
+
+      <span className="w-1.5 h-1.5 rotate-45 border border-[#C9962C] bg-[#B5472B]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-[#1B4D6B]" />
+    </div>
+
+    {/* Right Jaali lattice wing with fading line and diamond notches */}
+    <div className="flex-1 max-w-xs sm:max-w-md h-3 relative overflow-hidden">
+      <svg
+        viewBox="0 0 300 12"
+        preserveAspectRatio="none"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-full h-full"
+      >
+        <defs>
+          <linearGradient id="jaaliFadeRight" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+            <stop offset="50%" stopColor={color} stopOpacity="0.4" />
+            <stop offset="100%" stopColor={color} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M 0 6 L 300 6"
+          stroke="url(#jaaliFadeRight)"
+          strokeWidth="1.2"
+        />
+        {[20, 50, 90, 140, 190, 240].map((x) => (
+          <polygon
+            key={`R-${x}`}
+            points={`${x},3 ${x + 4},6 ${x},9 ${x - 4},6`}
+            stroke={color}
+            strokeWidth="0.8"
+            fill="none"
+            strokeOpacity="0.7"
+          />
+        ))}
+      </svg>
+    </div>
   </div>
 );
+
+export { RajasthaniDivider as JaaliDivider };
 
 

@@ -9,6 +9,7 @@ import { ENV } from '../config/env';
 import { sendEmail } from '../config/email';
 import crypto from 'crypto';
 import { OrderStatus, PaymentStatus, PaymentMethod, TrackingStatus } from '@prisma/client';
+import { shiprocketService } from '../services/shiprocketService';
 
 // Email Template Helper
 const getEmailTemplate = (title: string, message: string) => `
@@ -656,6 +657,17 @@ export const trackOrder = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Unable to find order with the provided details.' });
     }
 
+    let liveShiprocketData = null;
+    const firstAwb = order.shipments[0]?.awbNo;
+    if (firstAwb && ENV.SHIPROCKET_EMAIL && ENV.SHIPROCKET_PASSWORD && !firstAwb.startsWith('MANUAL-') && !firstAwb.startsWith('SIM-')) {
+      try {
+        const srRes = await shiprocketService.trackByAwb(firstAwb);
+        liveShiprocketData = srRes?.tracking_data || null;
+      } catch (srErr) {
+        // Non-blocking fallback
+      }
+    }
+
     const sanitizedData = {
       orderNumber: order.orderNumber,
       status: order.status,
@@ -664,7 +676,8 @@ export const trackOrder = async (req: Request, res: Response) => {
       placedAt: order.createdAt,
       statusHistory: order.statusHistory.map(h => ({ status: h.status, comment: h.comment, time: h.createdAt })),
       trackingEvents: order.trackingEvents.map(t => ({ status: t.status, title: t.title, description: t.description, location: t.location, time: t.eventTime })),
-      shipments: order.shipments.map(s => ({ courier: s.courier, awbNo: s.awbNo, trackingUrl: s.trackingUrl, expectedDelivery: s.expectedDelivery, status: s.status }))
+      shipments: order.shipments.map(s => ({ courier: s.courier, awbNo: s.awbNo, trackingUrl: s.trackingUrl, expectedDelivery: s.expectedDelivery, status: s.status })),
+      liveTracking: liveShiprocketData,
     };
 
     res.status(200).json({ success: true, data: sanitizedData, tracking: sanitizedData });

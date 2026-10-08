@@ -104,6 +104,36 @@ export interface Order {
   courierName?: string;
   items: OrderItem[];
   createdAt: string;
+  shipments?: Array<{
+    id: string;
+    courier?: string;
+    awbNo?: string;
+    trackingUrl?: string;
+    expectedDelivery?: string;
+    status: string;
+    trackingEvents?: Array<{
+      id: string;
+      title: string;
+      description?: string;
+      location?: string;
+      eventTime: string;
+    }>;
+  }>;
+  trackingEvents?: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    location?: string;
+    eventTime: string;
+    status: string;
+  }>;
+  statusHistory?: Array<{
+    id: string;
+    status: string;
+    comment?: string;
+    createdBy?: string;
+    createdAt: string;
+  }>;
 }
 
 export interface Customer {

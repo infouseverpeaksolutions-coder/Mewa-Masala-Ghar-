@@ -19,6 +19,7 @@ import cartRoutes from './routes/cartRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import publicRoutes from './routes/publicRoutes';
 import webhookRoutes from './routes/webhookRoutes';
+import shippingRoutes from './routes/shippingRoutes';
 
 const app = express();
 
@@ -81,6 +82,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api', publicRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/shipping', shippingRoutes);
 
 
 // Error handling middleware

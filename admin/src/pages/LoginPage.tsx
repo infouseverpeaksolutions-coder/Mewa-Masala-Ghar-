@@ -17,9 +17,9 @@ export const LoginPage: React.FC = () => {
     try {
       const res = await api.post('/auth/login', { email, password });
       if (res.data?.success) {
-        const allowedRoles = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'STAFF'];
+        const allowedRoles = ['SUPER_ADMIN', 'ADMIN'];
         if (!allowedRoles.includes(res.data.data.user.role)) {
-          setError('Access denied: Customer accounts cannot log into the Merchant Dashboard.');
+          setError('Access denied: Customer accounts cannot log into the Admin Panel.');
           return;
         }
         setAdminToken(res.data.data.accessToken);
@@ -39,8 +39,8 @@ export const LoginPage: React.FC = () => {
       <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-2xl border border-gray-100">
         <div className="text-center mb-8">
           <img src="/logo.png" alt="Mewa Masala Ghar" className="h-16 w-auto mx-auto mb-3 object-contain drop-shadow-xs" />
-          <h1 className="font-serif text-2xl font-bold text-gray-900">Admin Control Center</h1>
-          <p className="text-xs text-gray-500 mt-1">Mewa Masala Ghar Operations & Catalog Management</p>
+          <h1 className="font-serif text-2xl font-bold text-gray-900">Admin Panel</h1>
+          <p className="text-xs text-gray-500 mt-1">Orders, Shipments & Store Management</p>
         </div>
 
         {error && (

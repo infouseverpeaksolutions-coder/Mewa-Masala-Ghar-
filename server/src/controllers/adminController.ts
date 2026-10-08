@@ -229,6 +229,15 @@ export const getAdminCategories = async (req: Request, res: Response) => {
 export const createAdminCategory = async (req: Request, res: Response) => {
   try {
     const { storeId, parentId, name, slug, description, image, displayOrder } = req.body;
+    let targetStoreId = storeId;
+    if (!targetStoreId) {
+      const firstStore = await prisma.store.findFirst();
+      targetStoreId = firstStore?.id;
+    }
+    if (!targetStoreId) {
+      return res.status(400).json({ success: false, message: 'No department store found. Please create a store first.' });
+    }
+
     let finalSlug = (slug || name)
       .toLowerCase()
       .trim()
@@ -243,7 +252,7 @@ export const createAdminCategory = async (req: Request, res: Response) => {
 
     const category = await prisma.category.create({
       data: {
-        storeId,
+        storeId: targetStoreId,
         parentId: parentId || null,
         name: name.trim(),
         slug: finalSlug,
@@ -438,17 +447,60 @@ export const createProduct = async (req: Request, res: Response) => {
       variants = [],
     } = req.body;
 
+    let finalStoreId = storeId;
+    if (!finalStoreId && categoryId) {
+      const cat = await prisma.category.findUnique({ where: { id: categoryId } });
+      finalStoreId = cat?.storeId;
+    }
+    if (!finalStoreId) {
+      const firstStore = await prisma.store.findFirst();
+      finalStoreId = firstStore?.id;
+    }
+    if (!finalStoreId) {
+      return res.status(400).json({ success: false, message: 'Please create a store/department first.' });
+    }
+
+    // Auto convert single image to images array if provided
+    let finalImages = Array.isArray(images) ? [...images] : [];
+    if (finalImages.length === 0 && req.body.image) {
+      finalImages.push({
+        url: req.body.image,
+        altText: `${name.trim()} image`,
+        isPrimary: true,
+        displayOrder: 0,
+      });
+    }
+
+    // Auto convert direct price to default variant if variants array not provided
+    let finalVariants = Array.isArray(variants) ? [...variants] : [];
+    if (finalVariants.length === 0 && req.body.price !== undefined) {
+      const p = parseFloat(req.body.price) || 0;
+      const mrp = parseFloat(req.body.mrp) || p;
+      finalVariants.push({
+        name: req.body.variantName || 'Standard Pack',
+        weightGrams: req.body.weightGrams ? parseInt(req.body.weightGrams, 10) : 250,
+        mrp: mrp,
+        price: p,
+        stockQty: parseInt(req.body.stockQty || req.body.stock, 10) || 50,
+        packQty: 1,
+        gstPercent: gstRate ? parseFloat(gstRate) : 12.0,
+        sku: req.body.sku ? req.body.sku.trim() : `MMG-${Date.now().toString().slice(-6)}-1`,
+        isDefault: true,
+        isActive: true,
+      });
+    }
+
     const finalSlug = await generateUniqueProductSlug(customSlug || name);
 
     const product = await prisma.product.create({
       data: {
-        storeId,
+        storeId: finalStoreId,
         ...(brandId && { brandId }),
         categoryId,
         name: name.trim(),
         slug: finalSlug,
         shortDescription,
-        description,
+        description: description || `${name.trim()} - Premium authentic quality.`,
         ingredients,
         nutritionFacts,
         benefits,
@@ -468,7 +520,7 @@ export const createProduct = async (req: Request, res: Response) => {
         metaTitle,
         metaDescription,
         images: {
-          create: images.map((img: any, index: number) => {
+          create: finalImages.map((img: any, index: number) => {
             const url = typeof img === 'string' ? img : img.url;
             return {
               url,
@@ -479,11 +531,11 @@ export const createProduct = async (req: Request, res: Response) => {
           }),
         },
         variants: {
-          create: variants.map((v: any, index: number) => ({
+          create: finalVariants.map((v: any, index: number) => ({
             name: v.name || `${name} - ${v.weightGrams || ''}g`,
             weightGrams: v.weightGrams ? parseInt(v.weightGrams, 10) : null,
-            mrp: parseFloat(v.mrp),
-            price: parseFloat(v.price),
+            mrp: parseFloat(v.mrp) || parseFloat(v.price) || 0,
+            price: parseFloat(v.price) || 0,
             stockQty: v.stockQty !== undefined ? parseInt(v.stockQty, 10) : (v.stock ? parseInt(v.stock, 10) : 50),
             packQty: v.packQty ? parseInt(v.packQty, 10) : 1,
             gstPercent: v.gstPercent ? parseFloat(v.gstPercent) : 12.0,
@@ -556,10 +608,53 @@ export const updateProduct = async (req: Request, res: Response) => {
       },
     });
 
+    if (data.price !== undefined) {
+      const p = parseFloat(data.price) || 0;
+      const mrp = parseFloat(data.mrp) || p;
+      const defaultVariant = await prisma.productVariant.findFirst({
+        where: { productId: id },
+        orderBy: { isDefault: 'desc' },
+      });
+      if (defaultVariant) {
+        await prisma.productVariant.update({
+          where: { id: defaultVariant.id },
+          data: { price: p, mrp },
+        });
+      }
+    }
+
+    if (data.image) {
+      const existingImg = await prisma.productImage.findFirst({
+        where: { productId: id },
+        orderBy: { isPrimary: 'desc' },
+      });
+      if (existingImg) {
+        await prisma.productImage.update({
+          where: { id: existingImg.id },
+          data: { url: data.image },
+        });
+      } else {
+        await prisma.productImage.create({
+          data: {
+            productId: id,
+            url: data.image,
+            altText: `${updated.name} image`,
+            isPrimary: true,
+            displayOrder: 0,
+          },
+        });
+      }
+    }
+
+    const refreshed = await prisma.product.findUnique({
+      where: { id },
+      include: { images: true, variants: true },
+    });
+
     return res.json({
       success: true,
       message: 'Product updated successfully.',
-      data: updated,
+      data: refreshed || updated,
     });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });

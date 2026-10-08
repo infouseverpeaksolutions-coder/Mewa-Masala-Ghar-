@@ -13,7 +13,7 @@ export const ENV = {
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   
   COMPANY_NAME: process.env.COMPANY_NAME || 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)',
-  COMPANY_GSTIN: process.env.COMPANY_GSTIN || '08AABCM1234F1Z5',
+  COMPANY_GSTIN: process.env.COMPANY_GSTIN || '08BVFPR9012N1Z0',
   COMPANY_FSSAI: process.env.COMPANY_FSSAI || '10021051000123',
   COMPANY_STATE_CODE: process.env.COMPANY_STATE_CODE || '08',
   COMPANY_ADDRESS: process.env.COMPANY_ADDRESS || 'HANWANT COLONY GANDHIPURA Balotra -344022',
@@ -31,5 +31,12 @@ export const ENV = {
   SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASS: process.env.SMTP_PASS || '',
-  SMTP_FROM: process.env.SMTP_FROM || 'Mewa Masala Ghar <support@mewamasalaghar.com>'
+  SMTP_FROM: process.env.SMTP_FROM || 'Mewa Masala Ghar <support@mewamasalaghar.com>',
+
+  // Shiprocket API Integration
+  SHIPROCKET_BASE_URL: process.env.SHIPROCKET_BASE_URL || 'https://apiv2.shiprocket.in/v1/external',
+  SHIPROCKET_EMAIL: process.env.SHIPROCKET_EMAIL || 'prithvirajmali19@gmail.com',
+  SHIPROCKET_PASSWORD: process.env.SHIPROCKET_PASSWORD || 'cBY@PVh29IqxSVqS0PQ$U^m%Ar$*#Wvh',
+  SHIPROCKET_PICKUP_LOCATION: process.env.SHIPROCKET_PICKUP_LOCATION || 'work',
+  SHIPROCKET_DEFAULT_PINCODE: process.env.SHIPROCKET_DEFAULT_PINCODE || '344022'
 };

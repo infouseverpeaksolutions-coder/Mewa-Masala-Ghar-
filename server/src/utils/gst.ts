@@ -18,7 +18,7 @@ export interface GstCalculationResult {
 export function calculateGstInclusive(
   inclusiveTotal: number,
   gstRate: number,
-  buyerStateCode: string = '27' // Default Maharashtra
+  buyerStateCode: string = '08' // Default Rajasthan
 ): GstCalculationResult {
   const isInterState = buyerStateCode.trim() !== ENV.COMPANY_STATE_CODE.trim();
   const rateFraction = gstRate / 100;

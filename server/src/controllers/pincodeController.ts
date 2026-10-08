@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../config/db';
+import { shiprocketService } from '../services/shiprocketService';
+import { ENV } from '../config/env';
 
 export const checkPincode = async (req: Request, res: Response) => {
   try {
@@ -12,11 +14,25 @@ export const checkPincode = async (req: Request, res: Response) => {
       });
     }
 
+    // Optional real-time serviceability inquiry to Shiprocket
+    let shiprocketServiceability = null;
+    if (ENV.SHIPROCKET_EMAIL && ENV.SHIPROCKET_PASSWORD) {
+      try {
+        shiprocketServiceability = await shiprocketService.checkServiceability({
+          pickup_postcode: ENV.SHIPROCKET_DEFAULT_PINCODE || '344022',
+          delivery_postcode: pincode,
+          weight: 0.5,
+          cod: 1,
+        });
+      } catch (srErr) {
+        // Non-blocking fallback
+      }
+    }
+
     // Check database first
     const record = await prisma.pincode.findUnique({
       where: { pincode },
     });
-
 
     if (record) {
       return res.json({
@@ -31,6 +47,7 @@ export const checkPincode = async (req: Request, res: Response) => {
           isCodAvailable: record.isCodAvailable,
           deliveryCharge: record.deliveryCharge,
           freeDeliveryThreshold: 499,
+          shiprocket: shiprocketServiceability,
           message: record.isServiceable
             ? `Serviceable in ${record.city}, ${record.state}. Estimated delivery in ${record.estimatedDays} business days.`
             : `Currently not serviceable to ${pincode}.`,
@@ -100,6 +117,7 @@ export const checkPincode = async (req: Request, res: Response) => {
         isCodAvailable: true,
         deliveryCharge: 0,
         freeDeliveryThreshold: 499,
+        shiprocket: shiprocketServiceability,
         message: `Standard delivery to ${city}, ${state} within ${estimatedDays}-${estimatedDays + 1} days.`,
       },
     });

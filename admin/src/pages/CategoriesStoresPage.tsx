@@ -15,6 +15,7 @@ import {
   AlertCircle,
   ShieldCheck,
   Image as ImageIcon,
+  Upload,
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -32,6 +33,32 @@ export const CategoriesStoresPage: React.FC = () => {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
   const [displayOrder, setDisplayOrder] = useState('0');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const categoryFileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handleCategoryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingImage(true);
+    setFormError(null);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      if (res.data?.success && res.data?.data?.url) {
+        setImage(res.data.data.url);
+      } else {
+        setFormError('Failed to upload image.');
+      }
+    } catch (err: any) {
+      setFormError(err.response?.data?.message || 'Error uploading image from computer.');
+    } finally {
+      setIsUploadingImage(false);
+      if (e.target) e.target.value = '';
+    }
+  };
 
   // Fetch Stores
   const { data: stores = [], isLoading: storesLoading } = useQuery({
@@ -374,74 +401,109 @@ export const CategoriesStoresPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Category Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      if (!editingCategory) {
-                        setSlug(
-                          e.target.value
-                            .toLowerCase()
-                            .trim()
-                            .replace(/[^a-z0-9]+/g, '-')
-                            .replace(/^-|-$/g, '')
-                        );
-                      }
-                    }}
-                    placeholder="e.g. Dry Fruits & Nuts"
-                    className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">URL Slug</label>
-                  <input
-                    type="text"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    placeholder="dry-fruits-nuts"
-                    className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl font-mono text-xs"
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Category Image URL</label>
+                <label className="block font-bold text-gray-700 mb-1">Category Name *</label>
                 <input
-                  type="url"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl text-xs"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (!editingCategory) {
+                      setSlug(
+                        e.target.value
+                          .toLowerCase()
+                          .trim()
+                          .replace(/[^a-z0-9]+/g, '-')
+                          .replace(/^-|-$/g, '')
+                      );
+                    }
+                  }}
+                  placeholder="e.g. Dry Fruits & Nuts"
+                  className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#2F5D3A]"
                 />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Display Order</label>
-                  <input
-                    type="number"
-                    value={displayOrder}
-                    onChange={(e) => setDisplayOrder(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl text-xs"
-                  />
-                </div>
               </div>
 
               <div>
                 <label className="block font-bold text-gray-700 mb-1">Description</label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Category overview snippet..."
-                  className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl text-xs"
+                  placeholder="Brief overview of items in this category..."
+                  className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#2F5D3A]"
                 />
+              </div>
+
+              {/* System Image Upload (NO URL) */}
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">Category Image (Upload from Computer)</label>
+                <input
+                  type="file"
+                  ref={categoryFileInputRef}
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleCategoryFileUpload}
+                  className="hidden"
+                />
+
+                {image ? (
+                  <div className="p-3 bg-[#FAF6EC] border border-[#E6DEC8] rounded-2xl flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={image}
+                        alt="Uploaded preview"
+                        className="w-16 h-16 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-xs"
+                      />
+                      <div>
+                        <span className="font-bold text-gray-900 block text-xs">Image uploaded</span>
+                        <span className="text-[11px] text-gray-500 font-mono break-all">{image}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => categoryFileInputRef.current?.click()}
+                        disabled={isUploadingImage}
+                        className="px-3 py-1.5 bg-white border border-[#2F5D3A] text-[#2F5D3A] hover:bg-[#2F5D3A]/5 rounded-xl font-bold text-xs"
+                      >
+                        Change Image
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setImage('')}
+                        className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg"
+                        title="Remove image"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => categoryFileInputRef.current?.click()}
+                    className="p-6 border-2 border-dashed border-[#E6DEC8] hover:border-[#2F5D3A] rounded-2xl bg-white/70 hover:bg-white text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 group"
+                  >
+                    {isUploadingImage ? (
+                      <>
+                        <Loader2 className="w-6 h-6 animate-spin text-[#2F5D3A]" />
+                        <span className="font-bold text-gray-700 text-xs">Uploading from your system...</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-10 h-10 rounded-xl bg-[#FAF6EC] group-hover:bg-[#2F5D3A]/10 text-[#2F5D3A] flex items-center justify-center transition-colors">
+                          <Upload className="w-5 h-5 text-[#2F5D3A]" />
+                        </div>
+                        <span className="font-bold text-gray-800 text-xs">
+                          Click to Upload Image from Computer
+                        </span>
+                        <span className="text-[11px] text-gray-400">
+                          Supports PNG, JPG, WEBP (Max 5MB)
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="pt-2 flex justify-end gap-2">

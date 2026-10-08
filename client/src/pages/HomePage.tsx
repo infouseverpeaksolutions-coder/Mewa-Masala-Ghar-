@@ -136,6 +136,8 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <RajasthaniDivider />
+
       {/* 
         ========================================================================
         4. DRY FRUITS ROW (7 cards with price, rating, round green cart button)
