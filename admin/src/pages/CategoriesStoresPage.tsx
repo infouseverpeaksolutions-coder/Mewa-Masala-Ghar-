@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   FolderTree,
   Plus,
   Edit,
   Trash2,
-  ChevronRight,
-  ChevronDown,
-  Store,
-  Layers,
   X,
   Loader2,
-  Check,
   AlertCircle,
-  ShieldCheck,
   Image as ImageIcon,
   Upload,
 } from 'lucide-react';
@@ -30,7 +24,6 @@ const resolveImageUrl = (url: string) => {
 
 export const CategoriesStoresPage: React.FC = () => {
   const queryClient = useQueryClient();
-  const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -43,8 +36,9 @@ export const CategoriesStoresPage: React.FC = () => {
   const [image, setImage] = useState('');
   const [displayOrder, setDisplayOrder] = useState('0');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const categoryFileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const categoryFileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Handle System File Upload (From Computer ONLY, NO URL)
   const handleCategoryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -69,34 +63,14 @@ export const CategoriesStoresPage: React.FC = () => {
     }
   };
 
-  // Fetch Stores
-  const { data: stores = [], isLoading: storesLoading } = useQuery({
-    queryKey: ['admin-stores-manage'],
-    queryFn: async () => {
-      const res = await api.get('/admin/stores');
-      return res.data?.data || [];
-    },
-  });
-
-  // Set default store
-  React.useEffect(() => {
-    if (stores.length > 0 && !selectedStoreId) {
-      setSelectedStoreId(stores[0].id);
-    }
-  }, [stores, selectedStoreId]);
-
-  // Fetch Categories for selected store
+  // Fetch All Categories
   const { data: categories = [], isLoading: catsLoading } = useQuery({
-    queryKey: ['admin-categories-manage', selectedStoreId],
+    queryKey: ['admin-categories-manage'],
     queryFn: async () => {
-      if (!selectedStoreId) return [];
-      const res = await api.get(`/admin/categories?storeId=${selectedStoreId}`);
+      const res = await api.get('/admin/categories');
       return res.data?.data || [];
     },
-    enabled: !!selectedStoreId,
   });
-
-  const activeStore = stores.find((s: any) => s.id === selectedStoreId);
 
   // Parent categories (no parentId)
   const rootCategories = categories.filter((c: any) => !c.parentId);
@@ -108,6 +82,7 @@ export const CategoriesStoresPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories-manage'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-list'] });
     },
   });
 
@@ -137,7 +112,7 @@ export const CategoriesStoresPage: React.FC = () => {
     setModalOpen(true);
   };
 
-  // Save Category Submit
+  // Save Category Submit (No store selector required)
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
@@ -148,12 +123,10 @@ export const CategoriesStoresPage: React.FC = () => {
     }
 
     try {
-      const targetStore = selectedStoreId || stores[0]?.id || undefined;
       const payload = {
-        storeId: targetStore,
-        parentId: parentId?.trim() ? parentId.trim() : null,
         name: name.trim(),
         slug: slug.trim() || undefined,
+        parentId: parentId?.trim() ? parentId.trim() : null,
         description: description.trim() || undefined,
         image: image.trim() || undefined,
         displayOrder: parseInt(displayOrder, 10) || 0,
@@ -178,73 +151,32 @@ export const CategoriesStoresPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#2B2B2B]">Categories & Department Stores</h1>
+          <h1 className="font-serif text-2xl font-bold text-[#2B2B2B]">Categories</h1>
           <p className="text-[#8C7B65] mt-0.5">
-            Organize catalog taxonomy, store theme color palettes, and parent-child hierarchy.
+            Organize product categories, subcategories, descriptions, and uploaded images.
           </p>
         </div>
 
         <button
           onClick={() => handleOpenAdd()}
-          className="px-4 py-2 bg-[#2F5D3A] hover:bg-[#23472C] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+          className="px-4 py-2 bg-[#2F5D3A] hover:bg-[#23472C] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add Category</span>
         </button>
       </div>
 
-      {/* Stores Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {stores.map((s: any) => {
-          const isSelected = s.id === selectedStoreId;
-          return (
-            <div
-              key={s.id}
-              onClick={() => setSelectedStoreId(s.id)}
-              className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                isSelected
-                  ? 'bg-white border-[#2F5D3A] ring-2 ring-[#2F5D3A]/20 shadow-md'
-                  : 'bg-white/80 border-[#E6DEC8] hover:border-[#D9A441] shadow-xs'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-serif font-bold text-sm text-[#2B2B2B]">{s.name}</span>
-                <span
-                  className="w-3.5 h-3.5 rounded-full border border-black/10"
-                  style={{ backgroundColor: s.primaryColor }}
-                  title={`Store theme color: ${s.primaryColor}`}
-                />
-              </div>
-
-              <p className="text-[11px] text-[#4A4A4A] line-clamp-1 mb-3">{s.tagline || s.description}</p>
-
-              <div className="flex items-center justify-between text-[11px] text-[#8C7B65] pt-2 border-t border-gray-100">
-                <span>{s._count?.categories || 0} Categories</span>
-                <span>{s._count?.products || 0} Products</span>
-              </div>
-
-              {s.fssaiNumber && (
-                <div className="mt-2 text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-700" />
-                  <span>FSSAI: {s.fssaiNumber}</span>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Category Tree for Active Store */}
+      {/* Category Tree */}
       <div className="bg-white rounded-2xl border border-[#E6DEC8] shadow-sm p-6 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-[#E6DEC8]">
           <div className="flex items-center gap-2">
             <FolderTree className="w-4 h-4 text-[#2F5D3A]" />
             <span className="font-serif font-bold text-sm text-gray-900">
-              Taxonomy for {activeStore?.name || 'Selected Department'}
+              Categories Tree & Hierarchy
             </span>
           </div>
 
-          <span className="text-gray-500 text-[11px]">
+          <span className="text-gray-500 text-[11px] font-medium">
             {categories.length} total categories registered
           </span>
         </div>
@@ -252,11 +184,11 @@ export const CategoriesStoresPage: React.FC = () => {
         {catsLoading ? (
           <div className="p-8 text-center text-gray-500 flex items-center justify-center gap-2">
             <Loader2 className="w-5 h-5 animate-spin text-[#2F5D3A]" />
-            <span>Loading categories tree...</span>
+            <span>Loading categories...</span>
           </div>
         ) : rootCategories.length === 0 ? (
           <div className="p-8 text-center text-gray-400">
-            No categories defined for this department. Click "Add Category" to create one.
+            No categories defined yet. Click "Add Category" above to create one.
           </div>
         ) : (
           <div className="space-y-3">
@@ -264,14 +196,14 @@ export const CategoriesStoresPage: React.FC = () => {
               const children = categories.filter((c: any) => c.parentId === cat.id);
               return (
                 <div key={cat.id} className="border border-[#E6DEC8] rounded-2xl p-3.5 bg-[#FAF6EC]/40 space-y-2">
-                  {/* Parent Row */}
+                  {/* Parent Category Row */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {cat.image ? (
                         <img
                           src={resolveImageUrl(cat.image)}
-                          alt=""
-                          className="w-10 h-10 object-cover rounded-xl border border-[#E6DEC8] bg-white"
+                          alt={cat.name}
+                          className="w-10 h-10 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-2xs"
                           onError={(e) => {
                             const target = e.currentTarget as HTMLImageElement;
                             if (cat.image && !target.src.includes('localhost:5000') && !cat.image.startsWith('http')) {
@@ -280,7 +212,7 @@ export const CategoriesStoresPage: React.FC = () => {
                           }}
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-xl bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-400">
+                        <div className="w-10 h-10 rounded-xl bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-400 shrink-0">
                           <ImageIcon className="w-4 h-4" />
                         </div>
                       )}
@@ -290,16 +222,19 @@ export const CategoriesStoresPage: React.FC = () => {
                           <strong className="text-gray-900 font-bold text-xs">{cat.name}</strong>
                           <span className="font-mono text-[10px] text-gray-400">/{cat.slug}</span>
                         </div>
-                        <span className="text-[11px] text-[#8C7B65]">
+                        {cat.description && (
+                          <p className="text-[11px] text-[#4A4A4A] line-clamp-1 mt-0.5">{cat.description}</p>
+                        )}
+                        <span className="text-[11px] text-[#8C7B65] mt-0.5 block">
                           Order: {cat.displayOrder} • {cat._count?.products || 0} products linked
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => handleOpenAdd(cat.id)}
-                        className="px-2.5 py-1 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2F5D3A] rounded-lg font-bold text-[11px] flex items-center gap-1"
+                        className="px-2.5 py-1 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2F5D3A] rounded-lg font-bold text-[11px] flex items-center gap-1 cursor-pointer"
                         title="Add child sub-category"
                       >
                         <Plus className="w-3 h-3" />
@@ -308,7 +243,7 @@ export const CategoriesStoresPage: React.FC = () => {
 
                       <button
                         onClick={() => handleOpenEdit(cat)}
-                        className="p-1.5 text-gray-500 hover:text-amber-600 rounded-lg hover:bg-white"
+                        className="p-1.5 text-gray-500 hover:text-amber-600 rounded-lg hover:bg-white cursor-pointer"
                         title="Edit category"
                       >
                         <Edit className="w-3.5 h-3.5" />
@@ -316,11 +251,11 @@ export const CategoriesStoresPage: React.FC = () => {
 
                       <button
                         onClick={() => {
-                          if (window.confirm(`Delete category "${cat.name}"? Child products will need reassigning.`)) {
+                          if (window.confirm(`Delete category "${cat.name}"? Linked products will need reassigning.`)) {
                             deleteMutation.mutate(cat.id);
                           }
                         }}
-                        className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-white"
+                        className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-white cursor-pointer"
                         title="Delete category"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -338,6 +273,19 @@ export const CategoriesStoresPage: React.FC = () => {
                         >
                           <div className="flex items-center gap-2">
                             <span className="text-gray-400">└</span>
+                            {sub.image && (
+                              <img
+                                src={resolveImageUrl(sub.image)}
+                                alt={sub.name}
+                                className="w-7 h-7 object-cover rounded-lg border border-gray-200"
+                                onError={(e) => {
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  if (sub.image && !target.src.includes('localhost:5000') && !sub.image.startsWith('http')) {
+                                    target.src = `http://localhost:5000${sub.image.startsWith('/') ? '' : '/'}${sub.image}`;
+                                  }
+                                }}
+                              />
+                            )}
                             <div>
                               <strong className="text-gray-800 font-semibold">{sub.name}</strong>
                               <span className="text-gray-400 font-mono text-[10px] ml-1.5">/{sub.slug}</span>
@@ -350,7 +298,8 @@ export const CategoriesStoresPage: React.FC = () => {
                           <div className="flex items-center gap-1">
                             <button
                               onClick={() => handleOpenEdit(sub)}
-                              className="p-1 text-gray-400 hover:text-amber-600 rounded"
+                              className="p-1 text-gray-400 hover:text-amber-600 rounded cursor-pointer"
+                              title="Edit subcategory"
                             >
                               <Edit className="w-3 h-3" />
                             </button>
@@ -360,7 +309,8 @@ export const CategoriesStoresPage: React.FC = () => {
                                   deleteMutation.mutate(sub.id);
                                 }
                               }}
-                              className="p-1 text-gray-400 hover:text-red-600 rounded"
+                              className="p-1 text-gray-400 hover:text-red-600 rounded cursor-pointer"
+                              title="Delete subcategory"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -386,7 +336,7 @@ export const CategoriesStoresPage: React.FC = () => {
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-500 hover:text-gray-900"
+                className="w-7 h-7 rounded-full bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-500 hover:text-gray-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -452,7 +402,7 @@ export const CategoriesStoresPage: React.FC = () => {
                 />
               </div>
 
-              {/* System Image Upload (NO URL) */}
+              {/* System Image Upload (NO URL, Direct from Computer) */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">Category Image (Upload from Computer)</label>
                 <input
@@ -488,14 +438,14 @@ export const CategoriesStoresPage: React.FC = () => {
                         type="button"
                         onClick={() => categoryFileInputRef.current?.click()}
                         disabled={isUploadingImage}
-                        className="px-3 py-1.5 bg-white border border-[#2F5D3A] text-[#2F5D3A] hover:bg-[#2F5D3A]/5 rounded-xl font-bold text-xs"
+                        className="px-3 py-1.5 bg-white border border-[#2F5D3A] text-[#2F5D3A] hover:bg-[#2F5D3A]/5 rounded-xl font-bold text-xs cursor-pointer"
                       >
                         Change Image
                       </button>
                       <button
                         type="button"
                         onClick={() => setImage('')}
-                        className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg"
+                        className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg cursor-pointer"
                         title="Remove image"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -533,13 +483,13 @@ export const CategoriesStoresPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-[#E6DEC8] rounded-xl font-bold text-gray-700"
+                  className="px-4 py-2 bg-white border border-[#E6DEC8] rounded-xl font-bold text-gray-700 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#2F5D3A] text-white rounded-xl font-bold hover:bg-[#23472C]"
+                  className="px-5 py-2 bg-[#2F5D3A] text-white rounded-xl font-bold hover:bg-[#23472C] cursor-pointer"
                 >
                   Save Category
                 </button>
@@ -551,3 +501,5 @@ export const CategoriesStoresPage: React.FC = () => {
     </div>
   );
 };
+
+export const CategoriesPage = CategoriesStoresPage;

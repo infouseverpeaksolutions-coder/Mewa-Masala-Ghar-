@@ -35,7 +35,7 @@ export const InventoryPage: React.FC = () => {
     p.variants.map((v) => ({
       ...v,
       productName: p.name,
-      storeName: p.store?.name,
+      categoryName: p.category?.name || 'General',
       hsnCode: p.hsnCode,
     }))
   );
@@ -90,7 +90,7 @@ export const InventoryPage: React.FC = () => {
                 <tr>
                   <th className="p-3.5">SKU Code</th>
                   <th className="p-3.5">Product & Variant</th>
-                  <th className="p-3.5">Department</th>
+                  <th className="p-3.5">Category</th>
                   <th className="p-3.5">Selling Price (₹)</th>
                   <th className="p-3.5">Stock Level</th>
                   <th className="p-3.5 text-right">Quick Save</th>
@@ -112,7 +112,7 @@ export const InventoryPage: React.FC = () => {
                         <strong className="text-gray-900 block">{v.productName}</strong>
                         <span className="text-[11px] text-gray-500">{v.name} (HSN: {v.hsnCode})</span>
                       </td>
-                      <td className="p-3.5 text-gray-600">{v.storeName}</td>
+                      <td className="p-3.5 text-gray-600">{v.categoryName}</td>
                       <td className="p-3.5">
                         <input
                           type="number"

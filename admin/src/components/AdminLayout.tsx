@@ -30,7 +30,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
   { label: 'Orders & Shipments', path: '/orders', icon: ShoppingCart },
   { label: 'Products', path: '/products', icon: Package },
-  { label: 'Categories & Stores', path: '/categories-stores', icon: FolderTree },
+  { label: 'Categories', path: '/categories', icon: FolderTree },
   { label: 'Combos & Hampers', path: '/combos', icon: Layers },
   { label: 'Inventory Stocks', path: '/inventory', icon: Boxes },
   { label: 'Customers', path: '/customers', icon: Users },

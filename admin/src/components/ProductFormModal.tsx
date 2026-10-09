@@ -28,7 +28,7 @@ interface ProductFormModalProps {
   onClose: () => void;
   onSuccess: () => void;
   productToEdit?: any | null;
-  storesList: any[];
+  storesList?: any[];
   brandsList?: any[];
   initialBrand?: string;
 }
@@ -38,7 +38,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   onClose,
   onSuccess,
   productToEdit,
-  storesList,
+  storesList = [],
   brandsList: propBrandsList = [],
   initialBrand = 'mewa-masala-ghar',
 }) => {

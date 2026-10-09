@@ -32,7 +32,7 @@ export const DashboardPage: React.FC = () => {
 
   const recentOrders: Order[] = data?.recentOrders || [];
   const lowStockVariants: any[] = data?.lowStockVariants || [];
-  const stores: any[] = data?.stores || [];
+  const categories: any[] = data?.categories || [];
 
   if (isLoading) {
     return (
@@ -55,7 +55,7 @@ export const DashboardPage: React.FC = () => {
           Operations Overview
         </h1>
         <p className="text-xs text-gray-500 mt-1">
-          Real-time metrics across Mewa, Spices, Baby Nutrition, and Personal Care stores.
+          Real-time metrics across Mewa Masala Ghar catalog, orders, and fulfillment.
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export const DashboardPage: React.FC = () => {
           <div>
             <span className="text-xs uppercase font-bold text-gray-400 block mb-1">Catalog SKUs</span>
             <span className="text-2xl font-bold text-gray-900">{metrics.totalProducts}</span>
-            <span className="text-[11px] text-gray-500 block mt-1">3 Department Stores</span>
+            <span className="text-[11px] text-gray-500 block mt-1">{categories.length} Categories</span>
           </div>
           <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
             <Package className="w-6 h-6" />
@@ -115,20 +115,25 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Middle Split: Store breakdown and Low Stock alerts */}
+      {/* Middle Split: Category breakdown and Low Stock alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Stores Breakdown */}
+        {/* Categories Breakdown */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h2 className="font-serif font-bold text-base text-gray-900 mb-4">Department Stores</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-serif font-bold text-base text-gray-900">Categories</h2>
+            <Link to="/categories" className="text-xs font-bold text-[#2F5D3A] hover:underline">
+              View All →
+            </Link>
+          </div>
           <div className="space-y-3">
-            {stores.map((s) => (
-              <div key={s.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between">
+            {categories.slice(0, 5).map((c) => (
+              <div key={c.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between">
                 <div>
-                  <strong className="text-xs font-bold text-gray-800 block">{s.name}</strong>
-                  <span className="text-[11px] text-gray-500">Theme: {s.themeKey}</span>
+                  <strong className="text-xs font-bold text-gray-800 block">{c.name}</strong>
+                  <span className="text-[11px] text-gray-500 font-mono">/{c.slug}</span>
                 </div>
                 <span className="text-xs font-bold px-2.5 py-1 bg-white rounded-lg border border-gray-200 text-gray-700">
-                  {s._count?.products || 0} items
+                  {c._count?.products || 0} items
                 </span>
               </div>
             ))}
@@ -155,7 +160,7 @@ export const DashboardPage: React.FC = () => {
                 <div key={v.id} className="p-2.5 bg-amber-50/60 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
                   <div>
                     <strong className="text-gray-900 block">{v.product?.name} ({v.name})</strong>
-                    <span className="text-[11px] text-gray-500">SKU: {v.sku} • Department: {v.product?.store?.name}</span>
+                    <span className="text-[11px] text-gray-500">SKU: {v.sku} • Category: {v.product?.category?.name || 'General'}</span>
                   </div>
                   <span className="font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-lg">
                     {v.stock} units remaining

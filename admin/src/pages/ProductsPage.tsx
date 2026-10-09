@@ -35,7 +35,6 @@ export const ProductsPage: React.FC = () => {
 
   // Filters
   const [selectedBrand, setSelectedBrand] = useState<'all' | 'mewa-masala-ghar' | 'jimmi-jaggu'>('mewa-masala-ghar');
-  const [selectedStore, setSelectedStore] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [stockFilter, setStockFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -63,25 +62,11 @@ export const ProductsPage: React.FC = () => {
     },
   });
 
-  // Fetch Stores for filtering
-  const { data: storesList = [] } = useQuery({
-    queryKey: ['admin-stores-list'],
-    queryFn: async () => {
-      const res = await api.get('/admin/stores');
-      return res.data?.data || [];
-    },
-  });
-
   // Fetch Categories for filtering
   const { data: categoriesList = [] } = useQuery({
-    queryKey: ['admin-categories-list', selectedBrand, selectedStore],
+    queryKey: ['admin-categories-list', selectedBrand],
     queryFn: async () => {
-      let url = '/admin/categories';
-      if (selectedStore !== 'all') {
-        const s = storesList.find((st: any) => st.slug === selectedStore);
-        if (s) url += `?storeId=${s.id}`;
-      }
-      const res = await api.get(url);
+      const res = await api.get('/admin/categories');
       const allCats = res.data?.data || [];
       if (selectedBrand === 'mewa-masala-ghar') {
         return allCats.filter(
@@ -99,11 +84,10 @@ export const ProductsPage: React.FC = () => {
 
   // Fetch Products with Brand Filter
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ['admin-products', selectedBrand, selectedStore, selectedCategory, statusFilter, search],
+    queryKey: ['admin-products', selectedBrand, selectedCategory, statusFilter, search],
     queryFn: async () => {
       let url = '/admin/products?limit=150';
       if (selectedBrand !== 'all') url += `&brand=${selectedBrand}`;
-      if (selectedStore !== 'all') url += `&store=${selectedStore}`;
       if (selectedCategory !== 'all') url += `&category=${selectedCategory}`;
       if (statusFilter !== 'all') url += `&active=${statusFilter === 'active'}`;
       if (search) url += `&search=${encodeURIComponent(search)}`;
@@ -492,20 +476,6 @@ export const ProductsPage: React.FC = () => {
       {/* Filter Toolbar */}
       <div className="bg-white p-4 rounded-2xl border border-[#E6DEC8] shadow-xs flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Store select */}
-          <select
-            value={selectedStore}
-            onChange={(e) => {
-              setSelectedStore(e.target.value);
-              setSelectedCategory('all');
-            }}
-            className="px-3 py-1.5 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs font-semibold text-gray-800"
-          >
-            <option value="all">All Departments</option>
-            <option value="foods">Mewa & Healthy Foods</option>
-            <option value="baby">Baby & Family Nutrition</option>
-            <option value="care">Personal Care & Clays</option>
-          </select>
 
           {/* Category select (Filtered by Brand) */}
           <select
@@ -628,7 +598,7 @@ export const ProductsPage: React.FC = () => {
                     />
                   </th>
                   <th className="p-3.5">Product</th>
-                  <th className="p-3.5">Store & Category</th>
+                  <th className="p-3.5">Category</th>
                   <th className="p-3.5">Variants</th>
                   <th className="p-3.5">Price Range</th>
                   <th className="p-3.5">Stock</th>
@@ -694,8 +664,10 @@ export const ProductsPage: React.FC = () => {
                       </td>
 
                       <td className="p-3.5">
-                        <span className="font-semibold text-gray-800 block">{p.store?.name}</span>
-                        <span className="text-[11px] text-[#8C7B65]">{p.category?.name}</span>
+                        <span className="font-semibold text-gray-800 block">{p.category?.name || 'General'}</span>
+                        {p.category?.slug && (
+                          <span className="text-[11px] text-[#8C7B65] font-mono">/{p.category.slug}</span>
+                        )}
                       </td>
 
                       <td className="p-3.5">
@@ -807,7 +779,6 @@ export const ProductsPage: React.FC = () => {
           queryClient.invalidateQueries({ queryKey: ['admin-brands-list'] });
         }}
         productToEdit={editingProduct}
-        storesList={storesList}
         brandsList={brandsList}
         initialBrand={selectedBrand === 'jimmi-jaggu' ? 'jimmi-jaggu' : 'mewa-masala-ghar'}
       />

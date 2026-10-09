@@ -59,6 +59,14 @@ export const App: React.FC = () => {
         }
       />
       <Route
+        path="/categories"
+        element={
+          <ProtectedRoute>
+            <CategoriesStoresPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/categories-stores"
         element={
           <ProtectedRoute>

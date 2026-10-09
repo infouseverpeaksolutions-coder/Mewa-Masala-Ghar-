@@ -29,18 +29,19 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       }),
       prisma.productVariant.findMany({
         where: { stockQty: { lte: 10 }, isActive: true },
-        include: { product: { select: { name: true, store: { select: { name: true } } } } },
+        include: { product: { select: { name: true, category: { select: { name: true } } } } },
         take: 8,
       }),
     ]);
 
     const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
 
-    const stores = await prisma.store.findMany({
-      where: { isActive: true },
+    const categories = await prisma.category.findMany({
       include: {
         _count: { select: { products: { where: { isActive: true } } } },
       },
+      orderBy: { displayOrder: 'asc' },
+      take: 8,
     });
 
     return res.json({
@@ -54,7 +55,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         },
         recentOrders,
         lowStockVariants,
-        stores,
+        categories,
       },
     });
   } catch (error: any) {
