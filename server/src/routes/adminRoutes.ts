@@ -35,6 +35,7 @@ import {
   deleteAdminBanner,
   getAllCustomers,
   getActivityLogs,
+  clearAllProducts,
 } from '../controllers/adminController';
 import { getCoupons, createCoupon } from '../controllers/couponController';
 import { getSettings, updateSettings } from '../controllers/settingController';
@@ -75,6 +76,7 @@ router.get('/products/export/csv', requireStaffPermission('products'), exportPro
 router.post('/products/import/csv', requireStaffPermission('products'), upload.single('file'), importProductsCSV);
 router.get('/products/:id', requireStaffPermission('products'), getAdminProductById);
 router.post('/products', requireStaffPermission('products'), createProduct);
+router.post('/products/clear-all', requireStaffPermission('products'), clearAllProducts);
 router.put('/products/:id', requireStaffPermission('products'), updateProduct);
 router.delete('/products/:id', requireStaffPermission('products'), deleteProduct);
 

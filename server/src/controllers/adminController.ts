@@ -226,16 +226,64 @@ export const getAdminCategories = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Resiliently resolve a valid Store ID or auto-heal by fetching/creating the primary store
+ */
+async function resolveOrCreateDefaultStoreId(providedStoreId?: string, categoryId?: string): Promise<string> {
+  if (providedStoreId && typeof providedStoreId === 'string' && providedStoreId.trim().length > 0) {
+    const existing = await prisma.store.findUnique({ where: { id: providedStoreId.trim() } });
+    if (existing) return existing.id;
+  }
+
+  if (categoryId && typeof categoryId === 'string' && categoryId.trim().length > 0) {
+    const cat = await prisma.category.findUnique({ where: { id: categoryId.trim() } });
+    if (cat?.storeId) {
+      const existing = await prisma.store.findUnique({ where: { id: cat.storeId } });
+      if (existing) return existing.id;
+    }
+  }
+
+  const defaultStore = await prisma.store.findFirst({
+    where: { slug: 'foods' },
+  });
+  if (defaultStore) return defaultStore.id;
+
+  const anyStore = await prisma.store.findFirst();
+  if (anyStore) return anyStore.id;
+
+  // Auto-seed primary store if table is empty
+  const created = await prisma.store.create({
+    data: {
+      slug: 'foods',
+      name: 'Mewa & Healthy Foods',
+      tagline: 'Handpicked Dry Fruits, Roasted Makhana, Wholesome Seeds & Stone-Ground Spices',
+      description: 'Finest royal dry fruits, super seeds, slow-roasted makhana snacks, and authentic aromatic Indian spices with zero adulteration.',
+      themeKey: 'theme-foods',
+      primaryColor: '#2F5D3A',
+      accentColor: '#D9A441',
+      bgColor: '#FAF6EC',
+      fssaiNumber: '10021051000123',
+      isActive: true,
+    },
+  });
+  return created.id;
+}
+
 export const createAdminCategory = async (req: Request, res: Response) => {
   try {
     const { storeId, parentId, name, slug, description, image, displayOrder } = req.body;
-    let targetStoreId = storeId;
-    if (!targetStoreId) {
-      const firstStore = await prisma.store.findFirst();
-      targetStoreId = firstStore?.id;
+    
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Category name is required.' });
     }
-    if (!targetStoreId) {
-      return res.status(400).json({ success: false, message: 'No department store found. Please create a store first.' });
+
+    const targetStoreId = await resolveOrCreateDefaultStoreId(storeId);
+
+    // Validate parentId if provided
+    let validParentId: string | null = null;
+    if (parentId && typeof parentId === 'string' && parentId.trim()) {
+      const parentExists = await prisma.category.findUnique({ where: { id: parentId.trim() } });
+      if (parentExists) validParentId = parentExists.id;
     }
 
     let finalSlug = (slug || name)
@@ -253,11 +301,11 @@ export const createAdminCategory = async (req: Request, res: Response) => {
     const category = await prisma.category.create({
       data: {
         storeId: targetStoreId,
-        parentId: parentId || null,
+        parentId: validParentId,
         name: name.trim(),
         slug: finalSlug,
-        description,
-        image,
+        description: description || null,
+        image: image || null,
         displayOrder: displayOrder ? parseInt(displayOrder, 10) : 0,
       },
       include: {
@@ -447,18 +495,7 @@ export const createProduct = async (req: Request, res: Response) => {
       variants = [],
     } = req.body;
 
-    let finalStoreId = storeId;
-    if (!finalStoreId && categoryId) {
-      const cat = await prisma.category.findUnique({ where: { id: categoryId } });
-      finalStoreId = cat?.storeId;
-    }
-    if (!finalStoreId) {
-      const firstStore = await prisma.store.findFirst();
-      finalStoreId = firstStore?.id;
-    }
-    if (!finalStoreId) {
-      return res.status(400).json({ success: false, message: 'Please create a store/department first.' });
-    }
+    const finalStoreId = await resolveOrCreateDefaultStoreId(storeId, categoryId);
 
     // Auto convert single image to images array if provided
     let finalImages = Array.isArray(images) ? [...images] : [];
@@ -1486,4 +1523,25 @@ export const getActivityLogs = async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+/**
+ * Clear all products and related items for clean deployment/catalog setup
+ */
+export const clearAllProducts = async (req: Request, res: Response) => {
+  try {
+    await prisma.cartItem.deleteMany();
+    await prisma.wishlist.deleteMany();
+    await prisma.review.deleteMany();
+    await prisma.productImage.deleteMany();
+    await prisma.productVariant.deleteMany();
+    const count = await prisma.product.deleteMany();
+    return res.json({
+      success: true,
+      message: `Successfully removed ${count.count} sample products. Store catalog is now clean.`,
+    });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 

@@ -14,6 +14,15 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 
+const resolveImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
+    : 'http://localhost:5000';
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 interface ProductFormModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -451,9 +460,15 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   >
                     <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
                       <img
-                        src={img.url}
+                        src={resolveImageUrl(img.url)}
                         alt="Product preview"
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (img.url && !target.src.includes('localhost:5000') && !img.url.startsWith('http')) {
+                            target.src = `http://localhost:5000${img.url.startsWith('/') ? '' : '/'}${img.url}`;
+                          }
+                        }}
                       />
                       {img.isPrimary && (
                         <span className="absolute top-1.5 left-1.5 bg-[#D9A441] text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-xs flex items-center gap-0.5">

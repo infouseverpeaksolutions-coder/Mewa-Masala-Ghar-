@@ -23,11 +23,22 @@ import shippingRoutes from './routes/shippingRoutes';
 
 const app = express();
 
+import { UPLOAD_DIR } from './config/upload';
+
 // Security and middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(
   cors({
-    origin: [ENV.CLIENT_URL, ENV.ADMIN_URL, 'http://localhost:5173', 'http://localhost:5174'],
+    origin: [
+      ENV.CLIENT_URL,
+      ENV.ADMIN_URL,
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://127.0.0.1:5175',
+    ],
     credentials: true,
   })
 );
@@ -36,8 +47,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// Static uploads folder for dev fallback
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// Static uploads folders (serve canonical server/uploads and cwd fallbacks)
+app.use('/uploads', express.static(UPLOAD_DIR));
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'server/uploads')));
 
 // Health check
 app.get('/api/health', (req, res) => {

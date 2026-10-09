@@ -19,6 +19,15 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 
+const resolveImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
+    : 'http://localhost:5000';
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 export const CategoriesStoresPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
@@ -139,13 +148,14 @@ export const CategoriesStoresPage: React.FC = () => {
     }
 
     try {
+      const targetStore = selectedStoreId || stores[0]?.id || undefined;
       const payload = {
-        storeId: selectedStoreId,
-        parentId: parentId || null,
+        storeId: targetStore,
+        parentId: parentId?.trim() ? parentId.trim() : null,
         name: name.trim(),
         slug: slug.trim() || undefined,
-        description,
-        image,
+        description: description.trim() || undefined,
+        image: image.trim() || undefined,
         displayOrder: parseInt(displayOrder, 10) || 0,
       };
 
@@ -156,6 +166,7 @@ export const CategoriesStoresPage: React.FC = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['admin-categories-manage'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-categories-list'] });
       setModalOpen(false);
     } catch (err: any) {
       setFormError(err.response?.data?.message || 'Failed to save category.');
@@ -258,9 +269,15 @@ export const CategoriesStoresPage: React.FC = () => {
                     <div className="flex items-center gap-3">
                       {cat.image ? (
                         <img
-                          src={cat.image}
+                          src={resolveImageUrl(cat.image)}
                           alt=""
                           className="w-10 h-10 object-cover rounded-xl border border-[#E6DEC8] bg-white"
+                          onError={(e) => {
+                            const target = e.currentTarget as HTMLImageElement;
+                            if (cat.image && !target.src.includes('localhost:5000') && !cat.image.startsWith('http')) {
+                              target.src = `http://localhost:5000${cat.image.startsWith('/') ? '' : '/'}${cat.image}`;
+                            }
+                          }}
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-xl bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-400">
@@ -450,9 +467,15 @@ export const CategoriesStoresPage: React.FC = () => {
                   <div className="p-3 bg-[#FAF6EC] border border-[#E6DEC8] rounded-2xl flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={image}
+                        src={resolveImageUrl(image)}
                         alt="Uploaded preview"
                         className="w-16 h-16 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-xs"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (image && !target.src.includes('localhost:5000') && !image.startsWith('http')) {
+                            target.src = `http://localhost:5000${image.startsWith('/') ? '' : '/'}${image}`;
+                          }
+                        }}
                       />
                       <div>
                         <span className="font-bold text-gray-900 block text-xs">Image uploaded</span>

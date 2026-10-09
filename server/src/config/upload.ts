@@ -2,14 +2,21 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-const uploadsDir = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+// Canonical uploads directory: server/uploads
+export const UPLOAD_DIR = path.resolve(__dirname, '../../uploads');
+
+// Ensure both server/uploads and cwd/uploads exist
+[UPLOAD_DIR, path.resolve(process.cwd(), 'uploads'), path.resolve(process.cwd(), 'server/uploads')].forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+    } catch (_) {}
+  }
+});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadsDir);
+    cb(null, UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

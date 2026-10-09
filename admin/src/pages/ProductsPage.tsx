@@ -21,6 +21,15 @@ import api from '../services/api';
 import { Product } from '../types';
 import { ProductFormModal } from '../components/ProductFormModal';
 
+const resolveImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
+    : 'http://localhost:5000';
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 export const ProductsPage: React.FC = () => {
   const queryClient = useQueryClient();
 
@@ -141,6 +150,22 @@ export const ProductsPage: React.FC = () => {
     },
   });
 
+  // Clear All Demo Products Mutation
+  const clearAllMutation = useMutation({
+    mutationFn: async () => {
+      const res = await api.post('/admin/products/clear-all');
+      return res.data;
+    },
+    onSuccess: (data) => {
+      alert(data.message || 'All sample products removed successfully.');
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      setSelectedProductIds([]);
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.message || 'Failed to clear products.');
+    },
+  });
+
   // Export CSV
   const handleExportCSV = async () => {
     try {
@@ -258,6 +283,24 @@ export const ProductsPage: React.FC = () => {
           >
             <Upload className="w-3.5 h-3.5 text-[#D9A441]" />
             <span>Import CSV</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (window.confirm('⚠️ Are you sure you want to remove all sample demo products? This will leave your store catalog clean so only products you upload from the admin panel will appear.')) {
+                clearAllMutation.mutate();
+              }
+            }}
+            disabled={clearAllMutation.isPending}
+            className="px-3.5 py-2 bg-white border border-rose-200 hover:bg-rose-50 text-rose-700 text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            title="Remove all demo products for clean deployment"
+          >
+            {clearAllMutation.isPending ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
+            ) : (
+              <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+            )}
+            <span>Clear Demo Products</span>
           </button>
 
           <button
@@ -617,12 +660,17 @@ export const ProductsPage: React.FC = () => {
                       <td className="p-3.5 flex items-center gap-3">
                         <div className="w-12 sm:w-14 aspect-[4/5] rounded-xl overflow-hidden border border-[#E6DEC8] shrink-0 bg-white shadow-2xs relative">
                           <img
-                            src={primaryImg}
+                            src={resolveImageUrl(primaryImg)}
                             alt={p.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.currentTarget.src =
-                                'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80';
+                              const target = e.currentTarget as HTMLImageElement;
+                              if (primaryImg && !target.src.includes('localhost:5000') && !primaryImg.startsWith('http')) {
+                                target.src = `http://localhost:5000${primaryImg.startsWith('/') ? '' : '/'}${primaryImg}`;
+                              } else {
+                                target.src =
+                                  'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80';
+                              }
                             }}
                           />
                         </div>

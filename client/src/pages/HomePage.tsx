@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
   Gift,
   Mail,
   CheckCircle2,
   Loader2,
-  Star,
   Baby,
   Sparkles,
   Heart,
   Trophy,
+  Package,
 } from 'lucide-react';
 import { HeroVideo } from '../components/HeroVideo';
 import { MewaProductCard } from '../components/MewaProductCard';
@@ -22,34 +23,97 @@ import {
   BranchFlourishRight,
   RajasthaniDivider,
 } from '../components/ui/Icons';
-import {
-  CATEGORIES_DATA,
-  DRY_FRUITS_PRODUCTS,
-  COMBO_PACKS_BANNER,
-  FLAVOURED_MAKHANA_PANELS,
-  SEEDS_AATAA_PRODUCTS,
-  BESTSELLERS_PRODUCTS,
-  SISTER_BRAND_BANNER,
-  SUB_BRAND_BANNERS,
-} from '../data/mockData';
+import { COMBO_PACKS_BANNER, FLAVOURED_MAKHANA_PANELS } from '../data/mockData';
+import { resolveImageUrl } from '../utils/imageUrl';
 import api from '../services/api';
+
+const ProductCardSkeleton: React.FC = () => (
+  <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 sm:p-4 animate-pulse space-y-3">
+    <div className="aspect-[4/5] w-full rounded-xl sm:rounded-2xl bg-gray-200 dark:bg-gray-800" />
+    <div className="h-3.5 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
+    <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
+  </div>
+);
 
 export const HomePage: React.FC = () => {
   // Category filter state for Seeds & Aataa
   const [seedsAataaFilter, setSeedsAataaFilter] = useState<'all' | 'seeds' | 'aataa'>('all');
 
-  const filteredSeedsAataa = SEEDS_AATAA_PRODUCTS.filter((prod) => {
-    if (seedsAataaFilter === 'seeds') return prod.category.toLowerCase().includes('seed');
-    if (seedsAataaFilter === 'aataa') return prod.category.toLowerCase().includes('aata') || prod.category.toLowerCase().includes('flour');
-    return true;
-  });
-
   // Newsletter state
   const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterStatus, setNewsletterStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
-  >('idle');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [newsletterMsg, setNewsletterMsg] = useState('');
+
+  // 1. Fetch Real Categories from Database (Admin uploaded)
+  const { data: dbCategories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['home-categories'],
+    queryFn: async () => {
+      const res = await api.get('/categories?store=foods');
+      return res.data?.data || res.data?.all || [];
+    },
+  });
+
+  // 2. Fetch Real Dry Fruits from Database
+  const { data: dryFruitsData = [], isLoading: dryFruitsLoading } = useQuery({
+    queryKey: ['home-dry-fruits'],
+    queryFn: async () => {
+      const res = await api.get('/products?store=foods&category=dry-fruits&limit=14');
+      return res.data?.data?.products || [];
+    },
+  });
+
+  // 3. Fetch All Foods Products from Database for Seeds & Aataa + General Display
+  const { data: allFoodsData = [], isLoading: allFoodsLoading } = useQuery({
+    queryKey: ['home-foods-all'],
+    queryFn: async () => {
+      const res = await api.get('/products?store=foods&limit=30');
+      return res.data?.data?.products || [];
+    },
+  });
+
+  // 4. Fetch Real Bestsellers from Database
+  const { data: bestsellersData = [], isLoading: bestsellersLoading } = useQuery({
+    queryKey: ['home-bestsellers'],
+    queryFn: async () => {
+      const res = await api.get('/products?bestSeller=true&limit=6');
+      return res.data?.data?.products || [];
+    },
+  });
+
+  // Dry fruits to display: matched category, or fallback to foods catalog
+  const displayedDryFruits = useMemo(() => {
+    if (dryFruitsData.length > 0) return dryFruitsData.slice(0, 7);
+    return allFoodsData.slice(0, 7);
+  }, [dryFruitsData, allFoodsData]);
+
+  // Seeds & Aataa products filtered dynamically from DB
+  const filteredSeedsAataa = useMemo(() => {
+    const matching = allFoodsData.filter((p: any) => {
+      const text = `${p.name} ${p.category?.name || ''} ${p.category?.slug || ''} ${p.description || ''}`.toLowerCase();
+      if (seedsAataaFilter === 'seeds') {
+        return text.includes('seed') || text.includes('chia') || text.includes('flax') || text.includes('pumpkin') || text.includes('sunflower');
+      }
+      if (seedsAataaFilter === 'aataa') {
+        return text.includes('aata') || text.includes('flour') || text.includes('chakki') || text.includes('grain') || text.includes('ragi');
+      }
+      return text.includes('seed') || text.includes('aata') || text.includes('flour') || text.includes('chakki') || text.includes('grain');
+    });
+
+    if (matching.length > 0) return matching.slice(0, 7);
+    return seedsAataaFilter === 'all' ? allFoodsData.slice(0, 7) : [];
+  }, [allFoodsData, seedsAataaFilter]);
+
+  // Bestsellers: DB bestsellers or supplemented by foods catalog
+  const displayedBestsellers = useMemo(() => {
+    if (bestsellersData.length >= 4) return bestsellersData.slice(0, 6);
+    const combined = [...bestsellersData];
+    allFoodsData.forEach((p: any) => {
+      if (!combined.some((b) => b.id === p.id)) {
+        combined.push(p);
+      }
+    });
+    return combined.slice(0, 6);
+  }, [bestsellersData, allFoodsData]);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +126,6 @@ export const HomePage: React.FC = () => {
       setNewsletterMsg('Dhanyawaad! You have been subscribed successfully.');
       setNewsletterEmail('');
     } catch (err: any) {
-      // In dev fallback or offline, show success
       setNewsletterStatus('success');
       setNewsletterMsg('Dhanyawaad! You have been subscribed successfully.');
       setNewsletterEmail('');
@@ -85,10 +148,9 @@ export const HomePage: React.FC = () => {
       */}
       <div className="bg-white dark:bg-[#111813] relative space-y-10 sm:space-y-14 pt-8 sm:pt-12 pb-20 overflow-hidden">
 
-
       {/* 
         ========================================================================
-        3. SHOP BY CATEGORY (5 image cards with circular arrow button)
+        3. SHOP BY CATEGORY (Dynamic from Admin Panel Uploads)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
@@ -105,48 +167,71 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-5">
-          {CATEGORIES_DATA.map((cat) => (
-            <Link
-              key={cat.id}
-              to={cat.link}
-              className="group bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between overflow-hidden hover:-translate-y-1"
-            >
-              {/* Category Image */}
-              <div className="relative aspect-[4/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC] dark:bg-[#111813] mb-2.5">
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  loading="lazy"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
+        {categoriesLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-5">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-white dark:bg-[#18221B] rounded-2xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 animate-pulse space-y-2">
+                <div className="aspect-[4/3] w-full rounded-xl bg-gray-200 dark:bg-gray-800" />
+                <div className="h-3.5 bg-gray-200 dark:bg-gray-800 rounded w-2/3" />
               </div>
+            ))}
+          </div>
+        ) : dbCategories.length === 0 ? (
+          <div className="text-center py-8 px-4 bg-[#FAF6EC] dark:bg-[#18221B] rounded-2xl border border-dashed border-[#E6DEC8] dark:border-[#2A3B2F]">
+            <Package className="w-8 h-8 text-[#D9A441] mx-auto mb-2 opacity-70" />
+            <p className="font-serif font-bold text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">No categories added yet</p>
+            <p className="text-xs text-[#8C7B65] mt-1">Categories created in the Admin Panel will appear here automatically.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-5">
+            {dbCategories.slice(0, 5).map((cat: any) => {
+              const catImage = resolveImageUrl(cat.image) || '/foods/foods_dryfruits.jpg';
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/shop?category=${cat.slug}`}
+                  className="group bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between overflow-hidden hover:-translate-y-1"
+                >
+                  {/* Category Image */}
+                  <div className="relative aspect-[4/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC] dark:bg-[#111813] mb-2.5">
+                    <img
+                      src={catImage}
+                      alt={cat.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.src = '/foods/foods_dryfruits.jpg';
+                      }}
+                    />
+                  </div>
 
-              {/* Title & Circular Arrow Button */}
-              <div className="flex items-center justify-between pt-1">
-                <span className="font-serif text-xs sm:text-sm font-bold text-[#1F4D2E] dark:text-[#8ED9A0] group-hover:text-[#D9A441] dark:group-hover:text-[#E5B85C] transition-colors">
-                  {cat.name}
-                </span>
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#1F4D2E] dark:bg-[#284F33] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 shadow-2xs">
-                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+                  {/* Title & Circular Arrow Button */}
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="font-serif text-xs sm:text-sm font-bold text-[#1F4D2E] dark:text-[#8ED9A0] group-hover:text-[#D9A441] dark:group-hover:text-[#E5B85C] transition-colors truncate pr-1">
+                      {cat.name}
+                    </span>
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#1F4D2E] dark:bg-[#284F33] text-white flex items-center justify-center transition-transform group-hover:translate-x-0.5 shadow-2xs shrink-0">
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <RajasthaniDivider />
 
       {/* 
         ========================================================================
-        4. DRY FRUITS ROW (7 cards with price, rating, round green cart button)
+        4. DRY FRUITS / FRESH ARRIVALS ROW (Dynamic from Admin Panel Uploads)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1F4D2E] dark:text-[#8ED9A0] tracking-tight flex items-center">
-            <span>Dry Fruits</span>
+            <span>Dry Fruits & Fresh Arrivals</span>
             <SectionLeaf className="w-4 h-4 text-[#2F5D3A] dark:text-[#8ED9A0]" color="#2F5D3A" />
           </h2>
           <Link
@@ -157,11 +242,25 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
-          {DRY_FRUITS_PRODUCTS.map((prod) => (
-            <MewaProductCard key={prod.id} product={prod} />
-          ))}
-        </div>
+        {dryFruitsLoading || allFoodsLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : displayedDryFruits.length === 0 ? (
+          <div className="text-center py-8 px-4 bg-[#FAF6EC] dark:bg-[#18221B] rounded-2xl border border-dashed border-[#E6DEC8] dark:border-[#2A3B2F]">
+            <Package className="w-8 h-8 text-[#D9A441] mx-auto mb-2 opacity-70" />
+            <p className="font-serif font-bold text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">No products uploaded yet</p>
+            <p className="text-xs text-[#8C7B65] mt-1">Products added in the Admin Panel will be displayed here immediately.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+            {displayedDryFruits.map((prod: any) => (
+              <MewaProductCard key={prod.id} product={prod} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 
@@ -227,7 +326,6 @@ export const HomePage: React.FC = () => {
               to={panel.link}
               className="group relative rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 h-[130px] sm:h-[145px]"
             >
-              {/* Full background image */}
               <img
                 src={panel.image}
                 alt={panel.name.replace('\n', ' ')}
@@ -235,7 +333,6 @@ export const HomePage: React.FC = () => {
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
 
-              {/* Gradient overlay on left for text */}
               <div
                 className="absolute inset-0"
                 style={{
@@ -243,7 +340,6 @@ export const HomePage: React.FC = () => {
                 }}
               />
 
-              {/* Title text */}
               <div className="relative z-10 h-full flex items-center p-4 sm:p-5">
                 <h3 className="font-serif text-base sm:text-lg lg:text-xl font-bold leading-snug text-white whitespace-pre-line drop-shadow-lg">
                   {panel.name}
@@ -258,7 +354,7 @@ export const HomePage: React.FC = () => {
 
       {/* 
         ========================================================================
-        7. SEEDS & AATAA SECTION (Interactive Filter Tabs, 4:5 Cards, Purity Ribbon)
+        7. SEEDS & AATAA SECTION (Dynamic from Admin Panel Uploads)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
@@ -284,7 +380,7 @@ export const HomePage: React.FC = () => {
                     : 'text-[#7A6B58] hover:text-[#1F4D2E] dark:text-[#C5BCAD] dark:hover:text-white'
                 }`}
               >
-                All (7)
+                All
               </button>
               <button
                 onClick={() => setSeedsAataaFilter('seeds')}
@@ -294,7 +390,7 @@ export const HomePage: React.FC = () => {
                     : 'text-[#7A6B58] hover:text-[#1F4D2E] dark:text-[#C5BCAD] dark:hover:text-white'
                 }`}
               >
-                Super Seeds (5)
+                Super Seeds
               </button>
               <button
                 onClick={() => setSeedsAataaFilter('aataa')}
@@ -304,7 +400,7 @@ export const HomePage: React.FC = () => {
                     : 'text-[#7A6B58] hover:text-[#1F4D2E] dark:text-[#C5BCAD] dark:hover:text-white'
                 }`}
               >
-                Specialty Aataa (2)
+                Specialty Aataa
               </button>
             </div>
 
@@ -318,26 +414,40 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Product Cards Grid */}
-        <div
-          className={`grid gap-3 sm:gap-4 ${
-            seedsAataaFilter === 'all'
-              ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-7'
-              : seedsAataaFilter === 'seeds'
-              ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'
-              : 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto'
-          }`}
-        >
-          {filteredSeedsAataa.map((prod) => (
-            <SeedsAataaCard key={prod.id} product={prod} />
-          ))}
-        </div>
+        {allFoodsLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredSeedsAataa.length === 0 ? (
+          <div className="text-center py-8 px-4 bg-[#FAF6EC] dark:bg-[#18221B] rounded-2xl border border-dashed border-[#E6DEC8] dark:border-[#2A3B2F]">
+            <Package className="w-8 h-8 text-[#D9A441] mx-auto mb-2 opacity-70" />
+            <p className="font-serif font-bold text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">No items found in this section</p>
+            <p className="text-xs text-[#8C7B65] mt-1">Uploaded seed and flour items from the Admin Panel will appear here.</p>
+          </div>
+        ) : (
+          <div
+            className={`grid gap-3 sm:gap-4 ${
+              seedsAataaFilter === 'all'
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-7'
+                : seedsAataaFilter === 'seeds'
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'
+                : 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto'
+            }`}
+          >
+            {filteredSeedsAataa.map((prod: any) => (
+              <SeedsAataaCard key={prod.id} product={prod} />
+            ))}
+          </div>
+        )}
       </section>
 
       <RajasthaniDivider />
 
       {/* 
         ========================================================================
-        8. BESTSELLERS (6 Flagship Ranked Cards with Gold Badges & 4:5 Showcase)
+        8. BESTSELLERS (Dynamic from Admin Panel Uploads)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
@@ -363,21 +473,32 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-          {BESTSELLERS_PRODUCTS.map((prod, idx) => (
-            <BestsellerRankedCard key={prod.id} product={prod} rank={idx + 1} />
-          ))}
-        </div>
+        {bestsellersLoading || allFoodsLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : displayedBestsellers.length === 0 ? (
+          <div className="text-center py-8 px-4 bg-[#FAF6EC] dark:bg-[#18221B] rounded-2xl border border-dashed border-[#E6DEC8] dark:border-[#2A3B2F]">
+            <Package className="w-8 h-8 text-[#D9A441] mx-auto mb-2 opacity-70" />
+            <p className="font-serif font-bold text-sm text-[#1F4D2E] dark:text-[#8ED9A0]">No bestsellers uploaded yet</p>
+            <p className="text-xs text-[#8C7B65] mt-1">Products flagged as Bestseller in the Admin Panel will appear here.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+            {displayedBestsellers.map((prod: any, idx: number) => (
+              <BestsellerRankedCard key={prod.id} product={prod} rank={idx + 1} />
+            ))}
+          </div>
+        )}
       </section>
 
       <RajasthaniDivider />
 
       {/* 
         ========================================================================
-        9. JIMMI JAGGU SHOWCASE BANNER (Theme-Adaptive Jimmi Jaggu Palette • No Photos)
-        - Seamless Jimmi Jaggu brand colors tailored for both Dark mode & Light mode
-        - Interactive navigation to Jimmi Jaggu page using official brand logo
-        - Unique showcase featuring the 3 core pillars: Baby Nutrition (Pratham Aahar), Multani Clays, Maternal Poshan
+        9. JIMMI JAGGU SHOWCASE BANNER (Brand Hub)
         ========================================================================
       */}
       <section className="w-full px-2 sm:px-4 lg:px-6 xl:px-8">
@@ -399,11 +520,11 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Single Premium Showcase Banner - Off-White & Pearl White Matte Gradient */}
+        {/* Single Premium Showcase Banner */}
         <div
           className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_12px_45px_-12px_rgba(60,40,30,0.08)] dark:shadow-[0_12px_45px_-12px_rgba(0,0,0,0.5)] p-5 sm:p-8 md:p-10 lg:p-12 border border-[#E2D9CC] dark:border-[#3E3533] transition-all duration-300 bg-gradient-to-br from-[#FDFBF7] via-[#F5EFE6] to-[#ECE4D6] dark:from-[#211D1C] dark:via-[#272220] dark:to-[#1B1817]"
         >
-          {/* Soft Matte Ambient Accents */}
+          {/* Ambient Accents */}
           <div
             className="absolute -top-24 -right-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-20 dark:opacity-10 blur-3xl"
             style={{ background: 'radial-gradient(circle, #D9A441 0%, transparent 70%)' }}
@@ -412,26 +533,9 @@ export const HomePage: React.FC = () => {
             className="absolute -bottom-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none opacity-15 dark:opacity-15 blur-3xl"
             style={{ background: 'radial-gradient(circle, #78363A 0%, transparent 70%)' }}
           />
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-30 dark:opacity-5"
-            style={{
-              background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.7) 0%, transparent 75%)',
-            }}
-          />
-
-          {/* Subtle Decorative Botanical Vector Flourish */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-36 sm:w-48 h-36 sm:h-48 pointer-events-none opacity-10 dark:opacity-15">
-            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#78363A] dark:text-[#E8A598]">
-              <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
-              <path d="M100 95 C 115 80, 140 85, 145 100 C 135 110, 110 105, 100 95 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
-              <path d="M130 65 C 145 50, 170 55, 175 70 C 165 80, 140 75, 130 65 Z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
-              <circle cx="50" cy="150" r="12" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-            </svg>
-          </div>
 
           <div className="relative z-10">
-            {/* 1. Direct Navigation to Jimmi Jaggu using the Official Logo */}
+            {/* Direct Navigation using Official Logo */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-[#E2D9CC] dark:border-white/10">
               <Link
                 to="/jimmi-jaggu"
@@ -467,7 +571,7 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* 2. Headline & Mission */}
+            {/* Headline */}
             <div className="mt-5 sm:mt-7 max-w-2xl">
               <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-extrabold text-[#2C1D20] dark:text-[#FAF6EC] leading-tight drop-shadow-xs">
                 Gentle Care for Little Ones, Radiant Skin & Maternal Poshan
@@ -477,9 +581,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            {/* 3. Unique Showcase: The 3 Core Pillars of Jimmi Jaggu */}
+            {/* 3 Pillars */}
             <div className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-5">
-              {/* Pillar 1: Baby Nutrition & Care */}
               <Link
                 to="/jimmi-jaggu?category=baby-nutrition"
                 className="group relative rounded-2xl bg-white/85 dark:bg-[#181514]/75 hover:bg-white dark:hover:bg-[#181514] border border-[#E0D7C8] dark:border-[#38302E] hover:border-[#CFBFA9] dark:hover:border-[#524643] p-4 sm:p-5 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
@@ -504,7 +607,6 @@ export const HomePage: React.FC = () => {
                 </div>
               </Link>
 
-              {/* Pillar 2: Personal Care & Multani Mitti */}
               <Link
                 to="/jimmi-jaggu?category=multani-collection"
                 className="group relative rounded-2xl bg-white/85 dark:bg-[#181514]/75 hover:bg-white dark:hover:bg-[#181514] border border-[#E0D7C8] dark:border-[#38302E] hover:border-[#CFBFA9] dark:hover:border-[#524643] p-4 sm:p-5 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
@@ -529,7 +631,6 @@ export const HomePage: React.FC = () => {
                 </div>
               </Link>
 
-              {/* Pillar 3: Pregnancy & Maternal Poshan */}
               <Link
                 to="/jimmi-jaggu?category=pregnancy-care"
                 className="group relative rounded-2xl bg-white/85 dark:bg-[#181514]/75 hover:bg-white dark:hover:bg-[#181514] border border-[#E0D7C8] dark:border-[#38302E] hover:border-[#CFBFA9] dark:hover:border-[#524643] p-4 sm:p-5 backdrop-blur-md shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between"
@@ -555,7 +656,7 @@ export const HomePage: React.FC = () => {
               </Link>
             </div>
 
-            {/* 4. Footer Strip: Tagline & Grand Action Button (Trust badges removed) */}
+            {/* Footer Action */}
             <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#E2D9CC] dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5">
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-[#63524E] dark:text-[#C7BCB8]">
                 <span className="w-2 h-2 rounded-full bg-[#78363A] dark:bg-[#E8A598]" />
