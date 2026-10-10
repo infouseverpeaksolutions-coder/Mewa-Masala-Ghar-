@@ -28,6 +28,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import api from '../services/api';
 import { Product, ProductVariant } from '../types';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -114,7 +115,7 @@ export const ProductDetailPage: React.FC = () => {
   const currentVariant = selectedVariant || product.variants[0];
   const images = product.images.length > 0
     ? product.images
-    : [{ url: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80', isPrimary: true, displayOrder: 0, id: '1', productId: product.id }];
+    : [{ url: '/foods/foods_dryfruits.jpg', isPrimary: true, displayOrder: 0, id: '1', productId: product.id }];
   const currentImage = images[selectedImageIndex]?.url || images[0].url;
 
   const discountPercent = currentVariant.mrp > currentVariant.price
@@ -197,16 +198,19 @@ export const ProductDetailPage: React.FC = () => {
             className="aspect-[4/5] rounded-3xl overflow-hidden bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-soft relative cursor-crosshair group"
           >
             <img
-              src={currentImage}
+              src={resolveImageUrl(currentImage)}
               alt={product.name}
               style={{
                 transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
               }}
-              className={`w-full h-full object-cover object-center transition-transform duration-200 ${
+              className={`w-full h-full object-contain p-4 object-center transition-transform duration-200 ${
                 isHoveringImage ? 'sm:scale-150' : 'scale-100'
               }`}
               onError={(e) => {
-                e.currentTarget.src = 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80';
+                const target = e.currentTarget;
+                if (!target.src.includes('/foods/foods_dryfruits.jpg')) {
+                  target.src = '/foods/foods_dryfruits.jpg';
+                }
               }}
             />
 
@@ -262,7 +266,7 @@ export const ProductDetailPage: React.FC = () => {
                       : 'border-[#E7E0D0] dark:border-[#2A3B2F] opacity-70 hover:opacity-100'
                   }`}
                 >
-                  <img src={img.url} alt="" className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(img.url)} alt="" className="w-full h-full object-contain p-1" />
                 </button>
               ))}
             </div>
@@ -736,9 +740,12 @@ export const ProductDetailPage: React.FC = () => {
           </button>
           <div className="max-w-3xl max-h-[85vh] bg-white dark:bg-[#18221B] rounded-3xl overflow-hidden p-2">
             <img
-              src={currentImage}
+              src={resolveImageUrl(currentImage)}
               alt={product.name}
               className="w-full h-full max-h-[80vh] object-contain rounded-2xl"
+              onError={(e) => {
+                e.currentTarget.src = '/foods/foods_dryfruits.jpg';
+              }}
             />
           </div>
         </div>

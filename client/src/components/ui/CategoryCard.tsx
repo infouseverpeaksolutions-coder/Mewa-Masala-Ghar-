@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
+import { resolveImageUrl } from '../../utils/imageUrl';
+
 export interface CategoryCardProps {
   name: string;
   image: string;
@@ -22,12 +24,12 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
     >
       <div className="aspect-square w-full rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center mb-3">
         <img
-          src={image}
+          src={resolveImageUrl(image)}
           alt={name}
           onError={(e) => {
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80';
+            e.currentTarget.src = '/foods/foods_dryfruits.jpg';
           }}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
       </div>

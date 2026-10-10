@@ -18,6 +18,7 @@ import {
 import { useCart } from '../context/CartContext';
 import { useSettings } from '../context/SettingsContext';
 import api from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 export const CartPage: React.FC = () => {
   const {
@@ -157,11 +158,11 @@ export const CartPage: React.FC = () => {
                 {/* Thumbnail & Product Details */}
                 <div className="flex items-center gap-4 flex-1">
                   <img
-                    src={item.product.images?.[0]?.url || '/logo.jpg'}
+                    src={resolveImageUrl(item.product.images?.[0]?.url)}
                     alt={item.product.name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border border-[#E7E0D0] shrink-0 bg-[#FAF6EC]"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-contain p-2 rounded-2xl border border-[#E7E0D0] shrink-0 bg-[#FAF6EC]"
                     onError={(e) => {
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80';
+                      e.currentTarget.src = '/foods/foods_dryfruits.jpg';
                     }}
                   />
                   <div className="space-y-1">

@@ -4,6 +4,7 @@ import { ShoppingBag, Check, Heart } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { addToCart } = useCart();
@@ -28,30 +29,19 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const getFallbackImage = () => {
     const nameLower = (product.name || '').toLowerCase();
     if (nameLower.includes('flax') || nameLower.includes('seed') || nameLower.includes('chia') || nameLower.includes('pumpkin')) {
-      return 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=600&q=80';
-    }
-    if (nameLower.includes('almond') || nameLower.includes('badam') || nameLower.includes('kaju') || nameLower.includes('cashew') || nameLower.includes('walnut')) {
-      return 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80';
+      return '/foods/foods_superseeds.jpg';
     }
     if (nameLower.includes('makhana')) {
-      return 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=600&q=80';
+      return '/foods/foods_makhana.jpg';
     }
-    if (nameLower.includes('spice') || nameLower.includes('masala') || nameLower.includes('turmeric') || nameLower.includes('chili') || nameLower.includes('garam') || nameLower.includes('haldi')) {
-      return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80';
-    }
-    if (nameLower.includes('multani') || nameLower.includes('clay') || nameLower.includes('mud')) {
-      return 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80';
-    }
-    if (nameLower.includes('aahar') || nameLower.includes('poshan') || nameLower.includes('baby') || nameLower.includes('ragi') || nameLower.includes('garbh') || nameLower.includes('shishu')) {
-      return 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&w=600&q=80';
-    }
-    return 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80';
+    return '/foods/foods_dryfruits.jpg';
   };
 
-  const primaryImage =
+  const rawImage =
     product.images?.find((img) => img.isPrimary)?.url ||
-    product.images?.[0]?.url ||
-    getFallbackImage();
+    product.images?.[0]?.url;
+
+  const primaryImage = rawImage ? resolveImageUrl(rawImage) : getFallbackImage();
 
   const discountPercent =
     selectedVariant.mrp > selectedVariant.price
@@ -117,7 +107,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           <img
             src={primaryImage}
             alt={product.name}
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               e.currentTarget.src = getFallbackImage();
             }}

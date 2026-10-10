@@ -4,6 +4,7 @@ import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Tag, Check, AlertCircl
 import { useCart } from '../context/CartContext';
 import { useSettings } from '../context/SettingsContext';
 import api from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -136,10 +137,10 @@ export const CartDrawer: React.FC = () => {
               </div>
             ) : (
               items.map((item) => {
-                const imgUrl =
-                  item.product.images.find((i) => i.isPrimary)?.url ||
-                  item.product.images[0]?.url ||
-                  '/logo.jpg';
+                const rawUrl =
+                  item.product.images?.find((i) => i.isPrimary)?.url ||
+                  item.product.images?.[0]?.url;
+                const imgUrl = resolveImageUrl(rawUrl);
                 return (
                   <div
                     key={item.variant.id}
@@ -148,9 +149,9 @@ export const CartDrawer: React.FC = () => {
                     <img
                       src={imgUrl}
                       alt={item.product.name}
-                      className="w-16 h-16 object-cover rounded-xl bg-white shrink-0 border border-[#E7E0D0]"
+                      className="w-16 h-16 object-contain p-1 rounded-xl bg-white shrink-0 border border-[#E7E0D0]"
                       onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=300&q=80';
+                        e.currentTarget.src = '/foods/foods_dryfruits.jpg';
                       }}
                     />
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
