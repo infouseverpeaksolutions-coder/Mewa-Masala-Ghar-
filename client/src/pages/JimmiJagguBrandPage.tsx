@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,73 +11,9 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
-
-interface FeaturedProduct {
-  id: string;
-  name: string;
-  price: number;
-  rating: number;
-  reviewsCount: number;
-  image: string;
-  slug: string;
-}
-
-const FEATURED_PRODUCTS: FeaturedProduct[] = [
-  {
-    id: 'jj-prod-pratham-aahar',
-    name: 'Pratham Aahar Baby Food (Sprouted Porridge)',
-    price: 349,
-    rating: 4.9,
-    reviewsCount: 184,
-    image: '/jimmi-jaggu/cat_baby_bottle.jpg',
-    slug: 'pratham-aahar-baby-food',
-  },
-  {
-    id: 'jj-prod-dead-sea-mud',
-    name: 'Dead Sea Mud Mineral Purifying Pack',
-    price: 499,
-    rating: 4.8,
-    reviewsCount: 142,
-    image: '/jimmi-jaggu/prod_dead_sea_mud.jpg',
-    slug: 'dead-sea-mud-pack',
-  },
-  {
-    id: 'jj-prod-pink-multani-mitti',
-    name: 'Pink Multani Mitti Glow Clay',
-    price: 399,
-    rating: 4.9,
-    reviewsCount: 210,
-    image: '/jimmi-jaggu/cat_care.png',
-    slug: 'pink-multani-mitti',
-  },
-  {
-    id: 'jj-prod-premium-multani-mitti',
-    name: 'Premium Ayurvedic Multani Mitti (Triple-Sifted)',
-    price: 279,
-    rating: 5.0,
-    reviewsCount: 320,
-    image: '/jimmi-jaggu/cat_ayurvedic_powder.jpg',
-    slug: 'premium-ayurvedic-multani-mitti',
-  },
-  {
-    id: 'jj-prod-1',
-    name: 'Baby Moisturizing Cream',
-    price: 499,
-    rating: 4.8,
-    reviewsCount: 124,
-    image: '/jimmi-jaggu/prod_baby_cream.jpg',
-    slug: 'baby-moisturizing-cream',
-  },
-  {
-    id: 'jj-prod-2',
-    name: 'Natural Baby Massage Oil',
-    price: 449,
-    rating: 4.7,
-    reviewsCount: 98,
-    image: '/jimmi-jaggu/prod_massage_oil.jpg',
-    slug: 'natural-baby-massage-oil',
-  },
-];
+import api from '../services/api';
+import { Product } from '../types';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 
 
@@ -187,41 +124,30 @@ export const JimmiJagguBrandPage: React.FC = () => {
     setActiveStore('baby');
   }, [setActiveStore]);
 
-  const handleAddToCart = (prod: FeaturedProduct) => {
-    addToCart(
-      {
-        id: prod.id,
-        name: prod.name,
-        slug: prod.slug,
-        description: 'Natural care crafted for happy babies and glowing skin.',
-        categoryId: 'baby',
-        rating: prod.rating,
-        reviewCount: prod.reviewsCount,
-        images: [{ id: '1', url: prod.image, isPrimary: true, displayOrder: 0, productId: prod.id }],
-        variants: [
-          {
-            id: `${prod.id}-v1`,
-            productId: prod.id,
-            sku: `JJ-${prod.id}`,
-            weight: '100g',
-            price: prod.price,
-            mrp: prod.price + 100,
-            stockQty: 50,
-          },
-        ],
-      } as any,
-      {
+  const { data: products = [], isLoading: isProductsLoading } = useQuery({
+    queryKey: ['jimmi-jaggu-products'],
+    queryFn: async () => {
+      const res = await api.get('/products?brand=jimmi-jaggu&limit=20');
+      return (res.data?.data?.products || []) as Product[];
+    },
+  });
+
+  const handleAddToCart = (prod: Product) => {
+    const defaultVariant =
+      prod.variants?.find((v) => v.isDefault) ||
+      prod.variants?.[0] || {
         id: `${prod.id}-v1`,
         productId: prod.id,
-        sku: `JJ-${prod.id}`,
-        weight: '100g',
-        price: prod.price,
-        mrp: prod.price + 100,
-        stockQty: 50,
-      } as any,
-      1
-    );
+        name: 'Standard',
+        sku: `JJ-${prod.slug || prod.id}`,
+        weightGrams: 200,
+        price: 299,
+        mrp: 399,
+        stock: 50,
+        isDefault: true,
+      };
 
+    addToCart(prod, defaultVariant, 1);
     setAddedItem(prod.id);
     setTimeout(() => setAddedItem(null), 1500);
   };
@@ -514,87 +440,123 @@ export const JimmiJagguBrandPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Carousel Container with Arrows */}
-        <div className="relative group/carousel">
-          {/* Left Arrow */}
-          <button
-            onClick={() => scrollCarousel('left')}
-            className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-[#18221B] shadow-md border border-[#EFE8DF] dark:border-[#2A3B2F] flex items-center justify-center text-[#2B2321] dark:text-white hover:bg-gray-50 transition-all cursor-pointer"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          {/* Right Arrow */}
-          <button
-            onClick={() => scrollCarousel('right')}
-            className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-[#18221B] shadow-md border border-[#EFE8DF] dark:border-[#2A3B2F] flex items-center justify-center text-[#2B2321] dark:text-white hover:bg-gray-50 transition-all cursor-pointer"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
-          {/* Scrollable Track */}
-          <div
-            ref={carouselRef}
-            className="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-4 px-1"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {FEATURED_PRODUCTS.map((prod) => (
-              <div
-                key={prod.id}
-                className="w-[210px] sm:w-[230px] shrink-0 bg-white dark:bg-[#18221B] rounded-2xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3.5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between"
+        {/* Carousel or Empty State */}
+        {products.length === 0 ? (
+          <div className="w-full text-center py-12 px-6 bg-white dark:bg-[#18221B] rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-soft max-w-xl mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-[#B97375]/10 text-[#B97375] flex items-center justify-center text-3xl mx-auto mb-4">
+              🍼
+            </div>
+            <h3 className="font-serif text-lg sm:text-xl font-bold text-[#2B2321] dark:text-white">
+              Fresh Batches Launching Soon
+            </h3>
+            <p className="text-xs text-[#82746E] dark:text-gray-400 mt-2 max-w-md mx-auto leading-relaxed">
+              Our doctor-formulated baby nutrition and pure volcanic & ayurvedic skincare collections are currently being prepared and packaged. New stock will be available soon!
+            </p>
+            <div className="mt-5">
+              <Link
+                to="/shop"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
-                <div>
-                  {/* Product Image */}
-                  <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3 flex items-center justify-center p-2">
-                    <img
-                      src={prod.image}
-                      alt={prod.name}
-                      className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-
-                  {/* Title */}
-                  <h4 className="font-serif font-bold text-xs sm:text-sm text-[#2B2321] dark:text-white text-center leading-snug min-h-[36px]">
-                    {prod.name}
-                  </h4>
-
-                  {/* Price */}
-                  <p className="text-center font-bold text-sm sm:text-base text-[#2B2321] dark:text-white mt-1">
-                    ₹ {prod.price}
-                  </p>
-
-                  {/* Star Rating */}
-                  <div className="flex items-center justify-center gap-1 text-[11px] text-[#82746E] dark:text-gray-400 mt-1 mb-3">
-                    <Star className="w-3.5 h-3.5 fill-[#D9A441] text-[#D9A441]" />
-                    <span className="font-bold text-[#2B2321] dark:text-white">{prod.rating}</span>
-                    <span>({prod.reviewsCount})</span>
-                  </div>
-                </div>
-
-                {/* Add to Cart button */}
-                <button
-                  onClick={() => handleAddToCart(prod)}
-                  className={`w-full py-2 px-3 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 ${
-                    addedItem === prod.id
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-[#A89882] hover:bg-[#968670] text-white shadow-xs'
-                  }`}
-                >
-                  {addedItem === prod.id ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Added!</span>
-                    </>
-                  ) : (
-                    <span>Add to Cart</span>
-                  )}
-                </button>
-              </div>
-            ))}
+                <span>Explore Mewa Masala Ghar Foods</span>
+                <span className="text-xs">→</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="relative group/carousel">
+            {/* Left Arrow */}
+            <button
+              onClick={() => scrollCarousel('left')}
+              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-[#18221B] shadow-md border border-[#EFE8DF] dark:border-[#2A3B2F] flex items-center justify-center text-[#2B2321] dark:text-white hover:bg-gray-50 transition-all cursor-pointer"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              onClick={() => scrollCarousel('right')}
+              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-[#18221B] shadow-md border border-[#EFE8DF] dark:border-[#2A3B2F] flex items-center justify-center text-[#2B2321] dark:text-white hover:bg-gray-50 transition-all cursor-pointer"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* Scrollable Track */}
+            <div
+              ref={carouselRef}
+              className="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-4 px-1"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {products.map((prod) => {
+                const primaryImg =
+                  prod.images?.find((img) => img.isPrimary)?.url ||
+                  prod.images?.[0]?.url ||
+                  '/jimmi-jaggu/cat_baby_bottle.jpg';
+                const defaultVariant =
+                  prod.variants?.find((v) => v.isDefault) || prod.variants?.[0];
+                const price = defaultVariant?.price ?? 0;
+
+                return (
+                  <div
+                    key={prod.id}
+                    className="w-[210px] sm:w-[230px] shrink-0 bg-white dark:bg-[#18221B] rounded-2xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3.5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Product Image */}
+                      <Link to={`/product/${prod.slug}`} className="block w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3 flex items-center justify-center p-2">
+                        <img
+                          src={resolveImageUrl(primaryImg)}
+                          alt={prod.name}
+                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                        />
+                      </Link>
+
+                      {/* Title */}
+                      <Link to={`/product/${prod.slug}`}>
+                        <h4 className="font-serif font-bold text-xs sm:text-sm text-[#2B2321] dark:text-white text-center leading-snug min-h-[36px] hover:text-[#B97375] transition-colors line-clamp-2">
+                          {prod.name}
+                        </h4>
+                      </Link>
+
+                      {/* Price */}
+                      <p className="text-center font-bold text-sm sm:text-base text-[#2B2321] dark:text-white mt-1">
+                        ₹ {price}
+                      </p>
+
+                      {/* Star Rating */}
+                      <div className="flex items-center justify-center gap-1 text-[11px] text-[#82746E] dark:text-gray-400 mt-1 mb-3">
+                        <Star className="w-3.5 h-3.5 fill-[#D9A441] text-[#D9A441]" />
+                        <span className="font-bold text-[#2B2321] dark:text-white">{prod.rating || 5.0}</span>
+                        <span>({prod.reviewCount || 0})</span>
+                      </div>
+                    </div>
+
+                    {/* Add to Cart button */}
+                    <button
+                      onClick={() => handleAddToCart(prod)}
+                      className={`w-full py-2 px-3 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 ${
+                        addedItem === prod.id
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-[#A89882] hover:bg-[#968670] text-white shadow-xs'
+                      }`}
+                    >
+                      {addedItem === prod.id ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Added!</span>
+                        </>
+                      ) : (
+                        <span>Add to Cart</span>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
       </section>
 
       {/* 

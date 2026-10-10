@@ -233,8 +233,8 @@ export const ProductsPage: React.FC = () => {
 
   const mewaBrandData = brandsList.find((b: any) => b.slug === 'mewa-masala-ghar');
   const jimmiBrandData = brandsList.find((b: any) => b.slug === 'jimmi-jaggu');
-  const mewaCount = mewaBrandData?._count?.products ?? 20;
-  const jimmiCount = jimmiBrandData?._count?.products ?? 4;
+  const mewaCount = mewaBrandData?._count?.products ?? 0;
+  const jimmiCount = jimmiBrandData?._count?.products ?? 0;
 
   return (
     <div className="space-y-6">
