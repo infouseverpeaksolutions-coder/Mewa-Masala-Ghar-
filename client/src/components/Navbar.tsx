@@ -157,13 +157,13 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               <Link to="/jimmi-jaggu" className="flex items-center gap-2.5 sm:gap-3 group py-1">
                 {/* Official Jimmi Jaggu Logo (Dark version for light mode) */}
                 <img
-                  src="/jimmi-jaggu/logo_dark.png"
+                  src="/assets/jimmi-jaggu/logo_dark.png"
                   alt="Jimmi Jaggu"
                   className="h-11 sm:h-13 md:h-14 w-auto object-contain dark:hidden group-hover:scale-105 transition-transform duration-200"
                 />
                 {/* Official Jimmi Jaggu Logo (Light version for dark mode) */}
                 <img
-                  src="/jimmi-jaggu/logo_light.png"
+                  src="/assets/jimmi-jaggu/logo_light.png"
                   alt="Jimmi Jaggu"
                   className="h-11 sm:h-13 md:h-14 w-auto object-contain hidden dark:block group-hover:scale-105 transition-transform duration-200"
                 />

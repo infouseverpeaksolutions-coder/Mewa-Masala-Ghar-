@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-4">
               <Link to="/jimmi-jaggu" className="inline-block transition-transform duration-200 hover:scale-105">
                 <img
-                  src="/jimmi-jaggu/logo_light.png"
+                  src="/assets/jimmi-jaggu/logo_light.png"
                   alt="Jimmi Jaggu - From Our Store to Your Home"
                   className="h-20 sm:h-24 w-auto object-contain"
                 />
@@ -255,7 +255,7 @@ export const Footer: React.FC = () => {
               <div className="space-y-2">
                 <Link to="/jimmi-jaggu" className="inline-flex items-center gap-2.5 group">
                   <img
-                    src="/jimmi-jaggu/logo_light.png"
+                    src="/assets/jimmi-jaggu/logo_light.png"
                     alt="Jimmi Jaggu"
                     className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
                   />

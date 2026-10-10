@@ -32,7 +32,7 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'slide-1',
-    image: '/jimmi-jaggu/hero_slide_1.jpg',
+    image: '/assets/jimmi-jaggu/hero_slide_1.jpg',
     badgeStore: 'Presented by Mewa Masala Ghar',
     title: 'Gentle Care for',
     titleAccent: 'Little Ones & You',
@@ -43,7 +43,7 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: 'slide-2',
-    image: '/jimmi-jaggu/hero_slide_2.jpg',
+    image: '/assets/jimmi-jaggu/hero_slide_2.jpg',
     badgeStore: '100% Safe & Certified Essentials',
     title: 'Pure Comfort for',
     titleAccent: 'Tender Baby Skin',
@@ -54,7 +54,7 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: 'slide-3',
-    image: '/jimmi-jaggu/hero_slide_3.jpg',
+    image: '/assets/jimmi-jaggu/hero_slide_3.jpg',
     badgeStore: 'Ayurvedic Poshan for Mothers',
     title: 'Loving Care for',
     titleAccent: 'Mothers-to-Be',
@@ -65,7 +65,7 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: 'slide-4',
-    image: '/jimmi-jaggu/hero_slide_4.jpg',
+    image: '/assets/jimmi-jaggu/hero_slide_4.jpg',
     badgeStore: 'Triple-Sifted Ayurvedic Purity',
     title: 'Pure Botanical &',
     titleAccent: 'Ayurvedic Skincare',
@@ -241,12 +241,12 @@ export const JimmiJagguBrandPage: React.FC = () => {
             {/* Sub-brand badge with official Jimmi Jaggu logo */}
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-md transition-all mx-auto">
               <img
-                src="/jimmi-jaggu/logo_dark.png"
+                src="/assets/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
                 className="w-3.5 h-4 sm:w-4 sm:h-5 object-contain dark:hidden"
               />
               <img
-                src="/jimmi-jaggu/logo_light.png"
+                src="/assets/jimmi-jaggu/logo_light.png"
                 alt="Jimmi Jaggu"
                 className="w-3.5 h-4 sm:w-4 sm:h-5 object-contain hidden dark:block"
               />
@@ -337,7 +337,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div>
               <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
                 <img
-                  src="/jimmi-jaggu/cat_baby_bottle.jpg"
+                  src="/assets/jimmi-jaggu/cat_baby_bottle.jpg"
                   alt="Baby Products"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
@@ -365,7 +365,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div>
               <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
                 <img
-                  src="/jimmi-jaggu/cat_ayurvedic_powder.jpg"
+                  src="/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg"
                   alt="Personal Care & Skincare"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
@@ -393,7 +393,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div>
               <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
                 <img
-                  src="/jimmi-jaggu/cat_pregnancy_mother.jpg"
+                  src="/assets/jimmi-jaggu/cat_pregnancy_mother.jpg"
                   alt="Pregnancy Products"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
@@ -492,7 +492,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
                 const primaryImg =
                   prod.images?.find((img) => img.isPrimary)?.url ||
                   prod.images?.[0]?.url ||
-                  '/jimmi-jaggu/cat_baby_bottle.jpg';
+                  '/assets/jimmi-jaggu/cat_baby_bottle.jpg';
                 const defaultVariant =
                   prod.variants?.find((v) => v.isDefault) || prod.variants?.[0];
                 const price = defaultVariant?.price ?? 0;
@@ -568,7 +568,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
         <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-card min-h-[340px] sm:min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex items-center group">
           {/* Full-bleed background image across the whole banner */}
           <img
-            src="/jimmi-jaggu/banner_still.jpg"
+            src="/assets/jimmi-jaggu/banner_still.jpg"
             alt="Jimmi Jaggu Baby and Skincare"
             className="absolute inset-0 w-full h-full object-cover object-[78%_center] group-hover:scale-[1.02] transition-transform duration-700 ease-out"
           />
@@ -583,12 +583,12 @@ export const JimmiJagguBrandPage: React.FC = () => {
           <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12 max-w-lg sm:max-w-xl space-y-3.5 sm:space-y-4">
             <div className="flex items-center gap-3.5">
               <img
-                src="/jimmi-jaggu/logo_dark.png"
+                src="/assets/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
                 className="h-12 sm:h-14 lg:h-16 w-auto object-contain dark:hidden"
               />
               <img
-                src="/jimmi-jaggu/logo_light.png"
+                src="/assets/jimmi-jaggu/logo_light.png"
                 alt="Jimmi Jaggu"
                 className="h-12 sm:h-14 lg:h-16 w-auto object-contain hidden dark:block"
               />
