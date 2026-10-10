@@ -777,6 +777,7 @@ export const ProductsPage: React.FC = () => {
         onSuccess={() => {
           queryClient.invalidateQueries({ queryKey: ['admin-products'] });
           queryClient.invalidateQueries({ queryKey: ['admin-brands-list'] });
+          queryClient.refetchQueries({ queryKey: ['admin-products'] });
         }}
         productToEdit={editingProduct}
         brandsList={brandsList}

@@ -97,14 +97,19 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         .then((res) => {
           if (res.data?.data) {
             setCategoriesList(res.data.data);
+            if (!productToEdit && res.data.data.length > 0) {
+              setCategoryId((prev) => prev || res.data.data[0].id);
+            }
           }
         })
         .catch(() => {});
     }
-  }, [isOpen]);
+  }, [isOpen, productToEdit]);
 
   // Load existing product data if editing, or set clean defaults
   useEffect(() => {
+    if (!isOpen) return;
+
     if (productToEdit) {
       setName(productToEdit.name || '');
       setCategoryId(productToEdit.categoryId || '');
@@ -116,9 +121,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setIsFeatured(Boolean(productToEdit.isFeatured));
       setIsBestSeller(Boolean(productToEdit.isBestSeller));
 
-      if (productToEdit.variants && productToEdit.variants.length > 0) {
+      const activeVars = (productToEdit.variants || []).filter((v: any) => v.isActive !== false);
+      if (activeVars.length > 0) {
         setVariants(
-          productToEdit.variants.map((v: any) => ({
+          activeVars.map((v: any) => ({
             id: v.id,
             weightGrams: v.weightGrams || 200,
             price: v.price !== undefined ? String(v.price) : '',
@@ -163,7 +169,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setImages([]);
     }
     setErrorMessage(null);
-  }, [productToEdit, isOpen, categoriesList]);
+  }, [isOpen, productToEdit?.id]);
 
   const handleUpdateVariant = (
     index: number,
@@ -288,19 +294,17 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     setLoading(true);
 
     try {
-      // Pick 250g or 200g or first variant as default display
-      const defaultVar =
-        validVariants.find((v) => Number(v.weightGrams) === 250) ||
-        validVariants.find((v) => Number(v.weightGrams) === 200) ||
-        validVariants[0];
+      // Pick first valid variant as default display
+      const defaultVar = validVariants[0];
 
       const mappedVariants = validVariants.map((v, idx) => {
-        const w = Number(v.weightGrams) || 250;
+        const w = Number(v.weightGrams) || 200;
         const numPrice = parseFloat(String(v.price)) || 0;
         const numMrp = parseFloat(String(v.mrp)) || Math.round(numPrice * 1.2);
         const wLabel = w >= 1000 ? `${w / 1000}kg Pack` : `${w}g Pack`;
+        const isRealId = v.id && !String(v.id).startsWith('synth-');
         return {
-          id: v.id,
+          id: isRealId ? v.id : undefined,
           name: `${name.trim()} - ${wLabel}`,
           weightGrams: w,
           price: numPrice,
@@ -308,8 +312,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           stockQty: parseInt(String(v.stockQty), 10) || 50,
           packQty: 1,
           gstPercent: Number(gstRate) || 12,
-          sku: v.id ? undefined : `MMG-${Date.now().toString().slice(-4)}-${idx + 1}`,
-          isDefault: v.weightGrams === defaultVar.weightGrams,
+          isDefault: idx === 0,
           isActive: true,
         };
       });
@@ -319,10 +322,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         categoryId,
         storeId: resolvedStoreId,
         brandId: selectedCat?.brandId || undefined,
-        price: parseFloat(String(defaultVar.price)) || mappedVariants[0]?.price || 0,
-        mrp: parseFloat(String(defaultVar.mrp)) || mappedVariants[0]?.mrp || 0,
-        weightGrams: Number(defaultVar.weightGrams) || 250,
-        stockQty: parseInt(String(defaultVar.stockQty), 10) || 50,
+        price: mappedVariants[0]?.price || 0,
+        mrp: mappedVariants[0]?.mrp || 0,
+        weightGrams: mappedVariants[0]?.weightGrams || 200,
+        stockQty: mappedVariants[0]?.stockQty || 50,
         description: description.trim() || `${name.trim()} - Premium authentic selection.`,
         shortDescription: shortDescription.trim() || undefined,
         slug: slug.trim() || undefined,
@@ -349,7 +352,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       onSuccess();
       onClose();
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Failed to save product. Please verify inputs.');
+      const msg = err.response?.data?.message || 'Failed to save product. Please verify inputs.';
+      setErrorMessage(msg);
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -765,24 +770,35 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-8 pt-4 border-t border-[#E6DEC8] flex items-center justify-end gap-3 sticky bottom-0 bg-[#FAF6EC] z-10">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 bg-white border border-[#E6DEC8] text-gray-700 font-bold rounded-xl hover:bg-gray-50 text-xs"
-          >
-            Cancel
-          </button>
+        <div className="mt-8 pt-4 border-t border-[#E6DEC8] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sticky bottom-0 bg-[#FAF6EC] z-10">
+          {errorMessage ? (
+            <div className="flex items-center gap-2 text-red-600 text-xs font-bold bg-red-50 p-2 rounded-lg border border-red-200">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          ) : (
+            <div />
+          )}
 
-          <button
-            type="button"
-            disabled={loading}
-            onClick={() => handleSubmit(true)}
-            className="px-6 py-2.5 bg-[#2F5D3A] text-white font-bold rounded-xl hover:bg-[#23472C] text-xs flex items-center gap-2 shadow-md disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-            <span>{isEditing ? 'Save Changes' : 'Add Product'}</span>
-          </button>
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 bg-white border border-[#E6DEC8] text-gray-700 font-bold rounded-xl hover:bg-gray-50 text-xs"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleSubmit(true)}
+              className="px-6 py-2.5 bg-[#2F5D3A] text-white font-bold rounded-xl hover:bg-[#23472C] text-xs flex items-center gap-2 shadow-md disabled:opacity-50"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+              <span>{isEditing ? 'Save Changes' : 'Add Product'}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

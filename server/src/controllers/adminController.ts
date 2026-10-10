@@ -392,7 +392,20 @@ export const getAdminProducts = async (req: Request, res: Response) => {
     if (store && store !== 'all') where.store = { slug: String(store) };
     if (category && category !== 'all') where.category = { slug: String(category) };
     if (brand && brand !== 'all') {
-      where.brand = { slug: String(brand) };
+      if (brand === 'mewa-masala-ghar') {
+        where.OR = [
+          { brand: { slug: 'mewa-masala-ghar' } },
+          { brandId: null, store: { slug: 'foods' } },
+          { store: { slug: 'foods' } },
+        ];
+      } else if (brand === 'jimmi-jaggu') {
+        where.OR = [
+          { brand: { slug: 'jimmi-jaggu' } },
+          { store: { slug: { in: ['baby', 'care'] } } },
+        ];
+      } else {
+        where.brand = { slug: String(brand) };
+      }
     }
     if (active !== undefined && active !== '') where.isActive = active === 'true';
 
@@ -413,7 +426,7 @@ export const getAdminProducts = async (req: Request, res: Response) => {
           store: { select: { id: true, name: true, slug: true } },
           brand: { select: { id: true, name: true, slug: true, primaryColor: true, accentColor: true } },
           category: { select: { id: true, name: true, slug: true } },
-          variants: { orderBy: { price: 'asc' } },
+          variants: { where: { isActive: true }, orderBy: { price: 'asc' } },
           images: { orderBy: { displayOrder: 'asc' } },
         },
         orderBy: { createdAt: 'desc' },
@@ -449,7 +462,7 @@ export const getAdminProductById = async (req: Request, res: Response) => {
         store: true,
         brand: true,
         category: true,
-        variants: { orderBy: { price: 'asc' } },
+        variants: { where: { isActive: true }, orderBy: { price: 'asc' } },
         images: { orderBy: { displayOrder: 'asc' } },
       },
     });
@@ -662,6 +675,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       for (const ev of existingVariants) {
         if (!incomingIds.includes(ev.id)) {
           try {
+            await prisma.cartItem.deleteMany({ where: { productVariantId: ev.id } });
             await prisma.productVariant.delete({ where: { id: ev.id } });
           } catch {
             await prisma.productVariant.update({ where: { id: ev.id }, data: { isActive: false } });
@@ -688,11 +702,12 @@ export const updateProduct = async (req: Request, res: Response) => {
               mrp: mrpVal,
               stockQty: v.stockQty !== undefined ? parseInt(String(v.stockQty), 10) : 50,
               isDefault: v.isDefault !== undefined ? Boolean(v.isDefault) : idx === 0,
-              isActive: v.isActive !== undefined ? Boolean(v.isActive) : true,
+              isActive: true,
             },
           });
         } else {
-          const randSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+          const randSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+          const uniqueSku = `MMG-${Date.now().toString().slice(-6)}-${idx + 1}-${randSuffix}`;
           await prisma.productVariant.create({
             data: {
               productId: id,
@@ -703,7 +718,7 @@ export const updateProduct = async (req: Request, res: Response) => {
               stockQty: v.stockQty !== undefined ? parseInt(String(v.stockQty), 10) : 50,
               packQty: 1,
               gstPercent: v.gstPercent ? parseFloat(String(v.gstPercent)) : (updated.gstRate || 12.0),
-              sku: v.sku ? String(v.sku).trim() : `MMG-${Date.now().toString().slice(-4)}-${idx + 1}-${randSuffix}`,
+              sku: v.sku && !existingVariants.some((e) => e.sku === v.sku) ? String(v.sku).trim() : uniqueSku,
               isDefault: v.isDefault !== undefined ? Boolean(v.isDefault) : idx === 0,
               isActive: true,
             },
@@ -762,7 +777,10 @@ export const updateProduct = async (req: Request, res: Response) => {
 
     const refreshed = await prisma.product.findUnique({
       where: { id },
-      include: { images: true, variants: true },
+      include: {
+        images: { orderBy: { displayOrder: 'asc' } },
+        variants: { where: { isActive: true }, orderBy: { price: 'asc' } },
+      },
     });
 
     return res.json({
