@@ -58,7 +58,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   // Standard 5 Weight Categories (100g, 200g, 250g, 500g, 1 kg)
   const WEIGHT_CATEGORIES = [
-    { value: 100, label: '100 Grams (100g)' },
+    { value: 70, label: '70 Grams (70g)' },
     { value: 200, label: '200 Grams (200g)' },
     { value: 250, label: '250 Grams (250g)' },
     { value: 500, label: '500 Grams (500g)' },
