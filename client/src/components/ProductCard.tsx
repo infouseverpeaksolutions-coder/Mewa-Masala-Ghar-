@@ -62,27 +62,27 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     toggleWishlist(product);
   };
 
-  // Tag style by store
-  const getStoreTag = () => {
+  // Tag style: show real Category name or Jimmi Jaggu badge
+  const getProductBadge = () => {
     const sId = product.storeId || '';
-    if (sId.includes('baby')) {
-      return { label: 'Baby & Family', bg: 'bg-[#5DB4D6]', text: 'text-white' };
+    if (product.brand?.slug === 'jimmi-jaggu' || sId.includes('baby') || sId.includes('care')) {
+      return { label: 'Jimmi Jaggu', bg: 'bg-[#B97375]', text: 'text-white' };
     }
-    if (sId.includes('care')) {
-      return { label: 'Personal Care', bg: 'bg-[#E0808C]', text: 'text-white' };
+    if (product.category?.name) {
+      return { label: product.category.name, bg: 'bg-[#2F5D3A]', text: 'text-white' };
     }
-    return { label: 'Mewa & Healthy Foods', bg: 'bg-[#7A2633]', text: 'text-white' };
+    return { label: 'Pure & Natural', bg: 'bg-[#2F5D3A]', text: 'text-white' };
   };
 
-  const storeTag = getStoreTag();
+  const badge = getProductBadge();
 
   return (
     <div className="group bg-white rounded-2xl border border-[#E7E0D0] p-3 sm:p-4 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between h-full relative card-hover-lift">
       {/* Top badges & Wishlist */}
       <div className="relative">
         <div className="flex items-center justify-between mb-2">
-          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${storeTag.bg} ${storeTag.text} shadow-2xs`}>
-            {storeTag.label}
+          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${badge.bg} ${badge.text} shadow-2xs`}>
+            {badge.label}
           </span>
 
           <button

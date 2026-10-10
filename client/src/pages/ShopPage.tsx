@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Filter, SlidersHorizontal, RefreshCw, X, ChevronDown, Sparkles } from 'lucide-react';
+import { Filter, RefreshCw, X, ChevronDown, Sparkles } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
 import { LeafIcon } from '../components/ui/Icons';
-import { useTheme, STORE_THEMES, StoreType } from '../context/ThemeContext';
 import api from '../services/api';
 import { Product, Category } from '../types';
 
 export const ShopPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { activeStore, setActiveStore } = useTheme();
+  const navigate = useNavigate();
 
   const storeParam = searchParams.get('store');
   const categoryParam = searchParams.get('category') || '';
@@ -25,32 +24,27 @@ export const ShopPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
 
-  // Sync with storeParam
+  // Baby & Care products belong to Jimmi Jaggu sub-brand — redirect if requested
   useEffect(() => {
-    if (storeParam && (storeParam === 'foods' || storeParam === 'baby' || storeParam === 'care')) {
-      if (activeStore !== storeParam) {
-        setActiveStore(storeParam as StoreType);
-      }
+    if (storeParam === 'baby' || storeParam === 'care' || searchParams.get('brand') === 'jimmi-jaggu') {
+      navigate('/jimmi-jaggu', { replace: true });
     }
-  }, [storeParam, activeStore, setActiveStore]);
+  }, [storeParam, searchParams, navigate]);
 
-  // Fetch categories for active store
-  const { data: storesData } = useQuery({
-    queryKey: ['stores-categories'],
+  // Fetch Mewa Masala Ghar food categories
+  const { data: foodCategories = [] } = useQuery({
+    queryKey: ['mewa-food-categories'],
     queryFn: async () => {
-      const res = await api.get('/products/stores');
-      return res.data?.data as Array<{ slug: string; categories: Category[] }>;
+      const res = await api.get('/categories?store=foods');
+      return (res.data?.data || []) as Category[];
     },
   });
 
-  const activeStoreCategories =
-    storesData?.find((s) => s.slug === activeStore)?.categories || [];
-
-  // Fetch products
+  // Fetch products exclusively for Mewa Masala Ghar foods
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ['products', activeStore, selectedCategory, searchParam, featuredParam, selectedSort],
+    queryKey: ['mewa-products', selectedCategory, searchParam, featuredParam, selectedSort],
     queryFn: async () => {
-      let url = `/products?store=${activeStore}&sort=${selectedSort}`;
+      let url = `/products?store=foods&sort=${selectedSort}`;
       if (selectedCategory) url += `&category=${selectedCategory}`;
       if (searchParam) url += `&search=${encodeURIComponent(searchParam)}`;
       if (featuredParam) url += `&featured=true`;
@@ -85,7 +79,7 @@ export const ShopPage: React.FC = () => {
     setSelectedCategory('');
     setSearchInput('');
     setCurrentPage(1);
-    setSearchParams({ store: activeStore });
+    setSearchParams({});
   };
 
   // Pagination calculations
@@ -102,9 +96,9 @@ export const ShopPage: React.FC = () => {
       <nav className="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-widest font-semibold mb-4">
         <Link to="/" className="hover:text-[#2F5D3A] transition-colors">Home</Link>
         <span>•</span>
-        <Link to={`/shop?store=${activeStore}`} className="hover:text-[#2F5D3A] transition-colors">Catalog</Link>
+        <Link to="/shop" className="hover:text-[#2F5D3A] transition-colors">Catalog</Link>
         <span>•</span>
-        <span className="text-[#1F4D2E] font-bold">{STORE_THEMES[activeStore]?.name}</span>
+        <span className="text-[#1F4D2E] font-bold">Mewa Masala Ghar</span>
       </nav>
 
       {/* Page Title & Sort Row */}
@@ -113,11 +107,11 @@ export const ShopPage: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <LeafIcon className="w-5 h-5 text-[#2F5D3A]" color="#2F5D3A" />
             <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#1F4D2E] tracking-tight">
-              {STORE_THEMES[activeStore]?.name}
+              Mewa Masala Ghar Catalog
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-gray-600 mt-1 max-w-xl font-sans">
-            {STORE_THEMES[activeStore]?.tagline}
+            Handpicked Royal Dry Fruits, Super Seeds, Slow-Roasted Makhana & Stone-Ground Spices
           </p>
         </div>
 
@@ -153,38 +147,6 @@ export const ShopPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         {/* Desktop Sidebar Filters */}
         <aside className="hidden lg:block space-y-6 sticky top-24">
-          {/* Active Store Switcher */}
-          <div className="bg-white p-5 rounded-2xl border border-[#E7E0D0] shadow-soft">
-            <h3 className="font-serif font-bold text-sm text-[#1F4D2E] mb-3 flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-[#2F5D3A]" />
-              <span>Department</span>
-            </h3>
-            <div className="space-y-1.5">
-              {(['foods', 'baby', 'care'] as StoreType[]).map((st) => (
-                <button
-                  key={st}
-                  onClick={() => {
-                    setActiveStore(st);
-                    setSelectedCategory('');
-                    setCurrentPage(1);
-                    setSearchParams({ store: st });
-                  }}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center justify-between min-h-[44px] ${
-                    activeStore === st
-                      ? 'bg-[#2F5D3A] text-white shadow-2xs'
-                      : 'text-gray-700 hover:bg-[#FAF6EC]'
-                  }`}
-                >
-                  <span>{STORE_THEMES[st].name}</span>
-                  <span
-                    className="w-2.5 h-2.5 rounded-full border border-white/50"
-                    style={{ backgroundColor: STORE_THEMES[st].accentColor }}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Categories Filter */}
           <div className="bg-white p-5 rounded-2xl border border-[#E7E0D0] shadow-soft">
             <div className="flex items-center justify-between mb-3">
@@ -210,7 +172,7 @@ export const ShopPage: React.FC = () => {
                 <span>All Categories</span>
                 {!selectedCategory && <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />}
               </button>
-              {activeStoreCategories.map((cat) => (
+              {foodCategories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => handleApplyFilter(cat.slug)}
@@ -227,6 +189,31 @@ export const ShopPage: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Sub-brand Callout for Jimmi Jaggu */}
+          <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FAF2EE] p-5 rounded-2xl border border-[#E8C5BC] shadow-soft">
+            <div className="flex items-center gap-2.5 mb-2">
+              <img
+                src="/brands/jimmi_jaggu_logo.png"
+                alt="Jimmi Jaggu"
+                className="w-7 h-7 object-contain rounded-full shadow-2xs border border-[#E8C5BC]"
+              />
+              <div>
+                <h4 className="font-serif font-bold text-xs text-[#8F4F52]">Jimmi Jaggu</h4>
+                <span className="text-[10px] text-[#B97375] font-semibold">Sub-Brand</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-[#6E5D57] mb-3 leading-relaxed">
+              Looking for doctor-curated baby porridge, maternal poshan, or natural multani mitti clays?
+            </p>
+            <Link
+              to="/jimmi-jaggu"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-[11px] font-bold shadow-2xs transition-all hover:scale-105"
+            >
+              <span>Explore Jimmi Jaggu</span>
+              <span>→</span>
+            </Link>
           </div>
 
           {/* Clear Filters Button */}
@@ -371,37 +358,6 @@ export const ShopPage: React.FC = () => {
             </div>
 
             <div className="space-y-6 pb-20">
-              {/* Departments */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-                  Department
-                </h4>
-                <div className="grid grid-cols-1 gap-2">
-                  {(['foods', 'baby', 'care'] as StoreType[]).map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => {
-                        setActiveStore(st);
-                        setSelectedCategory('');
-                        setCurrentPage(1);
-                        setSearchParams({ store: st });
-                      }}
-                      className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-between min-h-[44px] ${
-                        activeStore === st
-                          ? 'bg-[#2F5D3A] text-white'
-                          : 'bg-[#FAF6EC] text-gray-800'
-                      }`}
-                    >
-                      <span>{STORE_THEMES[st].name}</span>
-                      <span
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: STORE_THEMES[st].accentColor }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Categories */}
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
@@ -419,7 +375,7 @@ export const ShopPage: React.FC = () => {
                     <span>All Categories</span>
                     {!selectedCategory && <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />}
                   </button>
-                  {activeStoreCategories.map((cat) => (
+                  {foodCategories.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => handleApplyFilter(cat.slug)}
@@ -436,6 +392,28 @@ export const ShopPage: React.FC = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Sub-brand Callout for Jimmi Jaggu */}
+              <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FAF2EE] p-4 rounded-2xl border border-[#E8C5BC]">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <img
+                    src="/brands/jimmi_jaggu_logo.png"
+                    alt="Jimmi Jaggu"
+                    className="w-5 h-5 object-contain rounded-full"
+                  />
+                  <h4 className="font-serif font-bold text-xs text-[#8F4F52]">Jimmi Jaggu Sub-Brand</h4>
+                </div>
+                <p className="text-[11px] text-[#6E5D57] mb-2.5">
+                  Looking for baby nutrition or skincare?
+                </p>
+                <Link
+                  to="/jimmi-jaggu"
+                  onClick={() => setMobileFilterOpen(false)}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#B97375]"
+                >
+                  <span>Visit Jimmi Jaggu Store →</span>
+                </Link>
               </div>
             </div>
 

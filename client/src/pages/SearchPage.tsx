@@ -12,7 +12,7 @@ export const SearchPage: React.FC = () => {
   const initialQuery = searchParams.get('q') || '';
 
   const [searchTerm, setSearchTerm] = useState(initialQuery);
-  const [storeFilter, setStoreFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('relevant');
   const [inStockOnly, setInStockOnly] = useState(false);
 
@@ -21,13 +21,13 @@ export const SearchPage: React.FC = () => {
     setSearchTerm(searchParams.get('q') || '');
   }, [searchParams]);
 
-  // Fetch search results
+  // Fetch search results for Mewa Masala Ghar foods
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['search-products', initialQuery, storeFilter],
+    queryKey: ['search-products', initialQuery, categoryFilter],
     queryFn: async () => {
-      let url = `/products?limit=100`;
+      let url = `/products?store=foods&limit=100`;
       if (initialQuery) url += `&search=${encodeURIComponent(initialQuery)}`;
-      if (storeFilter !== 'all') url += `&store=${storeFilter}`;
+      if (categoryFilter !== 'all') url += `&category=${categoryFilter}`;
       const res = await api.get(url);
       return (res.data?.data?.products || []) as Product[];
     },
@@ -77,7 +77,7 @@ export const SearchPage: React.FC = () => {
           </h1>
         </div>
         <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto font-sans">
-          Pure dry fruits, slow-roasted makhana snacks, sprouted baby cereals, and authentic volcanic clays.
+          Pure dry fruits, slow-roasted makhana snacks, organic seeds, and stone-ground spices.
         </p>
 
         <form onSubmit={handleSearchSubmit} className="relative max-w-xl mx-auto pt-2">
@@ -85,7 +85,7 @@ export const SearchPage: React.FC = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search almonds, peri-peri makhana, sprouted ragi, multani mitti..."
+            placeholder="Search almonds, cashews, peri-peri makhana, chia seeds, turmeric..."
             className="w-full pl-12 pr-14 py-3.5 text-xs sm:text-sm bg-[#FAF6EC] border border-[#E7E0D0] rounded-full focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] shadow-inner text-gray-900 placeholder-gray-400 min-h-[44px]"
           />
           <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pt-1" />
@@ -97,23 +97,31 @@ export const SearchPage: React.FC = () => {
             <Search className="w-4 h-4" />
           </button>
         </form>
+
+        <p className="text-[11px] text-[#8C7B65]">
+          Looking for baby porridge or herbal multani mitti?{' '}
+          <Link to="/jimmi-jaggu" className="text-[#B97375] font-bold hover:underline">
+            Visit Jimmi Jaggu Store →
+          </Link>
+        </p>
       </div>
 
       {/* Filter & Sort Controls */}
       <div className="bg-white rounded-2xl border border-[#E7E0D0] p-4 sm:p-5 shadow-soft flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Store Tabs */}
+        {/* Category Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
-            { id: 'all', label: 'All Departments' },
-            { id: 'foods', label: 'Foods & Spices' },
-            { id: 'baby', label: 'Baby & Family' },
-            { id: 'care', label: 'Personal Care' },
+            { id: 'all', label: 'All Foods' },
+            { id: 'dry-fruits', label: 'Dry Fruits' },
+            { id: 'seeds', label: 'Seeds' },
+            { id: 'makhana', label: 'Makhana' },
+            { id: 'spices', label: 'Spices' },
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setStoreFilter(tab.id)}
+              onClick={() => setCategoryFilter(tab.id)}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all min-h-[44px] ${
-                storeFilter === tab.id
+                categoryFilter === tab.id
                   ? 'bg-[#2F5D3A] text-white shadow-2xs'
                   : 'bg-[#FAF6EC] text-gray-700 hover:bg-[#F2ECE0]'
               }`}

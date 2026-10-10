@@ -69,6 +69,8 @@ export interface Product {
   images: ProductImage[];
   variants: ProductVariant[];
   store?: Store;
+  brandId?: string;
+  brand?: { id: string; name: string; slug: string; logo?: string };
   category?: Category;
 }
 

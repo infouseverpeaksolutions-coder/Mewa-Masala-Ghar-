@@ -48,17 +48,17 @@ export const Footer: React.FC = () => {
               </h4>
               <ul className="space-y-2 text-xs text-white/80">
                 <li>
-                  <Link to="/shop?store=baby" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/baby-nutrition" className="hover:text-[#D9A441] transition-colors">
                     Baby Products
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?store=care" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/personal-care" className="hover:text-[#D9A441] transition-colors">
                     Skincare
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?store=baby&category=pregnancy-care" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/baby-nutrition?category=pregnancy-care" className="hover:text-[#D9A441] transition-colors">
                     Pregnancy Products
                   </Link>
                 </li>

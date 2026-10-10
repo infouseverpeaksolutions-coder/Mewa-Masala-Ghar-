@@ -49,7 +49,7 @@ const HERO_SLIDES: HeroSlide[] = [
     titleAccent: 'Tender Baby Skin',
     subtitle: 'Nourishing botanical oils, soothing creams and everyday bedtime warmth.',
     ctaText: 'Explore Baby Products',
-    ctaLink: '/shop?store=baby',
+    ctaLink: '/baby-nutrition',
     objectPosition: 'object-[50%_35%] sm:object-[center_35%]',
   },
   {
@@ -60,7 +60,7 @@ const HERO_SLIDES: HeroSlide[] = [
     titleAccent: 'Mothers-to-Be',
     subtitle: 'Thoughtful formulations crafted for every stage — from bump to babyhood.',
     ctaText: 'Shop Pregnancy Care',
-    ctaLink: '/shop?store=baby&category=pregnancy-care',
+    ctaLink: '/baby-nutrition?category=pregnancy-care',
     objectPosition: 'object-[50%_45%] sm:object-[center_40%]',
   },
   {
@@ -71,7 +71,7 @@ const HERO_SLIDES: HeroSlide[] = [
     titleAccent: 'Ayurvedic Skincare',
     subtitle: 'Time-honored natural clays, multani mitti and chemical-free botanical blends.',
     ctaText: 'Discover Skincare',
-    ctaLink: '/shop?store=care',
+    ctaLink: '/personal-care',
     objectPosition: 'object-[50%_55%] sm:object-[center_50%]',
   },
 ];
@@ -351,7 +351,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </div>
             <div className="px-1">
               <Link
-                to="/shop?store=baby"
+                to="/baby-nutrition"
                 className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
                 <span>Explore</span>
@@ -379,7 +379,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </div>
             <div className="px-1">
               <Link
-                to="/shop?store=care"
+                to="/personal-care"
                 className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#6D8B74] hover:bg-[#5C7762] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
                 <span>Explore</span>
@@ -407,7 +407,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </div>
             <div className="px-1">
               <Link
-                to="/shop?store=baby&category=pregnancy-care"
+                to="/baby-nutrition?category=pregnancy-care"
                 className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
                 <span>Explore</span>
@@ -432,7 +432,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             <div className="w-12 sm:w-16 h-[1.5px] bg-[#D8CFC4] dark:bg-[#3E5244] hidden sm:block" />
           </div>
           <Link
-            to="/shop?store=baby"
+            to="/baby-nutrition"
             className="text-xs sm:text-sm font-semibold text-[#8C6D37] dark:text-[#E5B85C] hover:underline flex items-center gap-1"
           >
             <span>View All</span>
