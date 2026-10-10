@@ -29,7 +29,7 @@ import { useWishlist } from '../context/WishlistContext';
 import api from '../services/api';
 import { Product, ProductVariant } from '../types';
 import { resolveImageUrl } from '../utils/imageUrl';
-import { formatWeight } from '../utils/weight';
+import { formatWeight, ensureStandardVariants } from '../utils/weight';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -60,13 +60,24 @@ export const ProductDetailPage: React.FC = () => {
   const product = data?.product;
   const relatedProducts = data?.relatedProducts || [];
 
-  // Update selected variant when product data loads
-  React.useEffect(() => {
-    if (product?.variants?.length) {
-      const defaultVar = product.variants.find((v) => v.isDefault) || product.variants[0];
-      setSelectedVariant(defaultVar);
-    }
+  // Compute all standard 5 weights (100g, 200g, 250g, 500g, 1 kg)
+  const variants = React.useMemo(() => {
+    if (!product) return [];
+    return ensureStandardVariants(product);
   }, [product]);
+
+  // Update selected variant when product data loads or variants change
+  React.useEffect(() => {
+    if (variants.length > 0) {
+      setSelectedVariant((prev) => {
+        if (prev) {
+          const match = variants.find((v) => v.id === prev.id || v.weightGrams === prev.weightGrams);
+          if (match) return match;
+        }
+        return variants.find((v) => v.isDefault) || variants[0];
+      });
+    }
+  }, [variants]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!imgContainerRef.current) return;
@@ -113,7 +124,7 @@ export const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const currentVariant = selectedVariant || product.variants[0];
+  const currentVariant = selectedVariant || variants[0] || product.variants[0];
   const images = product.images.length > 0
     ? product.images
     : [{ url: '/foods/foods_dryfruits.jpg', isPrimary: true, displayOrder: 0, id: '1', productId: product.id }];
@@ -369,7 +380,7 @@ export const ProductDetailPage: React.FC = () => {
           </div>
 
           {/* Weight Dropdown Selector */}
-          {product.variants.length > 0 && (
+          {variants.length > 0 && (
             <div className="space-y-3 p-4 bg-[#FAF6EC]/80 dark:bg-[#18221B]/80 rounded-2xl border-2 border-[#2F5D3A]/25 dark:border-[#65B77E]/30 shadow-xs">
               <div className="flex items-center justify-between text-xs">
                 <label
@@ -393,12 +404,12 @@ export const ProductDetailPage: React.FC = () => {
                   id="weight-selector-dropdown"
                   value={currentVariant.id}
                   onChange={(e) => {
-                    const matched = product.variants.find((v) => v.id === e.target.value);
+                    const matched = variants.find((v) => v.id === e.target.value);
                     if (matched) setSelectedVariant(matched);
                   }}
                   className="w-full px-4 py-3 bg-white dark:bg-[#111813] border-2 border-[#2F5D3A] dark:border-[#65B77E] rounded-xl text-sm font-bold text-gray-900 dark:text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] cursor-pointer appearance-none transition-all pr-10"
                 >
-                  {product.variants.map((v) => {
+                  {variants.map((v) => {
                     const wDisplay = formatWeight(v.weightGrams, v.name);
                     const vDiscount =
                       v.mrp > v.price ? Math.round(((v.mrp - v.price) / v.mrp) * 100) : 0;
@@ -415,9 +426,9 @@ export const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Quick Weight Selector Pills for One-Click Switch */}
-              {product.variants.length > 1 && (
+              {variants.length > 1 && (
                 <div className="flex flex-wrap gap-2 pt-0.5">
-                  {product.variants.map((v) => {
+                  {variants.map((v) => {
                     const isSelected = currentVariant.id === v.id;
                     const wDisplay = formatWeight(v.weightGrams, v.name);
                     return (
