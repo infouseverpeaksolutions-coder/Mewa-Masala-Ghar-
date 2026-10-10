@@ -58,22 +58,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   // Standard 5 Weight Categories (100g, 200g, 250g, 500g, 1 kg)
   const WEIGHT_CATEGORIES = [
-    { value: 100, label: '100 Grams (100g)', shortLabel: '100g' },
-    { value: 200, label: '200 Grams (200g)', shortLabel: '200g' },
-    { value: 250, label: '250 Grams (250g)', shortLabel: '250g' },
-    { value: 500, label: '500 Grams (500g)', shortLabel: '500g' },
-    { value: 1000, label: '1 Kilogram (1 kg)', shortLabel: '1 kg' },
+    { value: 100, label: '100 Grams (100g)' },
+    { value: 200, label: '200 Grams (200g)' },
+    { value: 250, label: '250 Grams (250g)' },
+    { value: 500, label: '500 Grams (500g)' },
+    { value: 1000, label: '1 Kilogram (1 kg)' },
   ];
 
-  const buildStandardVariants = (basePrice = 299) => [
-    { weightGrams: 100, price: String(Math.round((basePrice * 0.45) / 5) * 5), mrp: String(Math.round((basePrice * 0.55) / 5) * 5), stockQty: '50' },
-    { weightGrams: 200, price: String(Math.round((basePrice * 0.82) / 5) * 5), mrp: String(Math.round((basePrice * 0.98) / 5) * 5), stockQty: '50' },
-    { weightGrams: 250, price: String(basePrice), mrp: String(Math.round((basePrice * 1.2) / 5) * 5), stockQty: '50' },
-    { weightGrams: 500, price: String(Math.round((basePrice * 1.9) / 5) * 5), mrp: String(Math.round((basePrice * 2.3) / 5) * 5), stockQty: '50' },
-    { weightGrams: 1000, price: String(Math.round((basePrice * 3.7) / 5) * 5), mrp: String(Math.round((basePrice * 4.4) / 5) * 5), stockQty: '50' },
-  ];
-
-  // Configurable Weight Variants with Custom Prices (All 5 Standard Weights Pre-populated)
+  // Configurable Weight Variants with Custom Prices
   const [variants, setVariants] = useState<
     Array<{
       id?: string;
@@ -82,7 +74,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       mrp: string | number;
       stockQty?: string | number;
     }>
-  >(buildStandardVariants(299));
+  >([{ weightGrams: 200, price: '', mrp: '', stockQty: '50' }]);
 
   // Image Upload State (From System ONLY, NO URL)
   const [images, setImages] = useState<{ url: string; altText: string; isPrimary: boolean }[]>([]);
@@ -125,72 +117,24 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setIsBestSeller(Boolean(productToEdit.isBestSeller));
 
       if (productToEdit.variants && productToEdit.variants.length > 0) {
-        const existing = productToEdit.variants;
-        const baseVar = existing.find((v: any) => Number(v.price) > 0 && Number(v.weightGrams) > 0) || existing[0];
-        const baseGrams = Number(baseVar.weightGrams) || 250;
-        const basePrice = Number(baseVar.price) || 299;
-        const baseMrp = Number(baseVar.mrp) || Math.round(basePrice * 1.2);
-        const pricePerG = basePrice / baseGrams;
-        const mrpPerG = baseMrp / baseGrams;
-
-        const merged: any[] = [];
-        const standardWeights = [100, 200, 250, 500, 1000];
-
-        for (const targetGrams of standardWeights) {
-          const match = existing.find((v: any) => {
-            const w = Number(v.weightGrams);
-            if (w === targetGrams) return true;
-            const n = (v.name || '').toLowerCase();
-            if (targetGrams === 100 && (n.includes('100g') || n.includes('100 g'))) return true;
-            if (targetGrams === 200 && (n.includes('200g') || n.includes('200 g'))) return true;
-            if (targetGrams === 250 && (n.includes('250g') || n.includes('250 g'))) return true;
-            if (targetGrams === 500 && (n.includes('500g') || n.includes('500 g'))) return true;
-            if (targetGrams === 1000 && (n.includes('1kg') || n.includes('1 kg') || n.includes('1000g'))) return true;
-            return false;
-          });
-
-          if (match) {
-            merged.push({
-              id: match.id,
-              weightGrams: targetGrams,
-              price: match.price !== undefined ? String(match.price) : '299',
-              mrp: match.mrp !== undefined ? String(match.mrp) : String(match.price || '350'),
-              stockQty: match.stockQty !== undefined ? String(match.stockQty) : '50',
-            });
-          } else {
-            let factor = 1.0;
-            if (targetGrams === 500) factor = 0.96;
-            if (targetGrams === 1000) factor = 0.92;
-            const calcPrice = Math.max(19, Math.round((pricePerG * targetGrams * factor) / 5) * 5);
-            const calcMrp = Math.max(calcPrice, Math.round((mrpPerG * targetGrams * factor) / 5) * 5);
-            merged.push({
-              weightGrams: targetGrams,
-              price: String(calcPrice),
-              mrp: String(calcMrp),
-              stockQty: String(baseVar.stockQty ?? 50),
-            });
-          }
-        }
-
-        // Keep any non-standard existing variants (e.g. 80g)
-        for (const ev of existing) {
-          const w = Number(ev.weightGrams);
-          if (w && !standardWeights.includes(w)) {
-            merged.push({
-              id: ev.id,
-              weightGrams: w,
-              price: String(ev.price ?? '299'),
-              mrp: String(ev.mrp ?? ev.price ?? '350'),
-              stockQty: String(ev.stockQty ?? '50'),
-            });
-          }
-        }
-
-        merged.sort((a, b) => Number(a.weightGrams) - Number(b.weightGrams));
-        setVariants(merged);
+        setVariants(
+          productToEdit.variants.map((v: any) => ({
+            id: v.id,
+            weightGrams: v.weightGrams || 200,
+            price: v.price !== undefined ? String(v.price) : '',
+            mrp: v.mrp !== undefined ? String(v.mrp) : (v.price !== undefined ? String(v.price) : ''),
+            stockQty: v.stockQty !== undefined ? String(v.stockQty) : '50',
+          }))
+        );
       } else {
-        const bp = Number(productToEdit.price) || 299;
-        setVariants(buildStandardVariants(bp));
+        setVariants([
+          {
+            weightGrams: productToEdit.weightGrams || 200,
+            price: productToEdit.price !== undefined ? String(productToEdit.price) : '',
+            mrp: productToEdit.mrp !== undefined ? String(productToEdit.mrp) : '',
+            stockQty: productToEdit.stockQty !== undefined ? String(productToEdit.stockQty) : '50',
+          },
+        ]);
       }
 
       if (productToEdit.images && productToEdit.images.length > 0) {
@@ -205,13 +149,13 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         setImages([]);
       }
     } else {
-      // Clean blank state for adding new product with all 5 standard weights
+      // Clean blank state for adding new product
       setName('');
       setCategoryId(categoriesList[0]?.id || '');
       setDescription('');
       setShortDescription('');
       setSlug('');
-      setVariants(buildStandardVariants(299));
+      setVariants([{ weightGrams: 200, price: '', mrp: '', stockQty: '50' }]);
       setHsnCode('0801');
       setGstRate(12);
       setIsFeatured(false);
@@ -231,39 +175,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       copy[index] = { ...copy[index], [field]: value };
       return copy;
     });
-  };
-
-  // Auto-calculate prices for all other weights from whichever row has a price
-  const handleAutoCalculatePrices = (sourceIdx?: number) => {
-    let idx = typeof sourceIdx === 'number' ? sourceIdx : -1;
-    if (idx < 0) {
-      idx = variants.findIndex((v) => parseFloat(String(v.price)) > 0);
-    }
-    if (idx < 0) idx = 0;
-
-    const source = variants[idx];
-    const sourceGrams = Number(source?.weightGrams) || 250;
-    const sourcePrice = parseFloat(String(source?.price)) || 299;
-    const sourceMrp = parseFloat(String(source?.mrp)) || Math.round(sourcePrice * 1.2);
-    const pricePerG = sourcePrice / sourceGrams;
-    const mrpPerG = sourceMrp / sourceGrams;
-
-    setVariants((prev) =>
-      prev.map((v, i) => {
-        if (i === idx && parseFloat(String(v.price)) > 0) return v;
-        const g = Number(v.weightGrams) || 250;
-        let factor = 1.0;
-        if (g === 500) factor = 0.96;
-        if (g === 1000) factor = 0.92;
-        const newPrice = Math.max(19, Math.round((pricePerG * g * factor) / 5) * 5);
-        const newMrp = Math.max(newPrice, Math.round((mrpPerG * g * factor) / 5) * 5);
-        return {
-          ...v,
-          price: String(newPrice),
-          mrp: String(newMrp),
-        };
-      })
-    );
   };
 
   const handleAddVariant = (preferredWeight?: number) => {
@@ -517,39 +428,27 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <label className="block font-bold text-gray-800 text-xs">
-                    Weight Categories & Selling Prices (100g, 200g, 250g, 500g, 1 kg) *
+                    Weight Categories & Prices (100g, 200g, 250g, 500g, 1 kg) *
                   </label>
                   <p className="text-[11px] text-[#8C7B65]">
-                    All standard weight categories are pre-configured below. Set the prices manually or click "Auto-Calculate".
+                    Select weight category from dropdown and set your price. Only the weights and prices you enter here will appear on the website.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 self-start sm:self-auto">
-                  <button
-                    type="button"
-                    onClick={() => handleAutoCalculatePrices()}
-                    className="px-3 py-1.5 bg-[#D9A441]/10 border border-[#D9A441] text-[#8C6D37] hover:bg-[#D9A441] hover:text-white rounded-xl font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
-                    title="Calculate all prices based on entered selling price"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>⚡ Auto-Calculate</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleAddVariant()}
-                    className="px-3 py-1.5 bg-[#FAF6EC] border border-[#2F5D3A] text-[#2F5D3A] hover:bg-[#2F5D3A] hover:text-white rounded-xl font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Custom Weight</span>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => handleAddVariant()}
+                  className="px-3 py-1.5 bg-[#FAF6EC] border border-[#2F5D3A] text-[#2F5D3A] hover:bg-[#2F5D3A] hover:text-white rounded-xl font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Another Weight</span>
+                </button>
               </div>
 
               {/* Quick-add buttons for the 5 requested weight categories */}
               <div className="flex flex-wrap items-center gap-1.5 p-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl">
                 <span className="text-[10px] font-bold text-[#8C7B65] uppercase tracking-wider mr-1">
-                  Active Weights:
+                  Add Weight:
                 </span>
                 {WEIGHT_CATEGORIES.map((cat) => {
                   const isAlreadyAdded = variants.some((v) => Number(v.weightGrams) === cat.value);
@@ -565,7 +464,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           : 'bg-white hover:bg-emerald-50 text-[#2F5D3A] border-[#D9A441] shadow-2xs cursor-pointer'
                       }`}
                     >
-                      {cat.label.split(' ')[0]} {isAlreadyAdded ? '✓' : '+ Add'}
+                      + {cat.label.split(' ')[0]} {isAlreadyAdded ? '✓' : ''}
                     </button>
                   );
                 })}

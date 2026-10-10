@@ -29,7 +29,7 @@ import { useWishlist } from '../context/WishlistContext';
 import api from '../services/api';
 import { Product, ProductVariant } from '../types';
 import { resolveImageUrl } from '../utils/imageUrl';
-import { formatWeight, ensureStandardVariants } from '../utils/weight';
+import { formatWeight } from '../utils/weight';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -60,10 +60,9 @@ export const ProductDetailPage: React.FC = () => {
   const product = data?.product;
   const relatedProducts = data?.relatedProducts || [];
 
-  // Compute all standard 5 weights (100g, 200g, 250g, 500g, 1 kg)
+  // Strictly use only the variants uploaded by the admin (no auto-generated variants)
   const variants = React.useMemo(() => {
-    if (!product) return [];
-    return ensureStandardVariants(product);
+    return product?.variants || [];
   }, [product]);
 
   // Update selected variant when product data loads or variants change
@@ -71,7 +70,7 @@ export const ProductDetailPage: React.FC = () => {
     if (variants.length > 0) {
       setSelectedVariant((prev) => {
         if (prev) {
-          const match = variants.find((v) => v.id === prev.id || v.weightGrams === prev.weightGrams);
+          const match = variants.find((v) => v.id === prev.id);
           if (match) return match;
         }
         return variants.find((v) => v.isDefault) || variants[0];

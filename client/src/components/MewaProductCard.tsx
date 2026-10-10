@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingBag, Check, Star, ChevronDown } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { resolveImageUrl } from '../utils/imageUrl';
-import { formatWeight, ensureStandardVariants } from '../utils/weight';
+import { formatWeight } from '../utils/weight';
 
 export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
   const { addToCart } = useCart();
@@ -16,7 +16,7 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
   const link = product.link || `/product/${slug}`;
 
   const cardVariants = React.useMemo(() => {
-    return ensureStandardVariants(product);
+    return product.variants || [];
   }, [product]);
 
   // Active selected variant
@@ -37,7 +37,7 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
     if (cardVariants.length > 0) {
       setSelectedVariant((prev: any) => {
         if (prev) {
-          const match = cardVariants.find((v: any) => v.id === prev.id || v.weightGrams === prev.weightGrams);
+          const match = cardVariants.find((v: any) => v.id === prev.id);
           if (match) return match;
         }
         return cardVariants.find((v: any) => v.isDefault) || cardVariants[0];
@@ -91,28 +91,34 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
           </h3>
         </Link>
 
-        {/* Weight Selector Dropdown */}
-        <div className="relative my-1">
-          <select
-            value={selectedVariant.id}
-            onChange={(e) => {
-              e.stopPropagation();
-              const matched = cardVariants.find((v: any) => v.id === e.target.value);
-              if (matched) setSelectedVariant(matched);
-            }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full text-[11px] font-bold px-2 py-1 bg-[#FAF6EC] dark:bg-[#111813] border border-[#E7E0D0] dark:border-[#2A3B2F] rounded-lg text-gray-800 dark:text-gray-200 cursor-pointer appearance-none pr-5"
-          >
-            {cardVariants.map((v: any) => (
-              <option key={v.id} value={v.id}>
-                {formatWeight(v.weightGrams, v.name)} — ₹{v.price}
-              </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-[#2F5D3A]">
-            <ChevronDown className="w-3 h-3" />
+        {/* Weight Selector Dropdown if multiple variants, or single weight display */}
+        {cardVariants.length > 1 ? (
+          <div className="relative my-1">
+            <select
+              value={selectedVariant.id}
+              onChange={(e) => {
+                e.stopPropagation();
+                const matched = cardVariants.find((v: any) => v.id === e.target.value);
+                if (matched) setSelectedVariant(matched);
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full text-[11px] font-bold px-2 py-1 bg-[#FAF6EC] dark:bg-[#111813] border border-[#E7E0D0] dark:border-[#2A3B2F] rounded-lg text-gray-800 dark:text-gray-200 cursor-pointer appearance-none pr-5"
+            >
+              {cardVariants.map((v: any) => (
+                <option key={v.id} value={v.id}>
+                  {formatWeight(v.weightGrams, v.name)} — ₹{v.price}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-[#2F5D3A]">
+              <ChevronDown className="w-3 h-3" />
+            </div>
           </div>
-        </div>
+        ) : (
+          <span className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1 font-medium">
+            {formatWeight(selectedVariant.weightGrams, selectedVariant.name)}
+          </span>
+        )}
 
         <div className="flex items-center justify-between mt-auto pt-1">
           <div>
