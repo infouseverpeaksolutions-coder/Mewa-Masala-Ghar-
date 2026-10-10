@@ -10,6 +10,9 @@ import {
   AlertCircle,
   Image as ImageIcon,
   Upload,
+  Store,
+  ShoppingBag,
+  Baby,
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -21,6 +24,11 @@ const resolveImageUrl = (url: string) => {
     : 'http://localhost:5000';
   return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 };
+
+// Mewa Masala Ghar store IDs (foods store)
+const MEWA_STORE_ID = 'cmu8ago75000ktdb58dx4yrx8';
+// Jimmi Jaggu store IDs (baby + care stores)
+const JIMMI_STORE_IDS = ['cmu8ago7b000ltdb56djoibkp', 'cmu8ago7g000mtdb5aqmugwk1'];
 
 export const CategoriesStoresPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -35,10 +43,11 @@ export const CategoriesStoresPage: React.FC = () => {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
   const [displayOrder, setDisplayOrder] = useState('0');
+  const [selectedStore, setSelectedStore] = useState<'mewa' | 'jimmi'>('mewa');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const categoryFileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Handle System File Upload (From Computer ONLY, NO URL)
+  // Handle System File Upload
   const handleCategoryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -63,6 +72,15 @@ export const CategoriesStoresPage: React.FC = () => {
     }
   };
 
+  // Fetch stores
+  const { data: stores = [] } = useQuery({
+    queryKey: ['admin-stores-list'],
+    queryFn: async () => {
+      const res = await api.get('/admin/stores');
+      return res.data?.data || [];
+    },
+  });
+
   // Fetch All Categories
   const { data: categories = [], isLoading: catsLoading } = useQuery({
     queryKey: ['admin-categories-manage'],
@@ -72,8 +90,20 @@ export const CategoriesStoresPage: React.FC = () => {
     },
   });
 
-  // Parent categories (no parentId)
-  const rootCategories = categories.filter((c: any) => !c.parentId);
+  // Split categories by store dynamically
+  const foodsStore = stores.find((s: any) => s.slug === 'foods');
+  const foodsStoreId = foodsStore?.id || MEWA_STORE_ID;
+
+  const mewaRootCategories = categories.filter(
+    (c: any) => !c.parentId && (c.storeId === foodsStoreId || c.store?.slug === 'foods' || (!c.store?.slug && !c.storeId))
+  );
+  const jimmiRootCategories = categories.filter(
+    (c: any) => !c.parentId && (
+      c.store?.slug === 'baby' ||
+      c.store?.slug === 'care' ||
+      JIMMI_STORE_IDS.includes(c.storeId)
+    )
+  );
 
   // Mutation to delete category
   const deleteMutation = useMutation({
@@ -87,7 +117,7 @@ export const CategoriesStoresPage: React.FC = () => {
   });
 
   // Open modal for new category
-  const handleOpenAdd = (parentCatId?: string) => {
+  const handleOpenAdd = (storeType: 'mewa' | 'jimmi' = 'mewa', parentCatId?: string) => {
     setEditingCategory(null);
     setName('');
     setSlug('');
@@ -95,6 +125,7 @@ export const CategoriesStoresPage: React.FC = () => {
     setDescription('');
     setImage('');
     setDisplayOrder('0');
+    setSelectedStore(storeType);
     setFormError(null);
     setModalOpen(true);
   };
@@ -108,11 +139,13 @@ export const CategoriesStoresPage: React.FC = () => {
     setDescription(cat.description || '');
     setImage(cat.image || '');
     setDisplayOrder(String(cat.displayOrder || 0));
+    const isJimmi = cat.store?.slug === 'baby' || cat.store?.slug === 'care' || JIMMI_STORE_IDS.includes(cat.storeId);
+    setSelectedStore(isJimmi ? 'jimmi' : 'mewa');
     setFormError(null);
     setModalOpen(true);
   };
 
-  // Save Category Submit (No store selector required)
+  // Save Category Submit
   const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
@@ -122,10 +155,21 @@ export const CategoriesStoresPage: React.FC = () => {
       return;
     }
 
+    // Determine storeId based on selected store
+    let storeId: string;
+    if (selectedStore === 'jimmi') {
+      const babyStore = stores.find((s: any) => s.slug === 'baby') || stores.find((s: any) => s.slug === 'care');
+      storeId = babyStore?.id || JIMMI_STORE_IDS[0];
+    } else {
+      const foodsStore = stores.find((s: any) => s.slug === 'foods');
+      storeId = foodsStore?.id || MEWA_STORE_ID;
+    }
+
     try {
       const payload = {
         name: name.trim(),
         slug: slug.trim() || undefined,
+        storeId,
         parentId: parentId?.trim() ? parentId.trim() : null,
         description: description.trim() || undefined,
         image: image.trim() || undefined,
@@ -146,6 +190,190 @@ export const CategoriesStoresPage: React.FC = () => {
     }
   };
 
+  // Reusable category tree renderer
+  const renderCategorySection = (
+    title: string,
+    rootCats: any[],
+    icon: React.ReactNode,
+    headerColor: string,
+    badgeColor: string,
+    storeType: 'mewa' | 'jimmi'
+  ) => (
+    <div className="bg-white rounded-2xl border border-[#E6DEC8] shadow-sm overflow-hidden">
+      {/* Section Header */}
+      <div className={`px-6 py-4 border-b border-[#E6DEC8] flex items-center justify-between ${headerColor}`}>
+        <div className="flex items-center gap-2.5">
+          {icon}
+          <div>
+            <span className="font-serif font-bold text-sm text-gray-900">{title}</span>
+            <span className={`ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeColor}`}>
+              {rootCats.length} categories
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={() => handleOpenAdd(storeType)}
+          className="px-3 py-1.5 bg-white border border-[#E6DEC8] hover:border-[#2F5D3A] text-[#2F5D3A] rounded-xl font-bold text-[11px] flex items-center gap-1.5 cursor-pointer shadow-xs transition-all"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Add Category
+        </button>
+      </div>
+
+      {/* Category List */}
+      <div className="p-5 space-y-3">
+        {catsLoading ? (
+          <div className="p-8 text-center text-gray-500 flex items-center justify-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin text-[#2F5D3A]" />
+            <span>Loading...</span>
+          </div>
+        ) : rootCats.length === 0 ? (
+          <div
+            onClick={() => handleOpenAdd(storeType)}
+            className="p-8 text-center text-gray-400 border-2 border-dashed border-[#E6DEC8] rounded-2xl cursor-pointer hover:border-[#2F5D3A] hover:text-[#2F5D3A] transition-all"
+          >
+            <Plus className="w-6 h-6 mx-auto mb-2 opacity-50" />
+            <p className="font-medium text-xs">No categories yet — click to add one</p>
+          </div>
+        ) : (
+          rootCats.map((cat: any) => {
+            const children = categories.filter((c: any) => c.parentId === cat.id);
+            return (
+              <div key={cat.id} className="border border-[#E6DEC8] rounded-2xl p-3.5 bg-[#FAF6EC]/40 space-y-2">
+                {/* Parent Category Row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {cat.image ? (
+                      <img
+                        src={resolveImageUrl(cat.image)}
+                        alt={cat.name}
+                        className="w-10 h-10 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-2xs"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (cat.image && !target.src.includes('localhost:5000') && !cat.image.startsWith('http')) {
+                            target.src = `http://localhost:5000${cat.image.startsWith('/') ? '' : '/'}${cat.image}`;
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-400 shrink-0">
+                        <ImageIcon className="w-4 h-4" />
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <strong className="text-gray-900 font-bold text-xs">{cat.name}</strong>
+                        <span className="font-mono text-[10px] text-gray-400">/{cat.slug}</span>
+                      </div>
+                      {cat.description && (
+                        <p className="text-[11px] text-[#4A4A4A] line-clamp-1 mt-0.5">{cat.description}</p>
+                      )}
+                      <span className="text-[11px] text-[#8C7B65] mt-0.5 block">
+                        Order: {cat.displayOrder} • {cat._count?.products || 0} products linked
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => {
+                        setParentId(cat.id);
+                        handleOpenAdd(storeType, cat.id);
+                      }}
+                      className="px-2.5 py-1 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2F5D3A] rounded-lg font-bold text-[11px] flex items-center gap-1 cursor-pointer"
+                      title="Add child sub-category"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Subcategory</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenEdit(cat)}
+                      className="p-1.5 text-gray-500 hover:text-amber-600 rounded-lg hover:bg-white cursor-pointer"
+                      title="Edit category"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Delete category "${cat.name}"? Linked products will need reassigning.`)) {
+                          deleteMutation.mutate(cat.id);
+                        }
+                      }}
+                      className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-white cursor-pointer"
+                      title="Delete category"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Children Subcategories */}
+                {children.length > 0 && (
+                  <div className="pl-6 border-l-2 border-[#D9A441]/40 ml-4 space-y-1.5 pt-1">
+                    {children.map((sub: any) => (
+                      <div
+                        key={sub.id}
+                        className="flex items-center justify-between p-2 rounded-xl bg-white border border-gray-100 shadow-2xs"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400">└</span>
+                          {sub.image && (
+                            <img
+                              src={resolveImageUrl(sub.image)}
+                              alt={sub.name}
+                              className="w-7 h-7 object-cover rounded-lg border border-gray-200"
+                              onError={(e) => {
+                                const target = e.currentTarget as HTMLImageElement;
+                                if (sub.image && !target.src.includes('localhost:5000') && !sub.image.startsWith('http')) {
+                                  target.src = `http://localhost:5000${sub.image.startsWith('/') ? '' : '/'}${sub.image}`;
+                                }
+                              }}
+                            />
+                          )}
+                          <div>
+                            <strong className="text-gray-800 font-semibold">{sub.name}</strong>
+                            <span className="text-gray-400 font-mono text-[10px] ml-1.5">/{sub.slug}</span>
+                            <span className="text-[10px] text-[#8C7B65] ml-2">
+                              ({sub._count?.products || 0} items)
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleOpenEdit(sub)}
+                            className="p-1 text-gray-400 hover:text-amber-600 rounded cursor-pointer"
+                            title="Edit subcategory"
+                          >
+                            <Edit className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Delete subcategory "${sub.name}"?`)) {
+                                deleteMutation.mutate(sub.id);
+                              }
+                            }}
+                            className="p-1 text-gray-400 hover:text-red-600 rounded cursor-pointer"
+                            title="Delete subcategory"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6 text-xs">
       {/* Page Header */}
@@ -153,186 +381,70 @@ export const CategoriesStoresPage: React.FC = () => {
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#2B2B2B]">Categories</h1>
           <p className="text-[#8C7B65] mt-0.5">
-            Organize product categories, subcategories, descriptions, and uploaded images.
+            Manage product categories for Mewa Masala Ghar and Jimmi Jaggu stores separately.
           </p>
         </div>
 
-        <button
-          onClick={() => handleOpenAdd()}
-          className="px-4 py-2 bg-[#2F5D3A] hover:bg-[#23472C] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Category</span>
-        </button>
-      </div>
-
-      {/* Category Tree */}
-      <div className="bg-white rounded-2xl border border-[#E6DEC8] shadow-sm p-6 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#E6DEC8]">
-          <div className="flex items-center gap-2">
-            <FolderTree className="w-4 h-4 text-[#2F5D3A]" />
-            <span className="font-serif font-bold text-sm text-gray-900">
-              Categories Tree & Hierarchy
-            </span>
-          </div>
-
-          <span className="text-gray-500 text-[11px] font-medium">
-            {categories.length} total categories registered
-          </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => handleOpenAdd('mewa')}
+            className="px-4 py-2 bg-[#2F5D3A] hover:bg-[#23472C] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Category</span>
+          </button>
         </div>
-
-        {catsLoading ? (
-          <div className="p-8 text-center text-gray-500 flex items-center justify-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-[#2F5D3A]" />
-            <span>Loading categories...</span>
-          </div>
-        ) : rootCategories.length === 0 ? (
-          <div className="p-8 text-center text-gray-400">
-            No categories defined yet. Click "Add Category" above to create one.
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {rootCategories.map((cat: any) => {
-              const children = categories.filter((c: any) => c.parentId === cat.id);
-              return (
-                <div key={cat.id} className="border border-[#E6DEC8] rounded-2xl p-3.5 bg-[#FAF6EC]/40 space-y-2">
-                  {/* Parent Category Row */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {cat.image ? (
-                        <img
-                          src={resolveImageUrl(cat.image)}
-                          alt={cat.name}
-                          className="w-10 h-10 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-2xs"
-                          onError={(e) => {
-                            const target = e.currentTarget as HTMLImageElement;
-                            if (cat.image && !target.src.includes('localhost:5000') && !cat.image.startsWith('http')) {
-                              target.src = `http://localhost:5000${cat.image.startsWith('/') ? '' : '/'}${cat.image}`;
-                            }
-                          }}
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-xl bg-white border border-[#E6DEC8] flex items-center justify-center text-gray-400 shrink-0">
-                          <ImageIcon className="w-4 h-4" />
-                        </div>
-                      )}
-
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <strong className="text-gray-900 font-bold text-xs">{cat.name}</strong>
-                          <span className="font-mono text-[10px] text-gray-400">/{cat.slug}</span>
-                        </div>
-                        {cat.description && (
-                          <p className="text-[11px] text-[#4A4A4A] line-clamp-1 mt-0.5">{cat.description}</p>
-                        )}
-                        <span className="text-[11px] text-[#8C7B65] mt-0.5 block">
-                          Order: {cat.displayOrder} • {cat._count?.products || 0} products linked
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <button
-                        onClick={() => handleOpenAdd(cat.id)}
-                        className="px-2.5 py-1 bg-white border border-[#E6DEC8] hover:border-[#D9A441] text-[#2F5D3A] rounded-lg font-bold text-[11px] flex items-center gap-1 cursor-pointer"
-                        title="Add child sub-category"
-                      >
-                        <Plus className="w-3 h-3" />
-                        <span>Subcategory</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleOpenEdit(cat)}
-                        className="p-1.5 text-gray-500 hover:text-amber-600 rounded-lg hover:bg-white cursor-pointer"
-                        title="Edit category"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          if (window.confirm(`Delete category "${cat.name}"? Linked products will need reassigning.`)) {
-                            deleteMutation.mutate(cat.id);
-                          }
-                        }}
-                        className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-white cursor-pointer"
-                        title="Delete category"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Children Subcategories */}
-                  {children.length > 0 && (
-                    <div className="pl-6 border-l-2 border-[#D9A441]/40 ml-4 space-y-1.5 pt-1">
-                      {children.map((sub: any) => (
-                        <div
-                          key={sub.id}
-                          className="flex items-center justify-between p-2 rounded-xl bg-white border border-gray-100 shadow-2xs"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-400">└</span>
-                            {sub.image && (
-                              <img
-                                src={resolveImageUrl(sub.image)}
-                                alt={sub.name}
-                                className="w-7 h-7 object-cover rounded-lg border border-gray-200"
-                                onError={(e) => {
-                                  const target = e.currentTarget as HTMLImageElement;
-                                  if (sub.image && !target.src.includes('localhost:5000') && !sub.image.startsWith('http')) {
-                                    target.src = `http://localhost:5000${sub.image.startsWith('/') ? '' : '/'}${sub.image}`;
-                                  }
-                                }}
-                              />
-                            )}
-                            <div>
-                              <strong className="text-gray-800 font-semibold">{sub.name}</strong>
-                              <span className="text-gray-400 font-mono text-[10px] ml-1.5">/{sub.slug}</span>
-                              <span className="text-[10px] text-[#8C7B65] ml-2">
-                                ({sub._count?.products || 0} items)
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => handleOpenEdit(sub)}
-                              className="p-1 text-gray-400 hover:text-amber-600 rounded cursor-pointer"
-                              title="Edit subcategory"
-                            >
-                              <Edit className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (window.confirm(`Delete subcategory "${sub.name}"?`)) {
-                                  deleteMutation.mutate(sub.id);
-                                }
-                              }}
-                              className="p-1 text-gray-400 hover:text-red-600 rounded cursor-pointer"
-                              title="Delete subcategory"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
       </div>
+
+      {/* Stats Bar */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white rounded-2xl border border-[#E6DEC8] p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+            <ShoppingBag className="w-5 h-5 text-[#2F5D3A]" />
+          </div>
+          <div>
+            <p className="text-[11px] text-gray-500 font-medium">Mewa Masala Ghar</p>
+            <p className="font-bold text-gray-900 text-base">{mewaRootCategories.length} categories</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl border border-[#E6DEC8] p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+            <Baby className="w-5 h-5 text-purple-600" />
+          </div>
+          <div>
+            <p className="text-[11px] text-gray-500 font-medium">Jimmi Jaggu</p>
+            <p className="font-bold text-gray-900 text-base">{jimmiRootCategories.length} categories</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mewa Masala Ghar Section */}
+      {renderCategorySection(
+        'Mewa Masala Ghar Categories',
+        mewaRootCategories,
+        <ShoppingBag className="w-4 h-4 text-[#2F5D3A]" />,
+        'bg-green-50/50',
+        'bg-green-100 text-green-800',
+        'mewa'
+      )}
+
+      {/* Jimmi Jaggu Section */}
+      {renderCategorySection(
+        'Jimmi Jaggu Categories',
+        jimmiRootCategories,
+        <Baby className="w-4 h-4 text-purple-600" />,
+        'bg-purple-50/50',
+        'bg-purple-100 text-purple-800',
+        'jimmi'
+      )}
 
       {/* Add / Edit Category Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="relative bg-[#FAF6EC] border border-[#E6DEC8] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl z-10 text-xs">
+          <div className="relative bg-[#FAF6EC] border border-[#E6DEC8] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl z-10 text-xs max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-[#E6DEC8] mb-4">
               <h3 className="font-serif font-bold text-base text-gray-900">
-                {editingCategory ? `Edit: ${editingCategory.name}` : 'Add Category'}
+                {editingCategory ? `Edit: ${editingCategory.name}` : 'Add New Category'}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
@@ -350,6 +462,41 @@ export const CategoriesStoresPage: React.FC = () => {
             )}
 
             <form onSubmit={handleSaveCategory} className="space-y-4">
+
+              {/* Store Selector — Which store does this category belong to? */}
+              <div>
+                <label className="block font-bold text-gray-700 mb-2">
+                  Add Category to Which Store? *
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedStore('mewa')}
+                    className={`flex items-center gap-2 px-3 py-3 rounded-xl border-2 font-bold text-xs cursor-pointer transition-all ${
+                      selectedStore === 'mewa'
+                        ? 'border-[#2F5D3A] bg-green-50 text-[#2F5D3A]'
+                        : 'border-[#E6DEC8] bg-white text-gray-500 hover:border-gray-300'
+                    }`}
+                  >
+                    <ShoppingBag className="w-4 h-4 shrink-0" />
+                    <span>Mewa Masala Ghar</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedStore('jimmi')}
+                    className={`flex items-center gap-2 px-3 py-3 rounded-xl border-2 font-bold text-xs cursor-pointer transition-all ${
+                      selectedStore === 'jimmi'
+                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        : 'border-[#E6DEC8] bg-white text-gray-500 hover:border-gray-300'
+                    }`}
+                  >
+                    <Baby className="w-4 h-4 shrink-0" />
+                    <span>Jimmi Jaggu</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Parent Category (optional) */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">Parent Category (Optional)</label>
                 <select
@@ -358,7 +505,7 @@ export const CategoriesStoresPage: React.FC = () => {
                   className="w-full px-3 py-2 bg-white border border-[#E6DEC8] rounded-xl font-medium"
                 >
                   <option value="">None (Top-level Parent Category)</option>
-                  {rootCategories
+                  {(selectedStore === 'mewa' ? mewaRootCategories : jimmiRootCategories)
                     .filter((c: any) => c.id !== editingCategory?.id)
                     .map((c: any) => (
                       <option key={c.id} value={c.id}>
@@ -368,6 +515,7 @@ export const CategoriesStoresPage: React.FC = () => {
                 </select>
               </div>
 
+              {/* Category Name */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">Category Name *</label>
                 <input
@@ -391,6 +539,7 @@ export const CategoriesStoresPage: React.FC = () => {
                 />
               </div>
 
+              {/* Description */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">Description</label>
                 <textarea
@@ -402,7 +551,7 @@ export const CategoriesStoresPage: React.FC = () => {
                 />
               </div>
 
-              {/* System Image Upload (NO URL, Direct from Computer) */}
+              {/* System Image Upload */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">Category Image (Upload from Computer)</label>
                 <input
