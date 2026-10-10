@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Check, Star } from 'lucide-react';
+import { ShoppingBag, Check, Star, ChevronDown } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { resolveImageUrl } from '../utils/imageUrl';
+import { formatWeight } from '../utils/weight';
 
 export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
   const { addToCart } = useCart();
@@ -14,18 +15,20 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
   const slug = product.slug || product.link?.replace('/product/', '') || product.id;
   const link = product.link || `/product/${slug}`;
 
-  // Primary variant
-  const primaryVariant = product.variants?.[0] || {
-    id: `var-${id}`,
-    name: product.weight || 'Standard Pack',
-    price: product.price || 299,
-    mrp: product.originalPrice || Math.round((product.price || 299) * 1.2),
-    weightGrams: 250,
-    stock: 50,
-    sku: `SKU-${id}`,
-    isDefault: true,
-  };
-  const price = primaryVariant.price ?? product.price ?? 299;
+  // Active selected variant
+  const [selectedVariant, setSelectedVariant] = useState<any>(
+    product.variants?.find((v: any) => v.isDefault) || product.variants?.[0] || {
+      id: `var-${id}`,
+      name: product.weight || 'Standard Pack',
+      price: product.price || 299,
+      mrp: product.originalPrice || Math.round((product.price || 299) * 1.2),
+      weightGrams: 250,
+      stock: 50,
+      sku: `SKU-${id}`,
+      isDefault: true,
+    }
+  );
+  const price = selectedVariant.price ?? product.price ?? 299;
 
   // Image resolution
   const rawImg =
@@ -41,7 +44,7 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    addToCart(product, primaryVariant, 1);
+    addToCart(product, selectedVariant, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };
@@ -66,11 +69,40 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
 
       {/* Product Info & Action */}
       <div className="flex-1 flex flex-col justify-between">
-        <Link to={link} className="block mb-1.5">
+        <Link to={link} className="block mb-1">
           <h3 className="font-serif text-xs sm:text-sm font-bold text-[#1F4D2E] dark:text-[#8ED9A0] group-hover:text-[#D9A441] dark:group-hover:text-[#E5B85C] transition-colors leading-tight truncate">
             {name}
           </h3>
         </Link>
+
+        {/* Weight Selector Dropdown */}
+        {product.variants && product.variants.length > 1 ? (
+          <div className="relative my-1">
+            <select
+              value={selectedVariant.id}
+              onChange={(e) => {
+                e.stopPropagation();
+                const matched = product.variants.find((v: any) => v.id === e.target.value);
+                if (matched) setSelectedVariant(matched);
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full text-[11px] font-bold px-2 py-1 bg-[#FAF6EC] dark:bg-[#111813] border border-[#E7E0D0] dark:border-[#2A3B2F] rounded-lg text-gray-800 dark:text-gray-200 cursor-pointer appearance-none pr-5"
+            >
+              {product.variants.map((v: any) => (
+                <option key={v.id} value={v.id}>
+                  {formatWeight(v.weightGrams, v.name)} — ₹{v.price}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-[#2F5D3A]">
+              <ChevronDown className="w-3 h-3" />
+            </div>
+          </div>
+        ) : (
+          <span className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1 font-medium">
+            {formatWeight(selectedVariant.weightGrams, selectedVariant.name)}
+          </span>
+        )}
 
         <div className="flex items-center justify-between mt-auto pt-1">
           <div>

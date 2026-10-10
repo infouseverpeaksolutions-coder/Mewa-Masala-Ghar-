@@ -24,14 +24,15 @@ export interface Category {
 
 export interface ProductVariant {
   id: string;
-  productId: string;
+  productId?: string;
   name: string;
   weightGrams?: number;
   mrp: number;
   price: number;
   stock: number;
+  stockQty?: number;
   sku: string;
-  isDefault: boolean;
+  isDefault?: boolean;
 }
 
 export interface ProductImage {

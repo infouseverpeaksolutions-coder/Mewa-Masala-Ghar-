@@ -29,6 +29,7 @@ import { useWishlist } from '../context/WishlistContext';
 import api from '../services/api';
 import { Product, ProductVariant } from '../types';
 import { resolveImageUrl } from '../utils/imageUrl';
+import { formatWeight } from '../utils/weight';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -121,6 +122,7 @@ export const ProductDetailPage: React.FC = () => {
   const discountPercent = currentVariant.mrp > currentVariant.price
     ? Math.round(((currentVariant.mrp - currentVariant.price) / currentVariant.mrp) * 100)
     : 0;
+  const currentStock = currentVariant?.stockQty ?? currentVariant?.stock ?? 50;
 
   const handleAddToCart = () => {
     if (!currentVariant) return;
@@ -358,52 +360,86 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             <div className="text-left sm:text-right text-xs">
-              <span className={`font-bold inline-flex items-center gap-1 ${currentVariant.stock > 10 ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'}`}>
+              <span className={`font-bold inline-flex items-center gap-1 ${currentStock > 10 ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'}`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                {currentVariant.stock > 0 ? `In Stock (${currentVariant.stock} available)` : 'Sold Out'}
+                {currentStock > 0 ? `In Stock (${currentStock} available)` : 'Sold Out'}
               </span>
               <span className="text-gray-400 dark:text-gray-500 block mt-0.5">SKU: {currentVariant.sku}</span>
             </div>
           </div>
 
-          {/* Pill-Style Weight Selector Chips */}
+          {/* Weight Dropdown Selector */}
           {product.variants.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-3 p-4 bg-[#FAF6EC]/80 dark:bg-[#18221B]/80 rounded-2xl border-2 border-[#2F5D3A]/25 dark:border-[#65B77E]/30 shadow-xs">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                  Select Pack Size / Weight:
-                </span>
-                <span className="text-gray-500 dark:text-gray-400 font-medium">
-                  Active: <strong className="text-gray-900 dark:text-white">{currentVariant.name}</strong>
+                <label
+                  htmlFor="weight-selector-dropdown"
+                  className="font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200 flex items-center gap-1.5"
+                >
+                  <Package className="w-4 h-4 text-[#2F5D3A] dark:text-[#65B77E]" />
+                  <span>Choose Weight / Pack Size:</span>
+                </label>
+                <span className="text-gray-600 dark:text-gray-300 font-semibold">
+                  Selected:{' '}
+                  <strong className="text-[#2F5D3A] dark:text-[#8ED9A0]">
+                    {formatWeight(currentVariant.weightGrams, currentVariant.name)}
+                  </strong>
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2.5">
-                {product.variants.map((v) => {
-                  const isSelected = currentVariant.id === v.id;
-                  const vDiscount = v.mrp > v.price ? Math.round(((v.mrp - v.price) / v.mrp) * 100) : 0;
-                  return (
-                    <button
-                      key={v.id}
-                      onClick={() => setSelectedVariant(v)}
-                      className={`px-4 py-2.5 rounded-full border-2 text-xs transition-all flex items-center gap-2.5 min-h-[44px] ${
-                        isSelected
-                          ? 'border-[#2F5D3A] dark:border-[#65B77E] bg-[#FAF6EC] dark:bg-[#14261B] text-[#1F4D2E] dark:text-[#8ED9A0] font-bold shadow-xs ring-2 ring-[#2F5D3A]/20'
-                          : 'border-gray-200 dark:border-[#2A3B2F] bg-white dark:bg-[#18221B] text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}
-                    >
-                      <span>{v.name}</span>
-                      <span className={`font-bold ${isSelected ? 'text-[#2F5D3A] dark:text-[#8ED9A0]' : 'text-gray-900 dark:text-white'}`}>
-                        ₹{v.price}
-                      </span>
-                      {vDiscount > 0 && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FAF6EC] dark:bg-[#2A2312] text-[#805D17] dark:text-[#E6C687] border border-[#E7E0D0] dark:border-[#3E3520]">
-                          {vDiscount}% off
+
+              {/* Responsive Weight Dropdown */}
+              <div className="relative">
+                <select
+                  id="weight-selector-dropdown"
+                  value={currentVariant.id}
+                  onChange={(e) => {
+                    const matched = product.variants.find((v) => v.id === e.target.value);
+                    if (matched) setSelectedVariant(matched);
+                  }}
+                  className="w-full px-4 py-3 bg-white dark:bg-[#111813] border-2 border-[#2F5D3A] dark:border-[#65B77E] rounded-xl text-sm font-bold text-gray-900 dark:text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] cursor-pointer appearance-none transition-all pr-10"
+                >
+                  {product.variants.map((v) => {
+                    const wDisplay = formatWeight(v.weightGrams, v.name);
+                    const vDiscount =
+                      v.mrp > v.price ? Math.round(((v.mrp - v.price) / v.mrp) * 100) : 0;
+                    return (
+                      <option key={v.id} value={v.id}>
+                        {wDisplay} — ₹{v.price} {v.mrp > v.price ? `(Save ${vDiscount}%)` : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-[#2F5D3A] dark:text-[#65B77E]">
+                  <ChevronRight className="w-4 h-4 rotate-90 stroke-[2.5]" />
+                </div>
+              </div>
+
+              {/* Quick Weight Selector Pills for One-Click Switch */}
+              {product.variants.length > 1 && (
+                <div className="flex flex-wrap gap-2 pt-0.5">
+                  {product.variants.map((v) => {
+                    const isSelected = currentVariant.id === v.id;
+                    const wDisplay = formatWeight(v.weightGrams, v.name);
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => setSelectedVariant(v)}
+                        className={`px-3 py-1.5 rounded-xl border text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                          isSelected
+                            ? 'border-[#2F5D3A] dark:border-[#65B77E] bg-[#2F5D3A] text-white font-bold shadow-xs'
+                            : 'border-[#E7E0D0] dark:border-[#2A3B2F] bg-white dark:bg-[#18221B] text-gray-700 dark:text-gray-300 hover:border-[#2F5D3A]'
+                        }`}
+                      >
+                        <span>{wDisplay}</span>
+                        <span className={isSelected ? 'text-amber-200' : 'text-[#2F5D3A] dark:text-[#8ED9A0] font-bold'}>
+                          ₹{v.price}
                         </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -432,7 +468,7 @@ export const ProductDetailPage: React.FC = () => {
               {/* Green Pill Add to Cart */}
               <button
                 onClick={handleAddToCart}
-                disabled={currentVariant.stock <= 0}
+                disabled={currentStock <= 0}
                 className={`flex-1 h-12 px-6 rounded-full font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 active:scale-98 min-h-[44px] ${
                   addedAnimation
                     ? 'bg-emerald-700 text-white scale-98'
@@ -455,7 +491,7 @@ export const ProductDetailPage: React.FC = () => {
               {/* Gold Pill Buy Now */}
               <button
                 onClick={handleBuyNow}
-                disabled={currentVariant.stock <= 0}
+                disabled={currentStock <= 0}
                 className="h-12 px-7 rounded-full font-bold text-sm bg-[#D9A441] hover:bg-[#B88728] text-white shadow-md transition-all flex items-center justify-center gap-2 active:scale-98 min-h-[44px]"
               >
                 <Zap className="w-4 h-4 fill-white" />

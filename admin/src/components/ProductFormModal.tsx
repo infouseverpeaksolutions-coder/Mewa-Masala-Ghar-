@@ -53,9 +53,27 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   // Primary Requested Fields
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [price, setPrice] = useState<string | number>('299');
-  const [mrp, setMrp] = useState<string | number>('350');
   const [description, setDescription] = useState('');
+
+  // Available Weight Options (100g, 200g, 250g, 500g, 1 kg)
+  const WEIGHT_CATEGORIES = [
+    { value: 100, label: '100 Grams (100g)' },
+    { value: 200, label: '200 Grams (200g)' },
+    { value: 250, label: '250 Grams (250g)' },
+    { value: 500, label: '500 Grams (500g)' },
+    { value: 1000, label: '1 Kilogram (1 kg)' },
+  ];
+
+  // Configurable Weight Variants with Custom Prices
+  const [variants, setVariants] = useState<
+    Array<{
+      id?: string;
+      weightGrams: number;
+      price: string | number;
+      mrp: string | number;
+      stockQty?: string | number;
+    }>
+  >([{ weightGrams: 250, price: '299', mrp: '350', stockQty: '50' }]);
 
   // Image Upload State (From System ONLY, NO URL)
   const [images, setImages] = useState<{ url: string; altText: string; isPrimary: boolean }[]>([]);
@@ -64,8 +82,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
 
   // Optional / Advanced Settings State
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [weightGrams, setWeightGrams] = useState<string | number>('250');
-  const [stockQty, setStockQty] = useState<string | number>('50');
   const [hsnCode, setHsnCode] = useState('0801');
   const [gstRate, setGstRate] = useState<number>(12);
   const [shortDescription, setShortDescription] = useState('');
@@ -99,11 +115,26 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setIsFeatured(Boolean(productToEdit.isFeatured));
       setIsBestSeller(Boolean(productToEdit.isBestSeller));
 
-      const primaryVar = productToEdit.variants?.[0];
-      setPrice(primaryVar?.price !== undefined ? primaryVar.price : 299);
-      setMrp(primaryVar?.mrp !== undefined ? primaryVar.mrp : 350);
-      setStockQty(primaryVar?.stockQty !== undefined ? primaryVar.stockQty : 50);
-      setWeightGrams(primaryVar?.weightGrams !== undefined ? primaryVar.weightGrams : 250);
+      if (productToEdit.variants && productToEdit.variants.length > 0) {
+        setVariants(
+          productToEdit.variants.map((v: any) => ({
+            id: v.id,
+            weightGrams: v.weightGrams || 250,
+            price: v.price !== undefined ? v.price : '299',
+            mrp: v.mrp !== undefined ? v.mrp : (v.price || '350'),
+            stockQty: v.stockQty !== undefined ? v.stockQty : '50',
+          }))
+        );
+      } else {
+        setVariants([
+          {
+            weightGrams: productToEdit.weightGrams || 250,
+            price: productToEdit.price !== undefined ? productToEdit.price : '299',
+            mrp: productToEdit.mrp !== undefined ? productToEdit.mrp : '350',
+            stockQty: productToEdit.stockQty !== undefined ? productToEdit.stockQty : '50',
+          },
+        ]);
+      }
 
       if (productToEdit.images && productToEdit.images.length > 0) {
         setImages(
@@ -120,13 +151,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       // Clean blank state for adding new product
       setName('');
       setCategoryId(categoriesList[0]?.id || '');
-      setPrice('299');
-      setMrp('350');
       setDescription('');
       setShortDescription('');
       setSlug('');
-      setWeightGrams('250');
-      setStockQty('50');
+      setVariants([{ weightGrams: 250, price: '299', mrp: '350', stockQty: '50' }]);
       setHsnCode('0801');
       setGstRate(12);
       setIsFeatured(false);
@@ -135,6 +163,41 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     }
     setErrorMessage(null);
   }, [productToEdit, isOpen, categoriesList]);
+
+  const handleUpdateVariant = (
+    index: number,
+    field: 'weightGrams' | 'price' | 'mrp' | 'stockQty',
+    value: any
+  ) => {
+    setVariants((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  };
+
+  const handleAddVariant = (preferredWeight?: number) => {
+    const existingWeights = variants.map((v) => Number(v.weightGrams));
+    let nextWeight = preferredWeight;
+    if (!nextWeight) {
+      const available = WEIGHT_CATEGORIES.find((w) => !existingWeights.includes(w.value));
+      nextWeight = available ? available.value : 500;
+    }
+    setVariants((prev) => [
+      ...prev,
+      {
+        weightGrams: nextWeight || 500,
+        price: '',
+        mrp: '',
+        stockQty: '50',
+      },
+    ]);
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    if (variants.length <= 1) return;
+    setVariants((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // Handle System File Upload (NO URL, Direct from Computer)
   const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,10 +265,20 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       return;
     }
 
-    const numericPrice = parseFloat(String(price));
-    if (isNaN(numericPrice) || numericPrice < 0) {
-      setErrorMessage('Please enter a valid product price.');
+    if (variants.length === 0) {
+      setErrorMessage('Please add at least one weight and price option.');
       return;
+    }
+
+    // Validate that each variant has a valid price
+    for (let i = 0; i < variants.length; i++) {
+      const vPrice = parseFloat(String(variants[i].price));
+      if (isNaN(vPrice) || vPrice < 0) {
+        const wCat = WEIGHT_CATEGORIES.find((w) => w.value === variants[i].weightGrams);
+        const wName = wCat ? wCat.label : `${variants[i].weightGrams}g`;
+        setErrorMessage(`Please enter a valid selling price for ${wName}.`);
+        return;
+      }
     }
 
     const selectedCat = categoriesList.find((c) => c.id === categoryId);
@@ -214,13 +287,35 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     setLoading(true);
 
     try {
+      const mappedVariants = variants.map((v, idx) => {
+        const w = Number(v.weightGrams) || 250;
+        const numPrice = parseFloat(String(v.price)) || 0;
+        const numMrp = parseFloat(String(v.mrp)) || numPrice;
+        const wLabel = w >= 1000 ? `${w / 1000}kg Pack` : `${w}g Pack`;
+        return {
+          id: v.id,
+          name: `${name.trim()} - ${wLabel}`,
+          weightGrams: w,
+          price: numPrice,
+          mrp: numMrp,
+          stockQty: parseInt(String(v.stockQty), 10) || 50,
+          packQty: 1,
+          gstPercent: Number(gstRate) || 12,
+          sku: v.id ? undefined : `MMG-${Date.now().toString().slice(-4)}-${idx + 1}`,
+          isDefault: idx === 0,
+          isActive: true,
+        };
+      });
+
       const payload: any = {
         name: name.trim(),
         categoryId,
         storeId: resolvedStoreId,
         brandId: selectedCat?.brandId || undefined,
-        price: numericPrice,
-        mrp: parseFloat(String(mrp)) || numericPrice,
+        price: mappedVariants[0]?.price || 0,
+        mrp: mappedVariants[0]?.mrp || 0,
+        weightGrams: mappedVariants[0]?.weightGrams || 250,
+        stockQty: mappedVariants[0]?.stockQty || 50,
         description: description.trim() || `${name.trim()} - Premium authentic selection.`,
         shortDescription: shortDescription.trim() || undefined,
         slug: slug.trim() || undefined,
@@ -229,29 +324,13 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         isFeatured,
         isBestSeller,
         isActive: publishStatus,
-        stockQty: parseInt(String(stockQty), 10) || 50,
-        weightGrams: parseInt(String(weightGrams), 10) || 250,
         images: images.map((img, idx) => ({
           url: img.url,
           altText: img.altText || `${name.trim()} view ${idx + 1}`,
           isPrimary: img.isPrimary,
           displayOrder: idx,
         })),
-        variants: [
-          {
-            id: productToEdit?.variants?.[0]?.id || undefined,
-            name: `${name.trim()} Standard Pack`,
-            weightGrams: parseInt(String(weightGrams), 10) || 250,
-            packQty: 1,
-            sku: productToEdit?.variants?.[0]?.sku || `MMG-${Date.now().toString().slice(-6)}-1`,
-            mrp: parseFloat(String(mrp)) || numericPrice,
-            price: numericPrice,
-            gstPercent: Number(gstRate) || 12,
-            stockQty: parseInt(String(stockQty), 10) || 50,
-            isDefault: true,
-            isActive: true,
-          },
-        ],
+        variants: mappedVariants,
       };
 
       if (isEditing) {
@@ -337,43 +416,147 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               </select>
             </div>
 
-            {/* 3. Price & MRP */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-bold text-gray-800 mb-1.5 text-xs">
-                  Selling Price (₹) *
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    step="1"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="299"
-                    className="w-full pl-8 pr-3.5 py-2.5 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white"
-                  />
+            {/* 3. Weight Categories & Custom Prices */}
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <label className="block font-bold text-gray-800 text-xs">
+                    Weight Categories & Prices *
+                  </label>
+                  <p className="text-[11px] text-[#8C7B65]">
+                    Select weight category (100g, 200g, 250g, 500g, 1 kg) from dropdown and set the selling price.
+                  </p>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleAddVariant()}
+                  className="px-3 py-1.5 bg-[#FAF6EC] border border-[#2F5D3A] text-[#2F5D3A] hover:bg-[#2F5D3A] hover:text-white rounded-xl font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer shadow-2xs self-start sm:self-auto"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Another Weight</span>
+                </button>
               </div>
 
-              <div>
-                <label className="block font-bold text-gray-800 mb-1.5 text-xs">
-                  Original MRP (₹) (Optional strikethrough price)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={mrp}
-                    onChange={(e) => setMrp(e.target.value)}
-                    placeholder="350"
-                    className="w-full pl-8 pr-3.5 py-2.5 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white"
-                  />
-                </div>
+              {/* Quick-add buttons for the 5 requested weight categories */}
+              <div className="flex flex-wrap items-center gap-1.5 p-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl">
+                <span className="text-[10px] font-bold text-[#8C7B65] uppercase tracking-wider mr-1">
+                  Quick Add:
+                </span>
+                {WEIGHT_CATEGORIES.map((cat) => {
+                  const isAlreadyAdded = variants.some((v) => Number(v.weightGrams) === cat.value);
+                  return (
+                    <button
+                      key={cat.value}
+                      type="button"
+                      disabled={isAlreadyAdded}
+                      onClick={() => handleAddVariant(cat.value)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all ${
+                        isAlreadyAdded
+                          ? 'bg-emerald-50 text-[#2F5D3A] border-emerald-300 opacity-60 cursor-default'
+                          : 'bg-white hover:bg-emerald-50 text-[#2F5D3A] border-[#D9A441] shadow-2xs cursor-pointer'
+                      }`}
+                    >
+                      + {cat.label.split(' ')[0]} {isAlreadyAdded ? '✓' : ''}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Weight Options List */}
+              <div className="space-y-2.5">
+                {variants.map((v, index) => (
+                  <div
+                    key={index}
+                    className="p-3 bg-[#FAF6EC]/80 border border-[#E6DEC8] rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5"
+                  >
+                    {/* Weight Dropdown */}
+                    <div className="sm:w-48">
+                      <label className="block text-[10px] font-bold text-gray-700 mb-1">
+                        Weight Dropdown *
+                      </label>
+                      <select
+                        value={v.weightGrams}
+                        onChange={(e) => handleUpdateVariant(index, 'weightGrams', Number(e.target.value))}
+                        className="w-full px-2.5 py-2 bg-white border border-[#E6DEC8] rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#2F5D3A]"
+                      >
+                        {WEIGHT_CATEGORIES.map((cat) => (
+                          <option key={cat.value} value={cat.value}>
+                            {cat.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Selling Price */}
+                    <div className="flex-1">
+                      <label className="block text-[10px] font-bold text-gray-700 mb-1">
+                        Selling Price (₹) *
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">₹</span>
+                        <input
+                          type="number"
+                          required
+                          min="0"
+                          step="1"
+                          value={v.price}
+                          onChange={(e) => handleUpdateVariant(index, 'price', e.target.value)}
+                          placeholder="e.g. 299"
+                          className="w-full pl-6 pr-2.5 py-2 bg-white border border-[#E6DEC8] rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#2F5D3A]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Original MRP */}
+                    <div className="flex-1">
+                      <label className="block text-[10px] font-bold text-gray-700 mb-1">
+                        Original MRP (₹)
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">₹</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={v.mrp}
+                          onChange={(e) => handleUpdateVariant(index, 'mrp', e.target.value)}
+                          placeholder="e.g. 350"
+                          className="w-full pl-6 pr-2.5 py-2 bg-white border border-[#E6DEC8] rounded-lg text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#2F5D3A]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stock Qty */}
+                    <div className="w-20">
+                      <label className="block text-[10px] font-bold text-gray-700 mb-1">
+                        Stock
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={v.stockQty}
+                        onChange={(e) => handleUpdateVariant(index, 'stockQty', e.target.value)}
+                        placeholder="50"
+                        className="w-full px-2.5 py-2 bg-white border border-[#E6DEC8] rounded-lg text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#2F5D3A]"
+                      />
+                    </div>
+
+                    {/* Delete Row Button */}
+                    {variants.length > 1 && (
+                      <div className="sm:self-end pb-1">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveVariant(index)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                          title="Remove this weight variant"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -511,7 +694,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               onClick={() => setShowAdvanced(!showAdvanced)}
               className="w-full p-4 flex items-center justify-between text-left font-bold text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              <span>More Product Details (Weight, Stock, HSN, Tax Rate)</span>
+              <span>More Product Details (HSN Code, GST Tax Rate, Flags)</span>
               {showAdvanced ? (
                 <ChevronUp className="w-4 h-4 text-gray-400" />
               ) : (
@@ -520,31 +703,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </button>
 
             {showAdvanced && (
-              <div className="p-5 pt-0 border-t border-[#E6DEC8] space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3">
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">Package Weight (Grams)</label>
-                    <input
-                      type="number"
-                      value={weightGrams}
-                      onChange={(e) => setWeightGrams(e.target.value)}
-                      placeholder="250"
-                      className="w-full px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">Stock Quantity (Units)</label>
-                    <input
-                      type="number"
-                      value={stockQty}
-                      onChange={(e) => setStockQty(e.target.value)}
-                      placeholder="50"
-                      className="w-full px-3 py-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl text-xs"
-                    />
-                  </div>
-                </div>
-
+              <div className="p-5 pt-3 border-t border-[#E6DEC8] space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">HSN Code</label>

@@ -569,18 +569,23 @@ export const createProduct = async (req: Request, res: Response) => {
           }),
         },
         variants: {
-          create: finalVariants.map((v: any, index: number) => ({
-            name: v.name || `${name} - ${v.weightGrams || ''}g`,
-            weightGrams: v.weightGrams ? parseInt(v.weightGrams, 10) : null,
-            mrp: parseFloat(v.mrp) || parseFloat(v.price) || 0,
-            price: parseFloat(v.price) || 0,
-            stockQty: v.stockQty !== undefined ? parseInt(v.stockQty, 10) : (v.stock ? parseInt(v.stock, 10) : 50),
-            packQty: v.packQty ? parseInt(v.packQty, 10) : 1,
-            gstPercent: v.gstPercent ? parseFloat(v.gstPercent) : 12.0,
-            sku: v.sku ? v.sku.trim() : `MMG-${Date.now().toString().slice(-6)}-${index + 1}`,
-            isDefault: v.isDefault !== undefined ? v.isDefault : index === 0,
-            isActive: v.isActive !== undefined ? v.isActive : true,
-          })),
+          create: finalVariants.map((v: any, index: number) => {
+            const w = v.weightGrams ? parseInt(v.weightGrams, 10) : null;
+            const wLabel = w ? (w >= 1000 ? `${w / 1000}kg Pack` : `${w}g Pack`) : 'Standard Pack';
+            const randSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+            return {
+              name: v.name || `${name} - ${wLabel}`,
+              weightGrams: w,
+              mrp: parseFloat(v.mrp) || parseFloat(v.price) || 0,
+              price: parseFloat(v.price) || 0,
+              stockQty: v.stockQty !== undefined ? parseInt(v.stockQty, 10) : (v.stock ? parseInt(v.stock, 10) : 50),
+              packQty: v.packQty ? parseInt(v.packQty, 10) : 1,
+              gstPercent: v.gstPercent ? parseFloat(v.gstPercent) : 12.0,
+              sku: v.sku ? v.sku.trim() : `MMG-${Date.now().toString().slice(-4)}-${index + 1}-${randSuffix}`,
+              isDefault: v.isDefault !== undefined ? Boolean(v.isDefault) : index === 0,
+              isActive: v.isActive !== undefined ? Boolean(v.isActive) : true,
+            };
+          }),
         },
       },
       include: {
@@ -646,7 +651,66 @@ export const updateProduct = async (req: Request, res: Response) => {
       },
     });
 
-    if (data.price !== undefined) {
+    // Sync variants if array provided
+    if (Array.isArray(data.variants) && data.variants.length > 0) {
+      const existingVariants = await prisma.productVariant.findMany({
+        where: { productId: id },
+      });
+      const incomingIds = data.variants.map((v: any) => v.id).filter(Boolean);
+
+      // Deactivate or remove omitted variants
+      for (const ev of existingVariants) {
+        if (!incomingIds.includes(ev.id)) {
+          try {
+            await prisma.productVariant.delete({ where: { id: ev.id } });
+          } catch {
+            await prisma.productVariant.update({ where: { id: ev.id }, data: { isActive: false } });
+          }
+        }
+      }
+
+      // Upsert incoming variants
+      for (let idx = 0; idx < data.variants.length; idx++) {
+        const v = data.variants[idx];
+        const weightGrams = v.weightGrams ? parseInt(String(v.weightGrams), 10) : null;
+        const priceVal = parseFloat(String(v.price)) || 0;
+        const mrpVal = parseFloat(String(v.mrp)) || priceVal;
+        const weightLabel = weightGrams ? (weightGrams >= 1000 ? `${weightGrams / 1000}kg Pack` : `${weightGrams}g Pack`) : 'Standard Pack';
+        const variantName = v.name || `${updated.name} - ${weightLabel}`;
+
+        if (v.id && existingVariants.some((ev) => ev.id === v.id)) {
+          await prisma.productVariant.update({
+            where: { id: v.id },
+            data: {
+              name: variantName,
+              weightGrams,
+              price: priceVal,
+              mrp: mrpVal,
+              stockQty: v.stockQty !== undefined ? parseInt(String(v.stockQty), 10) : 50,
+              isDefault: v.isDefault !== undefined ? Boolean(v.isDefault) : idx === 0,
+              isActive: v.isActive !== undefined ? Boolean(v.isActive) : true,
+            },
+          });
+        } else {
+          const randSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+          await prisma.productVariant.create({
+            data: {
+              productId: id,
+              name: variantName,
+              weightGrams,
+              price: priceVal,
+              mrp: mrpVal,
+              stockQty: v.stockQty !== undefined ? parseInt(String(v.stockQty), 10) : 50,
+              packQty: 1,
+              gstPercent: v.gstPercent ? parseFloat(String(v.gstPercent)) : (updated.gstRate || 12.0),
+              sku: v.sku ? String(v.sku).trim() : `MMG-${Date.now().toString().slice(-4)}-${idx + 1}-${randSuffix}`,
+              isDefault: v.isDefault !== undefined ? Boolean(v.isDefault) : idx === 0,
+              isActive: true,
+            },
+          });
+        }
+      }
+    } else if (data.price !== undefined) {
       const p = parseFloat(data.price) || 0;
       const mrp = parseFloat(data.mrp) || p;
       const defaultVariant = await prisma.productVariant.findFirst({
@@ -661,7 +725,19 @@ export const updateProduct = async (req: Request, res: Response) => {
       }
     }
 
-    if (data.image) {
+    // Sync product images if array provided
+    if (Array.isArray(data.images) && data.images.length > 0) {
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+      await prisma.productImage.createMany({
+        data: data.images.map((img: any, idx: number) => ({
+          productId: id,
+          url: typeof img === 'string' ? img : img.url,
+          altText: img.altText || `${updated.name} image ${idx + 1}`,
+          isPrimary: img.isPrimary !== undefined ? Boolean(img.isPrimary) : idx === 0,
+          displayOrder: img.displayOrder !== undefined ? parseInt(img.displayOrder, 10) : idx,
+        })),
+      });
+    } else if (data.image) {
       const existingImg = await prisma.productImage.findFirst({
         where: { productId: id },
         orderBy: { isPrimary: 'desc' },

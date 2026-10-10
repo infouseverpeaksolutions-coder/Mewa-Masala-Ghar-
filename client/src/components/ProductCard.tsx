@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Check, Heart } from 'lucide-react';
+import { ShoppingBag, Check, Heart, ChevronDown } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { resolveImageUrl } from '../utils/imageUrl';
+import { formatWeight } from '../utils/weight';
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { addToCart } = useCart();
@@ -124,27 +125,38 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             </h3>
           </Link>
 
-          <span className="text-xs text-gray-500 block mt-0.5 mb-2 font-medium">
-            {selectedVariant.name || `${selectedVariant.weightGrams}g`}
-          </span>
-
-          {/* Variant chips if multiple */}
-          {product.variants && product.variants.length > 1 && (
-            <div className="flex flex-wrap gap-1 mb-2">
-              {product.variants.slice(0, 3).map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => setSelectedVariant(v)}
-                  className={`text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors ${
-                    selectedVariant.id === v.id
-                      ? 'bg-[#2F5D3A] text-white font-bold'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+          {/* Weight Dropdown if multiple variants, or single weight display */}
+          {product.variants && product.variants.length > 1 ? (
+            <div className="mt-1 mb-2.5">
+              <label className="text-[10px] font-semibold text-gray-400 block mb-1">
+                Weight:
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedVariant.id}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    const v = product.variants.find((x) => x.id === e.target.value);
+                    if (v) setSelectedVariant(v);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-full text-xs font-bold px-2.5 py-1.5 bg-[#FAF6EC] border border-[#E7E0D0] rounded-lg text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#2F5D3A] cursor-pointer appearance-none pr-6"
                 >
-                  {v.name}
-                </button>
-              ))}
+                  {product.variants.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {formatWeight(v.weightGrams, v.name)} — ₹{v.price}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-[#2F5D3A]">
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </div>
+              </div>
             </div>
+          ) : (
+            <span className="text-xs text-gray-500 block mt-0.5 mb-2 font-medium">
+              {formatWeight(selectedVariant.weightGrams, selectedVariant.name)}
+            </span>
           )}
 
           {/* Price Block */}
