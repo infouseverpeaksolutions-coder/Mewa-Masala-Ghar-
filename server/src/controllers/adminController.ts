@@ -324,10 +324,21 @@ export const updateAdminCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { storeId, parentId, name, slug, description, image, displayOrder } = req.body;
+
+    // Validate storeId if provided — must exist in DB
+    let validatedStoreId: string | undefined;
+    if (storeId && typeof storeId === 'string' && storeId.trim()) {
+      const storeExists = await prisma.store.findUnique({ where: { id: storeId.trim() } });
+      if (!storeExists) {
+        return res.status(400).json({ success: false, message: `Store with ID "${storeId}" does not exist. Please refresh and try again.` });
+      }
+      validatedStoreId = storeId.trim();
+    }
+
     const category = await prisma.category.update({
       where: { id },
       data: {
-        ...(storeId && { storeId }),
+        ...(validatedStoreId && { storeId: validatedStoreId }),
         ...(parentId !== undefined && { parentId: parentId || null }),
         ...(name && { name: name.trim() }),
         ...(slug && { slug: slug.toLowerCase().trim() }),

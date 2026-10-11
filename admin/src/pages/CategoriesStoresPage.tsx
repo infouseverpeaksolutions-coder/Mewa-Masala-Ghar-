@@ -27,8 +27,9 @@ const resolveImageUrl = (url: string) => {
 
 // Mewa Masala Ghar store IDs (foods store)
 const MEWA_STORE_ID = 'cmu8ago75000ktdb58dx4yrx8';
-// Jimmi Jaggu store IDs (baby + care stores)
-const JIMMI_STORE_IDS = ['cmu8ago7b000ltdb56djoibkp', 'cmu8ago7g000mtdb5aqmugwk1'];
+// Jimmi Jaggu store - dedicated store + legacy baby/care stores
+const JIMMI_STORE_SLUG = 'jimmi-jaggu';
+const JIMMI_STORE_IDS = ['cmv3jfivv0000mf0x0njfn59r', 'cmu8ago7b000ltdb56djoibkp', 'cmu8ago7g000mtdb5aqmugwk1'];
 
 export const CategoriesStoresPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -158,8 +159,11 @@ export const CategoriesStoresPage: React.FC = () => {
     // Determine storeId based on selected store
     let storeId: string;
     if (selectedStore === 'jimmi') {
-      const babyStore = stores.find((s: any) => s.slug === 'baby') || stores.find((s: any) => s.slug === 'care');
-      storeId = babyStore?.id || JIMMI_STORE_IDS[0];
+      // Use dedicated Jimmi Jaggu store first, then fallback to baby/care stores
+      const jimmiStore = stores.find((s: any) => s.slug === 'jimmi-jaggu') ||
+                         stores.find((s: any) => s.slug === 'baby') ||
+                         stores.find((s: any) => s.slug === 'care');
+      storeId = jimmiStore?.id || JIMMI_STORE_IDS[0];
     } else {
       const foodsStore = stores.find((s: any) => s.slug === 'foods');
       storeId = foodsStore?.id || MEWA_STORE_ID;
