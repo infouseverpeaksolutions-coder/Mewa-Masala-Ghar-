@@ -27,7 +27,29 @@ export const getCategories = async (req: Request, res: Response) => {
   try {
     const { store, brand } = req.query;
     const where: any = {};
-    if (brand) {
+    const brandStr = brand ? String(brand).toLowerCase().trim() : '';
+    const storeStr = store ? String(store).toLowerCase().trim() : '';
+
+    if (
+      brandStr === 'jimmi-jaggu' ||
+      storeStr === 'jimmi-jaggu' ||
+      storeStr === 'baby' ||
+      storeStr === 'care'
+    ) {
+      where.OR = [
+        { brand: { slug: 'jimmi-jaggu' } },
+        { store: { slug: { in: ['jimmi-jaggu', 'baby', 'care'] } } },
+      ];
+    } else if (
+      brandStr === 'mewa-masala-ghar' ||
+      storeStr === 'foods' ||
+      storeStr === 'mewa-masala-ghar'
+    ) {
+      where.OR = [
+        { brand: { slug: 'mewa-masala-ghar' } },
+        { store: { slug: 'foods' } },
+      ];
+    } else if (brand) {
       where.brand = { slug: String(brand) };
     } else if (store) {
       where.store = { slug: String(store) };

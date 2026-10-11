@@ -142,8 +142,91 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 // ----------------------------------------------------
 // Stores CRUD
 // ----------------------------------------------------
+export async function ensureDefaultStoresAndBrands() {
+  // Ensure foods store
+  let foods = await prisma.store.findFirst({ where: { slug: 'foods' } });
+  if (!foods) {
+    foods = await prisma.store.create({
+      data: {
+        slug: 'foods',
+        name: 'Mewa & Healthy Foods',
+        tagline: 'Handpicked Dry Fruits, Roasted Makhana, Wholesome Seeds & Stone-Ground Spices',
+        description: 'Finest royal dry fruits, super seeds, slow-roasted makhana snacks, and authentic aromatic Indian spices with zero adulteration.',
+        themeKey: 'theme-foods',
+        primaryColor: '#2F5D3A',
+        accentColor: '#D9A441',
+        bgColor: '#FAF6EC',
+        fssaiNumber: '10021051000123',
+        isActive: true,
+      },
+    });
+  }
+
+  // Ensure jimmi-jaggu store
+  let jimmi = await prisma.store.findFirst({
+    where: { slug: 'jimmi-jaggu' },
+  });
+  if (!jimmi) {
+    jimmi = await prisma.store.create({
+      data: {
+        slug: 'jimmi-jaggu',
+        name: 'Jimmi Jaggu',
+        tagline: 'From Our Store to Your Home',
+        description: 'Pure, wholesome botanicals crafted for happy babies, healthy skin and a healthier tomorrow.',
+        themeKey: 'theme-baby',
+        primaryColor: '#B97375',
+        accentColor: '#6D8B74',
+        bgColor: '#FFFDF9',
+        fssaiNumber: '10021051000123',
+        isActive: true,
+      },
+    });
+  }
+
+  // Ensure mewa brand
+  let mewaBrand = await prisma.brand.findUnique({ where: { slug: 'mewa-masala-ghar' } });
+  if (!mewaBrand) {
+    mewaBrand = await prisma.brand.create({
+      data: {
+        slug: 'mewa-masala-ghar',
+        name: 'Mewa Masala Ghar',
+        tagline: 'Pure Indian Goodness, Rooted in Tradition',
+        logo: '/logo.png',
+        primaryColor: '#2F5D3A',
+        accentColor: '#D9A441',
+        bgColor: '#FAF6EC',
+        textColor: '#2B2B2B',
+        fssaiNumber: '10021051000123',
+        isActive: true,
+      },
+    });
+  }
+
+  // Ensure jimmi brand
+  let jimmiBrand = await prisma.brand.findUnique({ where: { slug: 'jimmi-jaggu' } });
+  if (!jimmiBrand) {
+    jimmiBrand = await prisma.brand.create({
+      data: {
+        slug: 'jimmi-jaggu',
+        name: 'Jimmi Jaggu',
+        tagline: 'From Our Store to Your Home',
+        logo: '/brands/jimmi_jaggu_logo.png',
+        primaryColor: '#B97375',
+        accentColor: '#6D8B74',
+        bgColor: '#FFFDF9',
+        textColor: '#2A2A2A',
+        fssaiNumber: '10021051000123',
+        isActive: true,
+      },
+    });
+  }
+
+  return { foods, jimmi, mewaBrand, jimmiBrand };
+}
+
 export const getAdminStores = async (req: Request, res: Response) => {
   try {
+    await ensureDefaultStoresAndBrands();
     const stores = await prisma.store.findMany({
       include: {
         _count: { select: { products: true, categories: true } },
@@ -215,6 +298,7 @@ export const getAdminCategories = async (req: Request, res: Response) => {
       where,
       include: {
         store: { select: { id: true, name: true, slug: true } },
+        brand: { select: { id: true, name: true, slug: true } },
         parent: { select: { id: true, name: true, slug: true } },
         children: { orderBy: { displayOrder: 'asc' } },
         _count: { select: { products: true } },
@@ -228,57 +312,68 @@ export const getAdminCategories = async (req: Request, res: Response) => {
 };
 
 /**
- * Resiliently resolve a valid Store ID or auto-heal by fetching/creating the primary store
+ * Resiliently resolve Store and Brand IDs based on user selection or explicit params
  */
-async function resolveOrCreateDefaultStoreId(providedStoreId?: string, categoryId?: string): Promise<string> {
-  if (providedStoreId && typeof providedStoreId === 'string' && providedStoreId.trim().length > 0) {
-    const existing = await prisma.store.findUnique({ where: { id: providedStoreId.trim() } });
-    if (existing) return existing.id;
+async function resolveStoreAndBrandForCategory(params: {
+  storeId?: string;
+  storeSlug?: string;
+  brandSlug?: string;
+  selectedStore?: string;
+  categoryId?: string;
+}): Promise<{ storeId: string; brandId: string }> {
+  const { foods, jimmi, mewaBrand, jimmiBrand } = await ensureDefaultStoresAndBrands();
+
+  const isJimmi =
+    params.selectedStore === 'jimmi' ||
+    params.storeSlug === 'jimmi-jaggu' ||
+    params.brandSlug === 'jimmi-jaggu' ||
+    params.storeId === jimmi.id;
+
+  if (isJimmi) {
+    return {
+      storeId: jimmi.id,
+      brandId: jimmiBrand.id,
+    };
   }
 
-  if (categoryId && typeof categoryId === 'string' && categoryId.trim().length > 0) {
-    const cat = await prisma.category.findUnique({ where: { id: categoryId.trim() } });
-    if (cat?.storeId) {
-      const existing = await prisma.store.findUnique({ where: { id: cat.storeId } });
-      if (existing) return existing.id;
+  // If specific storeId provided, check if valid
+  if (params.storeId && typeof params.storeId === 'string' && params.storeId.trim()) {
+    const foundStore = await prisma.store.findUnique({ where: { id: params.storeId.trim() } });
+    if (foundStore) {
+      const isJimmiStore = ['jimmi-jaggu', 'baby', 'care'].includes(foundStore.slug);
+      return {
+        storeId: foundStore.id,
+        brandId: isJimmiStore ? jimmiBrand.id : mewaBrand.id,
+      };
     }
   }
 
-  const defaultStore = await prisma.store.findFirst({
-    where: { slug: 'foods' },
-  });
-  if (defaultStore) return defaultStore.id;
+  // Default to Mewa Masala Ghar
+  return {
+    storeId: foods.id,
+    brandId: mewaBrand.id,
+  };
+}
 
-  const anyStore = await prisma.store.findFirst();
-  if (anyStore) return anyStore.id;
-
-  // Auto-seed primary store if table is empty
-  const created = await prisma.store.create({
-    data: {
-      slug: 'foods',
-      name: 'Mewa & Healthy Foods',
-      tagline: 'Handpicked Dry Fruits, Roasted Makhana, Wholesome Seeds & Stone-Ground Spices',
-      description: 'Finest royal dry fruits, super seeds, slow-roasted makhana snacks, and authentic aromatic Indian spices with zero adulteration.',
-      themeKey: 'theme-foods',
-      primaryColor: '#2F5D3A',
-      accentColor: '#D9A441',
-      bgColor: '#FAF6EC',
-      fssaiNumber: '10021051000123',
-      isActive: true,
-    },
-  });
-  return created.id;
+async function resolveOrCreateDefaultStoreId(providedStoreId?: string, categoryId?: string): Promise<string> {
+  const resolved = await resolveStoreAndBrandForCategory({ storeId: providedStoreId, categoryId });
+  return resolved.storeId;
 }
 
 export const createAdminCategory = async (req: Request, res: Response) => {
   try {
-    const { storeId, parentId, name, slug, description, image, displayOrder } = req.body;
+    const { storeId, storeSlug, brandSlug, selectedStore, parentId, name, slug, description, image, displayOrder } = req.body;
     
     if (!name || typeof name !== 'string' || !name.trim()) {
       return res.status(400).json({ success: false, message: 'Category name is required.' });
     }
 
-    const targetStoreId = await resolveOrCreateDefaultStoreId(storeId);
+    const { storeId: targetStoreId, brandId: targetBrandId } = await resolveStoreAndBrandForCategory({
+      storeId,
+      storeSlug,
+      brandSlug,
+      selectedStore,
+    });
 
     // Validate parentId if provided
     let validParentId: string | null = null;
@@ -302,6 +397,7 @@ export const createAdminCategory = async (req: Request, res: Response) => {
     const category = await prisma.category.create({
       data: {
         storeId: targetStoreId,
+        brandId: targetBrandId,
         parentId: validParentId,
         name: name.trim(),
         slug: finalSlug,
@@ -311,6 +407,7 @@ export const createAdminCategory = async (req: Request, res: Response) => {
       },
       include: {
         store: true,
+        brand: true,
         parent: true,
       },
     });
@@ -323,22 +420,28 @@ export const createAdminCategory = async (req: Request, res: Response) => {
 export const updateAdminCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { storeId, parentId, name, slug, description, image, displayOrder } = req.body;
+    const { storeId, storeSlug, brandSlug, selectedStore, parentId, name, slug, description, image, displayOrder } = req.body;
 
-    // Validate storeId if provided — must exist in DB
-    let validatedStoreId: string | undefined;
-    if (storeId && typeof storeId === 'string' && storeId.trim()) {
-      const storeExists = await prisma.store.findUnique({ where: { id: storeId.trim() } });
-      if (!storeExists) {
-        return res.status(400).json({ success: false, message: `Store with ID "${storeId}" does not exist. Please refresh and try again.` });
-      }
-      validatedStoreId = storeId.trim();
+    let targetStoreId: string | undefined;
+    let targetBrandId: string | undefined;
+
+    if (storeId || storeSlug || brandSlug || selectedStore) {
+      const resolved = await resolveStoreAndBrandForCategory({
+        storeId,
+        storeSlug,
+        brandSlug,
+        selectedStore,
+        categoryId: id,
+      });
+      targetStoreId = resolved.storeId;
+      targetBrandId = resolved.brandId;
     }
 
     const category = await prisma.category.update({
       where: { id },
       data: {
-        ...(validatedStoreId && { storeId: validatedStoreId }),
+        ...(targetStoreId && { storeId: targetStoreId }),
+        ...(targetBrandId && { brandId: targetBrandId }),
         ...(parentId !== undefined && { parentId: parentId || null }),
         ...(name && { name: name.trim() }),
         ...(slug && { slug: slug.toLowerCase().trim() }),
@@ -346,7 +449,7 @@ export const updateAdminCategory = async (req: Request, res: Response) => {
         ...(image !== undefined && { image }),
         ...(displayOrder !== undefined && { displayOrder: parseInt(displayOrder, 10) }),
       },
-      include: { store: true, parent: true },
+      include: { store: true, brand: true, parent: true },
     });
     return res.json({ success: true, message: 'Category updated successfully.', data: category });
   } catch (error: any) {

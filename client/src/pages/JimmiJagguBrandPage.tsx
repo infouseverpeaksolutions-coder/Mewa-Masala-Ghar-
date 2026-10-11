@@ -132,6 +132,15 @@ export const JimmiJagguBrandPage: React.FC = () => {
     },
   });
 
+  // Fetch Real Jimmi Jaggu Categories from Database
+  const { data: dbCategories = [] } = useQuery({
+    queryKey: ['jimmi-jaggu-categories'],
+    queryFn: async () => {
+      const res = await api.get('/categories?brand=jimmi-jaggu');
+      return (res.data?.data || []) as any[];
+    },
+  });
+
   const handleAddToCart = (prod: Product) => {
     const defaultVariant =
       prod.variants?.find((v) => v.isDefault) ||
@@ -327,95 +336,156 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
       {/* 
         ========================================================================
-        2. CATEGORY SHOWCASE CARDS (3 Columns: Baby, Skincare, Pregnancy)
+        2. CATEGORY SHOWCASE CARDS (Dynamic from DB + Presets Fallback)
         ========================================================================
       */}
       <section id="categories" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
-          {/* Card 1: Baby Products */}
-          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-            <div>
-              <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                <img
-                  src="/assets/jimmi-jaggu/cat_baby_bottle.jpg"
-                  alt="Baby Products"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
+        {dbCategories && dbCategories.length > 0 ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#2B2321] dark:text-white tracking-tight">
+                  Shop by Category
+                </h2>
+                <div className="w-12 sm:w-16 h-[1.5px] bg-[#D8CFC4] dark:bg-[#3E5244] hidden sm:block" />
               </div>
-              <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
-                Baby Products
-              </h3>
-              <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
-                Safe • Gentle • Everyday Essentials
-              </p>
             </div>
-            <div className="px-1">
-              <Link
-                to="/baby-nutrition"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-              >
-                <span>Explore</span>
-                <span className="text-xs">→</span>
-              </Link>
-            </div>
-          </div>
 
-          {/* Card 2: Personal Care & Skincare */}
-          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-            <div>
-              <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                <img
-                  src="/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg"
-                  alt="Personal Care & Skincare"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
-                Personal Care & Skincare
-              </h3>
-              <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
-                Pure Ingredients • Healthy Skin
-              </p>
-            </div>
-            <div className="px-1">
-              <Link
-                to="/personal-care"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#6D8B74] hover:bg-[#5C7762] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-              >
-                <span>Explore</span>
-                <span className="text-xs">→</span>
-              </Link>
-            </div>
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-7">
+              {dbCategories.map((cat: any, idx: number) => {
+                const fallbackImages = [
+                  '/assets/jimmi-jaggu/cat_baby_bottle.jpg',
+                  '/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg',
+                  '/assets/jimmi-jaggu/cat_pregnancy_mother.jpg',
+                ];
+                const catImg = cat.image ? resolveImageUrl(cat.image) : fallbackImages[idx % fallbackImages.length];
+                const targetUrl = cat.slug?.includes('baby') || cat.slug?.includes('aahar') || cat.slug?.includes('poshan')
+                  ? `/baby-nutrition?category=${cat.slug}`
+                  : cat.slug?.includes('care') || cat.slug?.includes('skin') || cat.slug?.includes('clay')
+                  ? `/personal-care?category=${cat.slug}`
+                  : `/shop?category=${cat.slug}&brand=jimmi-jaggu`;
 
-          {/* Card 3: Pregnancy Products */}
-          <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-            <div>
-              <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                <img
-                  src="/assets/jimmi-jaggu/cat_pregnancy_mother.jpg"
-                  alt="Pregnancy Products"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
-                Pregnancy Products
-              </h3>
-              <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
-                Care for You & Your Little One
-              </p>
-            </div>
-            <div className="px-1">
-              <Link
-                to="/baby-nutrition?category=pregnancy-care"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-              >
-                <span>Explore</span>
-                <span className="text-xs">→</span>
-              </Link>
+                return (
+                  <div
+                    key={cat.id || idx}
+                    className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+                  >
+                    <div>
+                      <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
+                        <img
+                          src={catImg}
+                          alt={cat.name}
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
+                        {cat.name}
+                      </h3>
+                      <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1 line-clamp-2">
+                        {cat.description || 'Safe • Gentle • Everyday Essentials'}
+                      </p>
+                    </div>
+                    <div className="px-1">
+                      <Link
+                        to={targetUrl}
+                        className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                      >
+                        <span>Explore</span>
+                        <span className="text-xs">→</span>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
+            {/* Card 1: Baby Products */}
+            <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+              <div>
+                <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
+                  <img
+                    src="/assets/jimmi-jaggu/cat_baby_bottle.jpg"
+                    alt="Baby Products"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
+                  Baby Products
+                </h3>
+                <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
+                  Safe • Gentle • Everyday Essentials
+                </p>
+              </div>
+              <div className="px-1">
+                <Link
+                  to="/baby-nutrition"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                >
+                  <span>Explore</span>
+                  <span className="text-xs">→</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 2: Personal Care & Skincare */}
+            <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+              <div>
+                <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
+                  <img
+                    src="/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg"
+                    alt="Personal Care & Skincare"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
+                  Personal Care & Skincare
+                </h3>
+                <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
+                  Pure Ingredients • Healthy Skin
+                </p>
+              </div>
+              <div className="px-1">
+                <Link
+                  to="/personal-care"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#6D8B74] hover:bg-[#5C7762] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                >
+                  <span>Explore</span>
+                  <span className="text-xs">→</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 3: Pregnancy Products */}
+            <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+              <div>
+                <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
+                  <img
+                    src="/assets/jimmi-jaggu/cat_pregnancy_mother.jpg"
+                    alt="Pregnancy Products"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
+                  Pregnancy Products
+                </h3>
+                <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
+                  Care for You & Your Little One
+                </p>
+              </div>
+              <div className="px-1">
+                <Link
+                  to="/baby-nutrition?category=pregnancy-care"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
+                >
+                  <span>Explore</span>
+                  <span className="text-xs">→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 

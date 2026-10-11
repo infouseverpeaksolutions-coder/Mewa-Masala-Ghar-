@@ -91,20 +91,19 @@ export const CategoriesStoresPage: React.FC = () => {
     },
   });
 
-  // Split categories by store dynamically
-  const foodsStore = stores.find((s: any) => s.slug === 'foods');
-  const foodsStoreId = foodsStore?.id || MEWA_STORE_ID;
-
-  const mewaRootCategories = categories.filter(
-    (c: any) => !c.parentId && (c.storeId === foodsStoreId || c.store?.slug === 'foods' || (!c.store?.slug && !c.storeId))
-  );
-  const jimmiRootCategories = categories.filter(
-    (c: any) => !c.parentId && (
+  // Helper to determine if a category belongs to Jimmi Jaggu
+  const isJimmiCategory = (c: any) => {
+    return (
+      c.brand?.slug === 'jimmi-jaggu' ||
+      c.store?.slug === 'jimmi-jaggu' ||
       c.store?.slug === 'baby' ||
       c.store?.slug === 'care' ||
-      JIMMI_STORE_IDS.includes(c.storeId)
-    )
-  );
+      (c.storeId && JIMMI_STORE_IDS.includes(c.storeId))
+    );
+  };
+
+  const mewaRootCategories = categories.filter((c: any) => !c.parentId && !isJimmiCategory(c));
+  const jimmiRootCategories = categories.filter((c: any) => !c.parentId && isJimmiCategory(c));
 
   // Mutation to delete category
   const deleteMutation = useMutation({
@@ -140,8 +139,7 @@ export const CategoriesStoresPage: React.FC = () => {
     setDescription(cat.description || '');
     setImage(cat.image || '');
     setDisplayOrder(String(cat.displayOrder || 0));
-    const isJimmi = cat.store?.slug === 'baby' || cat.store?.slug === 'care' || JIMMI_STORE_IDS.includes(cat.storeId);
-    setSelectedStore(isJimmi ? 'jimmi' : 'mewa');
+    setSelectedStore(isJimmiCategory(cat) ? 'jimmi' : 'mewa');
     setFormError(null);
     setModalOpen(true);
   };
@@ -157,16 +155,15 @@ export const CategoriesStoresPage: React.FC = () => {
     }
 
     // Determine storeId based on selected store
-    let storeId: string;
+    let storeId: string | undefined;
     if (selectedStore === 'jimmi') {
-      // Use dedicated Jimmi Jaggu store first, then fallback to baby/care stores
       const jimmiStore = stores.find((s: any) => s.slug === 'jimmi-jaggu') ||
                          stores.find((s: any) => s.slug === 'baby') ||
                          stores.find((s: any) => s.slug === 'care');
-      storeId = jimmiStore?.id || JIMMI_STORE_IDS[0];
+      storeId = jimmiStore?.id;
     } else {
       const foodsStore = stores.find((s: any) => s.slug === 'foods');
-      storeId = foodsStore?.id || MEWA_STORE_ID;
+      storeId = foodsStore?.id;
     }
 
     try {
@@ -174,6 +171,9 @@ export const CategoriesStoresPage: React.FC = () => {
         name: name.trim(),
         slug: slug.trim() || undefined,
         storeId,
+        selectedStore,
+        storeSlug: selectedStore === 'jimmi' ? 'jimmi-jaggu' : 'foods',
+        brandSlug: selectedStore === 'jimmi' ? 'jimmi-jaggu' : 'mewa-masala-ghar',
         parentId: parentId?.trim() ? parentId.trim() : null,
         description: description.trim() || undefined,
         image: image.trim() || undefined,
