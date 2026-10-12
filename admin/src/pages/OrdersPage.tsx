@@ -126,9 +126,11 @@ export const OrdersPage: React.FC = () => {
         pickupLocation: 'work',
       });
       if (res.data?.success) {
+        const awb = res.data?.data?.awb_code || res.data?.shipment?.awbNo || 'Assigned';
+        const courier = res.data?.data?.courier_name || res.data?.shipment?.courier || 'Courier Assigned';
         setShippingNotice({
           type: 'success',
-          text: `Successfully dispatched with Shiprocket! AWB: ${res.data.data.awb_code || 'Assigned'} (${res.data.data.courier_name || 'Courier Assigned'})`,
+          text: `Successfully dispatched with Shiprocket! AWB: ${awb} (${courier})`,
         });
         queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
         handleOpenViewDetails({ ...viewingOrder!, id: orderId });

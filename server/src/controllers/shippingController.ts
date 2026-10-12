@@ -67,10 +67,23 @@ export const shipOrderWithShiprocket = async (req: Request, res: Response) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    if (!isValidTransition(order.status, OrderStatus.SHIPPED) && order.status !== OrderStatus.PACKED) {
+    const allowedStatuses: OrderStatus[] = [
+      OrderStatus.PLACED,
+      OrderStatus.CONFIRMED,
+      OrderStatus.PROCESSING,
+      OrderStatus.PACKED,
+    ];
+
+    if (!allowedStatuses.includes(order.status)) {
+      if (order.status === OrderStatus.SHIPPED) {
+        return res.status(400).json({
+          success: false,
+          message: `Order is already shipped (${order.courierName || 'Shiprocket'}, AWB: ${order.trackingNumber || 'Assigned'})`,
+        });
+      }
       return res.status(400).json({
         success: false,
-        message: `Cannot transition order from status ${order.status} to SHIPPED`,
+        message: `Cannot transition order from status ${order.status} to SHIPPED. Only PLACED, CONFIRMED, PROCESSING, or PACKED orders can be dispatched.`,
       });
     }
 
@@ -174,6 +187,13 @@ export const shipOrderWithShiprocket = async (req: Request, res: Response) => {
       message: 'Shipment created and dispatched via Shiprocket',
       shipment: shipmentResult,
       order: updatedOrder,
+      data: {
+        awb_code: shipmentResult.awbNo,
+        courier_name: shipmentResult.courier,
+        shipment_id: shipmentResult.shipmentId,
+        order_id: shipmentResult.shiprocketOrderId,
+        ...shipmentResult,
+      },
     });
   } catch (error: any) {
     console.error('[ShiprocketController] shipOrder error:', error.message || error);

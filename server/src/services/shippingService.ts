@@ -109,6 +109,9 @@ export class ShiprocketShippingProvider implements ShippingProvider {
       if (awbRes?.response?.data?.awb_code) {
         awbCode = awbRes.response.data.awb_code;
         courierName = awbRes.response.data.courier_name || courierName;
+      } else if (awbRes?.awb_code) {
+        awbCode = awbRes.awb_code;
+        courierName = awbRes.courier_name || courierName;
       }
     } catch (awbErr: any) {
       console.warn(`[Shiprocket] AWB auto-assignment deferred: ${awbErr.message}`);
@@ -171,8 +174,8 @@ export const COURIER_STATUS_MAP: Record<string, { orderStatus: string; trackingS
 /** Valid order status transitions */
 export const VALID_TRANSITIONS: Record<string, string[]> = {
   PENDING: ['PLACED', 'CONFIRMED', 'CANCELLED'],
-  PLACED: ['CONFIRMED', 'CANCELLED'],
-  CONFIRMED: ['PACKED', 'CANCELLED'],
+  PLACED: ['CONFIRMED', 'PACKED', 'SHIPPED', 'CANCELLED'],
+  CONFIRMED: ['PACKED', 'SHIPPED', 'CANCELLED'],
   PACKED: ['SHIPPED', 'CANCELLED'],
   SHIPPED: ['OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED', 'RETURNED'],
   OUT_FOR_DELIVERY: ['DELIVERED', 'RETURNED'],
