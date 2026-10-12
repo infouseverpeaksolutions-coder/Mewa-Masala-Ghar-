@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
 import { CheckCircle2, FileText, ArrowRight, Package, Printer, Truck, ShieldCheck, CreditCard, Sparkles } from 'lucide-react';
-import api from '../services/api';
+import api, { getInvoiceUrl } from '../services/api';
 
 export const OrderSuccessPage: React.FC = () => {
   const { id, orderNo } = useParams<{ id?: string; orderNo?: string }>();
@@ -62,7 +62,7 @@ export const OrderSuccessPage: React.FC = () => {
   }
 
   const shippingAddr = order.shippingAddressSnapshot || order.shippingAddress || {};
-  const invoiceUrl = `http://localhost:5000/api/orders/${order.id}/invoice`;
+  const invoiceUrl = getInvoiceUrl(order.id);
   const trackingUrl = `/track-order?token=${order.trackingToken || ''}&orderNumber=${order.orderNumber}`;
 
   return (

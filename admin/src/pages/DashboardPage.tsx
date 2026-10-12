@@ -11,7 +11,7 @@ import {
   TrendingUp,
   FileText,
 } from 'lucide-react';
-import api from '../services/api';
+import api, { getInvoiceUrl } from '../services/api';
 import { DashboardMetrics, Order } from '../types';
 
 export const DashboardPage: React.FC = () => {
@@ -212,7 +212,7 @@ export const DashboardPage: React.FC = () => {
                   </td>
                   <td className="p-3 text-right">
                     <a
-                      href={`http://localhost:5000/api/orders/${o.id}/invoice`}
+                      href={getInvoiceUrl(o.id)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2F5D3A] hover:underline"

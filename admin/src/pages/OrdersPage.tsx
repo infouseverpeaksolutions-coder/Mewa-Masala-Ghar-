@@ -19,14 +19,14 @@ import {
   ShieldCheck,
   RefreshCw,
 } from 'lucide-react';
-import api from '../services/api';
+import api, { getInvoiceUrl } from '../services/api';
 import { Order } from '../types';
 
 const VALID_NEXT_STATUSES: Record<string, string[]> = {
-  PLACED: ['CONFIRMED', 'CANCELLED'],
+  PLACED: ['CONFIRMED', 'PACKED', 'SHIPPED', 'CANCELLED'],
   PENDING: ['CONFIRMED', 'CANCELLED'],
-  CONFIRMED: ['PACKED', 'CANCELLED'],
-  PROCESSING: ['PACKED', 'CANCELLED'],
+  CONFIRMED: ['PACKED', 'SHIPPED', 'CANCELLED'],
+  PROCESSING: ['PACKED', 'SHIPPED', 'CANCELLED'],
   PACKED: ['SHIPPED', 'CANCELLED'],
   SHIPPED: ['OUT_FOR_DELIVERY', 'DELIVERED', 'RETURNED'],
   OUT_FOR_DELIVERY: ['DELIVERED', 'RETURNED'],
@@ -339,7 +339,7 @@ export const OrdersPage: React.FC = () => {
                           Update
                         </button>
                         <a
-                          href={`http://localhost:5000/api/orders/${o.id}/invoice`}
+                          href={getInvoiceUrl(o.id)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold"
@@ -636,7 +636,7 @@ export const OrdersPage: React.FC = () => {
             {/* Modal Footer Actions */}
             <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
               <a
-                href={`http://localhost:5000/api/orders/${viewingOrder.id}/invoice`}
+                href={getInvoiceUrl(viewingOrder.id)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold border border-emerald-200"

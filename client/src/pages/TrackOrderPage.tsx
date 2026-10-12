@@ -16,7 +16,7 @@ import {
   RotateCcw,
   Sparkles,
 } from 'lucide-react';
-import api from '../services/api';
+import api, { getInvoiceUrl } from '../services/api';
 
 const ORDER_STEPS = [
   { key: 'PLACED', label: 'Order Placed', desc: 'Received & logged' },
@@ -375,7 +375,7 @@ export const TrackOrderPage: React.FC = () => {
             </Link>
             {order.orderNumber && (
               <a
-                href={`http://localhost:5000/api/orders/${order.orderNumber}/invoice`}
+                href={getInvoiceUrl(order.orderNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-2.5 bg-[#2F5D3A] hover:bg-[#1F4D2E] text-white rounded-full text-xs font-bold transition-all inline-flex items-center gap-2 shadow-xs"

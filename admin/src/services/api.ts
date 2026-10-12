@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000/api' : '/api');
+export const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://api.mewamasalaghar.com/api');
+
+export const getInvoiceUrl = (orderIdOrNumber: string) => `${API_URL}/orders/${orderIdOrNumber}/invoice`;
 
 const api = axios.create({
   baseURL: API_URL,

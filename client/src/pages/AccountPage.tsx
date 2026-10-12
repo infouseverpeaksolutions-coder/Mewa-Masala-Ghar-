@@ -22,7 +22,7 @@ import {
   X,
   RotateCcw,
 } from 'lucide-react';
-import api from '../services/api';
+import api, { getInvoiceUrl } from '../services/api';
 import { Order, Product } from '../types';
 
 type TabType = 'orders' | 'wishlist' | 'addresses' | 'profile';
@@ -407,7 +407,7 @@ export const AccountPage: React.FC = () => {
                               )}
 
                               <a
-                                href={`http://localhost:5000/api/orders/${ord.id}/invoice`}
+                                href={getInvoiceUrl(ord.id)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 text-gray-600 hover:text-gray-900 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
@@ -536,7 +536,7 @@ export const AccountPage: React.FC = () => {
                     {/* Modal Actions */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-gray-100">
                       <a
-                        href={`http://localhost:5000/api/orders/${selectedOrder.id}/invoice`}
+                        href={getInvoiceUrl(selectedOrder.id)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full text-xs font-bold transition-all inline-flex items-center gap-1.5"
