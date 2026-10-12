@@ -97,9 +97,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         .then((res) => {
           if (res.data?.data) {
             setCategoriesList(res.data.data);
-            if (!productToEdit && res.data.data.length > 0) {
-              setCategoryId((prev) => prev || res.data.data[0].id);
-            }
           }
         })
         .catch(() => {});
@@ -157,7 +154,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     } else {
       // Clean blank state for adding new product
       setName('');
-      setCategoryId(categoriesList[0]?.id || '');
+      setCategoryId('');
       setDescription('');
       setShortDescription('');
       setSlug('');
@@ -419,12 +416,38 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 required
                 className="w-full px-3.5 py-2.5 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl font-medium text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white"
               >
-                <option value="">-- Select Category from Dropdown --</option>
-                {categoriesList.map((c: any) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} {c.store?.name ? `(${c.store.name})` : ''}
-                  </option>
-                ))}
+                <option value="">-- Select Category (Required) --</option>
+                <optgroup label="Mewa Masala Ghar (Dry Fruits, Seeds, Makhana, Spices, Aataa)">
+                  {categoriesList
+                    .filter(
+                      (c: any) =>
+                        c.store?.slug === 'foods' ||
+                        (!c.brand?.slug?.includes('jimmi') &&
+                          !c.store?.slug?.includes('baby') &&
+                          !c.store?.slug?.includes('care') &&
+                          !c.store?.slug?.includes('jimmi'))
+                    )
+                    .map((c: any) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="Jimmi Jaggu (Baby Nutrition, Clays & Natural Care)">
+                  {categoriesList
+                    .filter(
+                      (c: any) =>
+                        c.brand?.slug?.includes('jimmi') ||
+                        c.store?.slug?.includes('baby') ||
+                        c.store?.slug?.includes('care') ||
+                        c.store?.slug?.includes('jimmi')
+                    )
+                    .map((c: any) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </optgroup>
               </select>
             </div>
 

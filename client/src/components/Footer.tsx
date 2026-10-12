@@ -119,11 +119,16 @@ export const Footer: React.FC = () => {
                 Get in Touch
               </h4>
               <ul className="space-y-2.5 text-xs text-white/80">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
-                  <a href="tel:+917071704506" className="hover:text-white transition-colors font-medium">
-                    +91 70717 04506
-                  </a>
+                <li className="flex items-start gap-2">
+                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
+                  <div className="flex flex-col gap-0.5">
+                    <a href="tel:+917071704506" className="hover:text-white transition-colors font-medium">
+                      +91 70717 04506
+                    </a>
+                    <a href="tel:+919460302825" className="hover:text-white transition-colors font-medium">
+                      +91 94603 02825
+                    </a>
+                  </div>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
@@ -134,8 +139,10 @@ export const Footer: React.FC = () => {
                 <li className="flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
                   <div className="leading-tight text-white/80">
-                    <span className="font-semibold block text-white/95">JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)</span>
-                    <span className="text-white/70 block mt-0.5">HANWANT COLONY GANDHIPURA Balotra -344022</span>
+                    <span className="font-semibold block text-white/95">Jagriti Trading Company</span>
+                    <span className="font-bold uppercase block mt-1 text-white/95 tracking-wide">
+                      HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022
+                    </span>
                   </div>
                 </li>
               </ul>
@@ -286,14 +293,22 @@ export const Footer: React.FC = () => {
                 Get in Touch
               </h4>
               <ul className="space-y-2.5 text-xs text-white/80">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
-                  <a
-                    href="tel:+917071704506"
-                    className="hover:text-white transition-colors font-medium"
-                  >
-                    {settings.phone || '+91 70717 04506'}
-                  </a>
+                <li className="flex items-start gap-2">
+                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
+                  <div className="flex flex-col gap-0.5">
+                    <a
+                      href="tel:+917071704506"
+                      className="hover:text-white transition-colors font-medium"
+                    >
+                      +91 70717 04506
+                    </a>
+                    <a
+                      href="tel:+919460302825"
+                      className="hover:text-white transition-colors font-medium"
+                    >
+                      +91 94603 02825
+                    </a>
+                  </div>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
@@ -308,10 +323,10 @@ export const Footer: React.FC = () => {
                   <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
                   <div className="leading-tight text-white/80">
                     <span className="font-semibold block text-white/95">
-                      {settings.company_name || 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)'}
+                      Jagriti Trading Company
                     </span>
-                    <span className="text-white/70 block mt-0.5">
-                      {settings.address || 'HANWANT COLONY GANDHIPURA Balotra -344022'}
+                    <span className="font-bold uppercase block mt-1 text-white/95 tracking-wide">
+                      HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022
                     </span>
                   </div>
                 </li>
@@ -322,7 +337,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Strip */}
         <div className="pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-white/60 gap-4">
-          <p>© 2026 {isJimmiJaggu ? 'Jimmi Jaggu' : 'Mewa Masala Ghar'} · JAGRITI TRADING COMPANY. All rights reserved.</p>
+          <p>© 2026 {isJimmiJaggu ? 'Jimmi Jaggu' : 'Mewa Masala Ghar'} · Jagriti Trading Company. All rights reserved.</p>
 
           {/* Social icons */}
           <div className="flex items-center gap-4 text-white/80">

@@ -66,7 +66,7 @@ export const HomePage: React.FC = () => {
   const { data: allFoodsData = [], isLoading: allFoodsLoading } = useQuery({
     queryKey: ['home-foods-all'],
     queryFn: async () => {
-      const res = await api.get('/products?store=foods&limit=30');
+      const res = await api.get('/products?store=foods&limit=50');
       return res.data?.data?.products || [];
     },
   });
@@ -80,27 +80,130 @@ export const HomePage: React.FC = () => {
     },
   });
 
-  // Dry fruits to display: matched category, or fallback to foods catalog
+  // Strict Category Identification Helpers (Prevents category mixing on Home Page)
+  const isStrictlyDryFruit = (p: any) => {
+    const slug = (p.category?.slug || '').toLowerCase();
+    const catName = (p.category?.name || '').toLowerCase();
+    const prodName = (p.name || '').toLowerCase();
+
+    // STRICT REJECTIONS: Spices, Makhana, Seeds, Flours/Aataa, Baby/Care
+    if (
+      slug.includes('spice') || catName.includes('spice') || catName.includes('masala') ||
+      prodName.includes('powder') || prodName.includes('mirch') || prodName.includes('haldi') || prodName.includes('coriander') || prodName.includes('dhaniya') || prodName.includes('chilli') ||
+      slug.includes('makhana') || catName.includes('makhana') || prodName.includes('makhana') ||
+      slug.includes('seed') || catName.includes('seed') || prodName.includes('seed') || prodName.includes('chia') || prodName.includes('flax') ||
+      slug.includes('aata') || catName.includes('aata') || slug.includes('flour') || catName.includes('flour') || prodName.includes('aata') || prodName.includes('flour') ||
+      slug.includes('baby') || catName.includes('baby') || slug.includes('care') || catName.includes('care')
+    ) {
+      return false;
+    }
+
+    return (
+      slug.includes('dry-fruit') ||
+      catName.includes('dry fruit') ||
+      catName.includes('mewa') ||
+      slug.includes('nut') ||
+      catName.includes('nut') ||
+      prodName.includes('badam') ||
+      prodName.includes('almond') ||
+      prodName.includes('kaju') ||
+      prodName.includes('cashew') ||
+      prodName.includes('pista') ||
+      prodName.includes('pistachio') ||
+      prodName.includes('anjeer') ||
+      prodName.includes('fig') ||
+      prodName.includes('akhrot') ||
+      prodName.includes('walnut') ||
+      prodName.includes('kismis') ||
+      prodName.includes('kishmish') ||
+      prodName.includes('raisin') ||
+      prodName.includes('dry fruit') ||
+      prodName.includes('munch')
+    );
+  };
+
+  const isStrictlySeed = (p: any) => {
+    const slug = (p.category?.slug || '').toLowerCase();
+    const catName = (p.category?.name || '').toLowerCase();
+    const prodName = (p.name || '').toLowerCase();
+
+    // STRICT REJECTIONS: Spices, Makhana, Dry Fruits, Flours, Baby/Care
+    if (
+      slug.includes('spice') || catName.includes('spice') || catName.includes('masala') ||
+      prodName.includes('powder') || prodName.includes('mirch') || prodName.includes('haldi') || prodName.includes('coriander') || prodName.includes('dhaniya') ||
+      slug.includes('makhana') || catName.includes('makhana') || prodName.includes('makhana') ||
+      slug.includes('dry-fruit') || catName.includes('dry fruit') ||
+      slug.includes('aata') || catName.includes('aata') || slug.includes('flour') || catName.includes('flour') ||
+      slug.includes('baby') || catName.includes('baby') || slug.includes('care') || catName.includes('care')
+    ) {
+      return false;
+    }
+
+    return (
+      slug.includes('seed') ||
+      catName.includes('seed') ||
+      prodName.includes('seed') ||
+      prodName.includes('chia') ||
+      prodName.includes('flax') ||
+      prodName.includes('pumpkin') ||
+      prodName.includes('sunflower') ||
+      prodName.includes('sesame') ||
+      prodName.includes('til') ||
+      prodName.includes('alsi') ||
+      prodName.includes('magaz')
+    );
+  };
+
+  const isStrictlyAataa = (p: any) => {
+    const slug = (p.category?.slug || '').toLowerCase();
+    const catName = (p.category?.name || '').toLowerCase();
+    const prodName = (p.name || '').toLowerCase();
+
+    // STRICT REJECTIONS: Spices, Makhana, Dry Fruits, Seeds, Baby/Care
+    if (
+      slug.includes('spice') || catName.includes('spice') || catName.includes('masala') ||
+      prodName.includes('powder') ||
+      slug.includes('makhana') || catName.includes('makhana') || prodName.includes('makhana') ||
+      slug.includes('dry-fruit') || catName.includes('dry fruit') ||
+      slug.includes('seed') || catName.includes('seed') ||
+      slug.includes('baby') || catName.includes('baby') || slug.includes('care') || catName.includes('care')
+    ) {
+      return false;
+    }
+
+    return (
+      slug.includes('aata') ||
+      catName.includes('aata') ||
+      slug.includes('flour') ||
+      catName.includes('flour') ||
+      prodName.includes('aata') ||
+      prodName.includes('flour') ||
+      prodName.includes('chakki') ||
+      prodName.includes('ragi flour') ||
+      prodName.includes('besan')
+    );
+  };
+
+  // Dry fruits to display: strictly Dry Fruits only
   const displayedDryFruits = useMemo(() => {
-    if (dryFruitsData.length > 0) return dryFruitsData.slice(0, 7);
-    return allFoodsData.slice(0, 7);
+    const pool = [...dryFruitsData];
+    allFoodsData.forEach((p: any) => {
+      if (!pool.some((item) => item.id === p.id)) {
+        pool.push(p);
+      }
+    });
+    return pool.filter(isStrictlyDryFruit).slice(0, 7);
   }, [dryFruitsData, allFoodsData]);
 
-  // Seeds & Aataa products filtered dynamically from DB
+  // Seeds & Aataa products: strictly Seeds and Aataa only
   const filteredSeedsAataa = useMemo(() => {
-    const matching = allFoodsData.filter((p: any) => {
-      const text = `${p.name} ${p.category?.name || ''} ${p.category?.slug || ''} ${p.description || ''}`.toLowerCase();
-      if (seedsAataaFilter === 'seeds') {
-        return text.includes('seed') || text.includes('chia') || text.includes('flax') || text.includes('pumpkin') || text.includes('sunflower');
-      }
-      if (seedsAataaFilter === 'aataa') {
-        return text.includes('aata') || text.includes('flour') || text.includes('chakki') || text.includes('grain') || text.includes('ragi');
-      }
-      return text.includes('seed') || text.includes('aata') || text.includes('flour') || text.includes('chakki') || text.includes('grain');
-    });
-
-    if (matching.length > 0) return matching.slice(0, 7);
-    return seedsAataaFilter === 'all' ? allFoodsData.slice(0, 7) : [];
+    if (seedsAataaFilter === 'seeds') {
+      return allFoodsData.filter(isStrictlySeed).slice(0, 7);
+    }
+    if (seedsAataaFilter === 'aataa') {
+      return allFoodsData.filter(isStrictlyAataa).slice(0, 7);
+    }
+    return allFoodsData.filter((p: any) => isStrictlySeed(p) || isStrictlyAataa(p)).slice(0, 7);
   }, [allFoodsData, seedsAataaFilter]);
 
   // Bestsellers: DB bestsellers or supplemented by foods catalog
