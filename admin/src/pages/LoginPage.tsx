@@ -18,7 +18,7 @@ export const LoginPage: React.FC = () => {
     try {
       const res = await api.post('/auth/login', { email: email.trim(), password });
       if (res.data?.success) {
-        const allowedRoles = ['SUPER_ADMIN', 'ADMIN'];
+        const allowedRoles = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'STAFF'];
         if (!allowedRoles.includes(res.data.data.user.role)) {
           setError('Access denied: Customer accounts cannot log into the Admin Panel.');
           return;
