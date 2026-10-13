@@ -551,6 +551,9 @@ export const getInvoiceHtml = async (req: Request, res: Response) => {
     });
 
     if (!order) {
+      if (req.headers.host?.includes('localhost') || req.headers.host?.includes('127.0.0.1')) {
+        return res.redirect(`https://api.mewamasalaghar.com/api/orders/${id}/invoice`);
+      }
       return res.status(404).send('<h1>Invoice Not Found</h1>');
     }
 
