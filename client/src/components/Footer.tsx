@@ -7,9 +7,7 @@ import { BrandLogoBadge } from './ui/Icons';
 export const Footer: React.FC = () => {
   const { settings } = useSettings();
   const location = useLocation();
-  const isJimmiJaggu =
-    location.pathname.startsWith('/jimmi-jaggu') ||
-    location.pathname.startsWith('/jimmi_jaggu');
+  const isJimmiJaggu = location.pathname.startsWith('/jimmi-jaggu');
 
   return (
     <footer className="bg-[#1F4D2E] dark:bg-[#111813] text-white pt-12 pb-20 md:pb-12 border-t border-white/10 relative">
@@ -50,18 +48,18 @@ export const Footer: React.FC = () => {
               </h4>
               <ul className="space-y-2 text-xs text-white/80">
                 <li>
-                  <Link to="/jimmi-jaggu#products-section" className="hover:text-[#D9A441] transition-colors">
-                    All Products
+                  <Link to="/baby-nutrition" className="hover:text-[#D9A441] transition-colors">
+                    Baby Products
                   </Link>
                 </li>
                 <li>
-                  <Link to="/jimmi-jaggu?category=personal-care-skincare#products-section" className="hover:text-[#D9A441] transition-colors">
-                    Personal Care & Skincare
+                  <Link to="/personal-care" className="hover:text-[#D9A441] transition-colors">
+                    Skincare
                   </Link>
                 </li>
                 <li>
-                  <Link to="/jimmi-jaggu?category=baby-care#products-section" className="hover:text-[#D9A441] transition-colors">
-                    Baby Care
+                  <Link to="/baby-nutrition?category=pregnancy-care" className="hover:text-[#D9A441] transition-colors">
+                    Pregnancy Products
                   </Link>
                 </li>
               </ul>
@@ -121,16 +119,11 @@ export const Footer: React.FC = () => {
                 Get in Touch
               </h4>
               <ul className="space-y-2.5 text-xs text-white/80">
-                <li className="flex items-start gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
-                  <div className="flex flex-col gap-0.5">
-                    <a href="tel:+917071704506" className="hover:text-white transition-colors font-medium">
-                      +91 70717 04506
-                    </a>
-                    <a href="tel:+919460302825" className="hover:text-white transition-colors font-medium">
-                      +91 94603 02825
-                    </a>
-                  </div>
+                <li className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
+                  <a href="tel:+917071704506" className="hover:text-white transition-colors font-medium">
+                    +91 70717 04506
+                  </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
@@ -141,10 +134,8 @@ export const Footer: React.FC = () => {
                 <li className="flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
                   <div className="leading-tight text-white/80">
-                    <span className="font-semibold block text-white/95">Jagriti Trading Company</span>
-                    <span className="font-bold uppercase block mt-1 text-white/95 tracking-wide">
-                      HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022
-                    </span>
+                    <span className="font-semibold block text-white/95">JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)</span>
+                    <span className="text-white/70 block mt-0.5">HANWANT COLONY GANDHIPURA Balotra -344022</span>
                   </div>
                 </li>
               </ul>
@@ -190,7 +181,7 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?category=seeds" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/shop?category=seeds-mixes" className="hover:text-[#D9A441] transition-colors">
                     Seeds
                   </Link>
                 </li>
@@ -200,12 +191,17 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?category=spices" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/shop?category=spices-seasonings" className="hover:text-[#D9A441] transition-colors">
                     Spices
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?category=combo-packs" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/shop?category=specialty-flours" className="hover:text-[#D9A441] transition-colors">
+                    Aataa (Flour)
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop?combo=true" className="hover:text-[#D9A441] transition-colors">
                     Combo Packs
                   </Link>
                 </li>
@@ -290,22 +286,14 @@ export const Footer: React.FC = () => {
                 Get in Touch
               </h4>
               <ul className="space-y-2.5 text-xs text-white/80">
-                <li className="flex items-start gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
-                  <div className="flex flex-col gap-0.5">
-                    <a
-                      href="tel:+917071704506"
-                      className="hover:text-white transition-colors font-medium"
-                    >
-                      +91 70717 04506
-                    </a>
-                    <a
-                      href="tel:+919460302825"
-                      className="hover:text-white transition-colors font-medium"
-                    >
-                      +91 94603 02825
-                    </a>
-                  </div>
+                <li className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
+                  <a
+                    href="tel:+917071704506"
+                    className="hover:text-white transition-colors font-medium"
+                  >
+                    {settings.phone || '+91 70717 04506'}
+                  </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#D9A441] shrink-0" />
@@ -320,10 +308,10 @@ export const Footer: React.FC = () => {
                   <MapPin className="w-3.5 h-3.5 text-[#D9A441] shrink-0 mt-0.5" />
                   <div className="leading-tight text-white/80">
                     <span className="font-semibold block text-white/95">
-                      Jagriti Trading Company
+                      {settings.company_name || 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)'}
                     </span>
-                    <span className="font-bold uppercase block mt-1 text-white/95 tracking-wide">
-                      HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022
+                    <span className="text-white/70 block mt-0.5">
+                      {settings.address || 'HANWANT COLONY GANDHIPURA Balotra -344022'}
                     </span>
                   </div>
                 </li>
@@ -334,7 +322,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Strip */}
         <div className="pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-white/60 gap-4">
-          <p>© 2026 {isJimmiJaggu ? 'Jimmi Jaggu' : 'Mewa Masala Ghar'} · Jagriti Trading Company. All rights reserved.</p>
+          <p>© 2026 {isJimmiJaggu ? 'Jimmi Jaggu' : 'Mewa Masala Ghar'} · JAGRITI TRADING COMPANY. All rights reserved.</p>
 
           {/* Social icons */}
           <div className="flex items-center gap-4 text-white/80">

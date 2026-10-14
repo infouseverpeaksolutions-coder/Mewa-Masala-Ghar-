@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -49,7 +49,7 @@ export const App: React.FC = () => {
           <Route path="/baby-nutrition" element={<BabyNutritionStorePage />} />
           <Route path="/personal-care" element={<PersonalCareStorePage />} />
           <Route path="/jimmi-jaggu" element={<JimmiJagguBrandPage />} />
-          <Route path="/jimmi_jaggu" element={<JimmiJagguBrandPage />} />
+          <Route path="/jimmi_jaggu" element={<Navigate to="/jimmi-jaggu" replace />} />
 
           {/* Catalog & Product Discovery */}
           <Route path="/shop" element={<ShopPage />} />

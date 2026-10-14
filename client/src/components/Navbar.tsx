@@ -17,8 +17,6 @@ import {
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
-import { useQuery } from '@tanstack/react-query';
-import api from '../services/api';
 import { LeafIcon, BrandLogoBadge } from './ui/Icons';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -29,40 +27,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isJimmiJaggu =
-    location.pathname.startsWith('/jimmi-jaggu') ||
-    location.pathname.startsWith('/jimmi_jaggu');
-
-  // Dynamically fetch brand/store specific categories from database
-  const { data: dbCategories = [] } = useQuery({
-    queryKey: ['nav-categories', isJimmiJaggu ? 'jimmi-jaggu' : 'foods'],
-    queryFn: async () => {
-      const url = isJimmiJaggu ? '/categories?brand=jimmi-jaggu' : '/categories?store=foods';
-      const res = await api.get(url);
-      return (res.data?.data || []) as any[];
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const defaultJimmiCategories = [
-    { name: 'Personal Care & Skincare', slug: 'personal-care-skincare' },
-    { name: 'Baby care', slug: 'baby-care' },
-  ];
-
-  const defaultMewaCategories = [
-    { name: 'Dry Fruits', slug: 'dry-fruits' },
-    { name: 'Seeds', slug: 'seeds' },
-    { name: 'Makhana', slug: 'makhana' },
-    { name: 'Spices', slug: 'spices' },
-    { name: 'Combo Packs', slug: 'combo-packs' },
-  ];
-
-  const activeCategories =
-    dbCategories.length > 0
-      ? dbCategories
-      : isJimmiJaggu
-      ? defaultJimmiCategories
-      : defaultMewaCategories;
+  const isJimmiJaggu = location.pathname.startsWith('/jimmi-jaggu');
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -221,10 +186,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
           {/* Nav Links in Center (Desktop & Tablet) */}
           <nav className="hidden md:flex items-center gap-5 lg:gap-7 select-none">
             {/* Home */}
-            <Link
-              to={isJimmiJaggu ? '/jimmi-jaggu' : '/'}
-              className={navItemClass(isJimmiJaggu ? '/jimmi-jaggu' : '/')}
-            >
+            <Link to="/" className={navItemClass('/')}>
               Home
             </Link>
 
@@ -232,65 +194,64 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             <div className="relative" ref={shopRef}>
               <button
                 onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
-                className={`flex items-center gap-1 ${navItemClass(isJimmiJaggu ? '/jimmi-jaggu#products-section' : '/shop')}`}
+                className={`flex items-center gap-1 ${navItemClass('/shop')}`}
               >
                 <span>Shop</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${shopDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {shopDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-52 bg-white dark:bg-[#18221B] rounded-2xl shadow-xl border border-[#E7E0D0] dark:border-[#2A3B2F] py-2 z-50 animate-in fade-in duration-150">
-                  {isJimmiJaggu ? (
-                    <>
-                      <Link
-                        to="/jimmi-jaggu#products-section"
-                        onClick={() => setShopDropdownOpen(false)}
-                        className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#B97375]"
-                      >
-                        All Jimmi Jaggu Products
-                      </Link>
-                      <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
-                      {activeCategories.map((cat: any) => (
-                        <Link
-                          key={cat.id || cat.slug}
-                          to={`/jimmi-jaggu?category=${cat.slug}#products-section`}
-                          onClick={() => setShopDropdownOpen(false)}
-                          className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#B97375]"
-                        >
-                          {cat.name}
-                        </Link>
-                      ))}
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        to="/shop"
-                        onClick={() => setShopDropdownOpen(false)}
-                        className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E]"
-                      >
-                        All Products
-                      </Link>
-                      <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
-                      {activeCategories.map((cat: any) => (
-                        <Link
-                          key={cat.id || cat.slug}
-                          to={`/shop?category=${cat.slug}`}
-                          onClick={() => setShopDropdownOpen(false)}
-                          className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E]"
-                        >
-                          {cat.name}
-                        </Link>
-                      ))}
-                      <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
-                      <Link
-                        to="/shop?combo=true"
-                        onClick={() => setShopDropdownOpen(false)}
-                        className="block px-4 py-2 text-xs font-semibold text-[#8C6D37] dark:text-[#E5B85C] hover:bg-[#FAF6EC] dark:hover:bg-[#202E24]"
-                      >
-                        Combo Packs (2/4/6)
-                      </Link>
-                    </>
-                  )}
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-[#E7E0D0] py-2 z-50 animate-in fade-in duration-150">
+                  <Link
+                    to="/shop"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    All Products
+                  </Link>
+                  <Link
+                    to="/shop?category=dry-fruits"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    Dry Fruits
+                  </Link>
+                  <Link
+                    to="/shop?category=seeds-mixes"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    Seeds & Mixes
+                  </Link>
+                  <Link
+                    to="/shop?category=makhana"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    Flavoured Makhana
+                  </Link>
+                  <Link
+                    to="/shop?category=spices-seasonings"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    Spices
+                  </Link>
+                  <Link
+                    to="/shop?category=specialty-flours"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    Aataa (Flour)
+                  </Link>
+                  <div className="border-t border-gray-100 my-1" />
+                  <Link
+                    to="/shop?combo=true"
+                    onClick={() => setShopDropdownOpen(false)}
+                    className="block px-4 py-2 text-xs font-semibold text-[#8C6D37] hover:bg-[#FAF6EC]"
+                  >
+                    Combo Packs (2/4/6)
+                  </Link>
                 </div>
               )}
             </div>
@@ -299,58 +260,60 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             <div className="relative" ref={catRef}>
               <button
                 onClick={() => setCategoriesDropdownOpen(!categoriesDropdownOpen)}
-                className={`flex items-center gap-1 ${navItemClass(isJimmiJaggu ? '/jimmi-jaggu#categories-section' : '/categories')}`}
+                className={`flex items-center gap-1 ${navItemClass('/categories')}`}
               >
                 <span>Categories</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${categoriesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {categoriesDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#18221B] rounded-2xl shadow-xl border border-[#E7E0D0] dark:border-[#2A3B2F] py-2 z-50 animate-in fade-in duration-150">
-                  {isJimmiJaggu ? (
-                    <>
-                      <div className="px-4 py-1.5 text-[10px] font-bold tracking-wider text-[#B97375] uppercase border-b border-gray-100 dark:border-gray-800 mb-1">
-                        Jimmi Jaggu Categories
-                      </div>
-                      {activeCategories.map((cat: any) => (
-                        <Link
-                          key={cat.id || cat.slug}
-                          to={`/jimmi-jaggu?category=${cat.slug}#products-section`}
-                          onClick={() => setCategoriesDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#B97375]"
-                        >
-                          <span className="w-2 h-2 rounded-full bg-[#B97375]" />
-                          <span>{cat.name}</span>
-                        </Link>
-                      ))}
-                    </>
-                  ) : (
-                    <>
-                      <div className="px-4 py-1.5 text-[10px] font-bold tracking-wider text-[#1F4D2E] dark:text-[#8ED9A0] uppercase border-b border-gray-100 dark:border-gray-800 mb-1">
-                        Mewa Masala Categories
-                      </div>
-                      {activeCategories.map((cat: any) => (
-                        <Link
-                          key={cat.id || cat.slug}
-                          to={`/shop?category=${cat.slug}`}
-                          onClick={() => setCategoriesDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E]"
-                        >
-                          <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
-                          <span>{cat.name}</span>
-                        </Link>
-                      ))}
-                    </>
-                  )}
+                <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-[#E7E0D0] py-2 z-50 animate-in fade-in duration-150">
+                  <Link
+                    to="/shop?category=dry-fruits"
+                    onClick={() => setCategoriesDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
+                    <span>Dry Fruits</span>
+                  </Link>
+                  <Link
+                    to="/shop?category=seeds-mixes"
+                    onClick={() => setCategoriesDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
+                    <span>Seeds</span>
+                  </Link>
+                  <Link
+                    to="/shop?category=makhana"
+                    onClick={() => setCategoriesDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
+                    <span>Makhana</span>
+                  </Link>
+                  <Link
+                    to="/shop?category=spices-seasonings"
+                    onClick={() => setCategoriesDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
+                    <span>Spices</span>
+                  </Link>
+                  <Link
+                    to="/shop?category=specialty-flours"
+                    onClick={() => setCategoriesDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
+                    <span>Aataa (Flour)</span>
+                  </Link>
                 </div>
               )}
             </div>
 
             {/* Bestsellers */}
-            <Link
-              to={isJimmiJaggu ? '/jimmi-jaggu#products-section' : '/shop?featured=true'}
-              className={navItemClass(isJimmiJaggu ? '/jimmi-jaggu#products-section' : '/shop?featured=true')}
-            >
+            <Link to="/shop?featured=true" className={navItemClass('/shop?featured=true')}>
               Bestsellers
             </Link>
 
@@ -569,133 +532,78 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             </div>
           </form>
 
-          {isJimmiJaggu ? (
-            /* Jimmi Jaggu Mobile Menu */
-            <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
-              <Link
-                to="/jimmi-jaggu"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-[#B97375] font-bold border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Jimmi Jaggu Home
-              </Link>
-              <a
-                href="#products-section"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                All Products
-              </a>
-              {activeCategories.map((cat: any) => (
-                <Link
-                  key={cat.id || cat.slug}
-                  to={`/jimmi-jaggu?category=${cat.slug}#products-section`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="col-span-2 p-3 bg-[#FAF6EC] dark:bg-[#18221B] rounded-xl text-center font-bold text-[#1F4D2E] dark:text-[#8ED9A0] border border-[#2F5D3A]/20 shadow-2xs flex items-center justify-center gap-2 transition-all"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="text-xs font-bold font-serif tracking-wide">
-                  Return to Mewa Masala Ghar
-                </span>
-              </Link>
-              <Link
-                to="/about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                About Us
-              </Link>
-              <Link
-                to="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Contact Us
-              </Link>
-            </div>
-          ) : (
-            /* Mewa Masala Ghar Mobile Menu */
-            <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-[#1F4D2E] dark:text-[#8ED9A0] font-bold border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/shop"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Shop All
-              </Link>
-              <Link
-                to="/shop?category=dry-fruits"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Dry Fruits
-              </Link>
-              <Link
-                to="/shop?category=seeds"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Seeds
-              </Link>
-              <Link
-                to="/shop?category=makhana"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Makhana
-              </Link>
-              <Link
-                to="/shop?category=spices"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Spices
-              </Link>
-              <Link
-                to="/jimmi-jaggu"
-                onClick={() => setMobileMenuOpen(false)}
-                className="col-span-2 p-3 bg-gradient-to-r from-[#FAF2EE] via-[#FCEAE5] to-[#F7DDD7] dark:from-[#2B1B1D] dark:via-[#362024] dark:to-[#45272D] rounded-xl text-center font-bold text-[#8F4F52] dark:text-[#F3C5BA] border border-[#E8C5BC] dark:border-[#5C383E] shadow-2xs flex items-center justify-center gap-2.5 transition-all"
-              >
-                <img
-                  src="/brands/jimmi_jaggu_logo.png"
-                  alt="Jimmi Jaggu"
-                  className="w-6 h-6 object-contain rounded-full shadow-2xs"
-                />
-                <span className="text-xs font-bold font-serif tracking-wide">
-                  Explore Jimmi Jaggu (Baby & Care) →
-                </span>
-              </Link>
-              <Link
-                to="/about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                About Us
-              </Link>
-              <Link
-                to="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
-              >
-                Contact Us
-              </Link>
-            </div>
-          )}
+          <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-[#1F4D2E] dark:text-[#8ED9A0] font-bold border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Home
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Shop All
+            </Link>
+            <Link
+              to="/shop?category=dry-fruits"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Dry Fruits
+            </Link>
+            <Link
+              to="/shop?category=seeds-mixes"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Seeds
+            </Link>
+            <Link
+              to="/shop?category=makhana"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Makhana
+            </Link>
+            <Link
+              to="/shop?category=specialty-flours"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Aataa (Flour)
+            </Link>
+            <Link
+              to="/jimmi-jaggu"
+              onClick={() => setMobileMenuOpen(false)}
+              className="col-span-2 p-3 bg-gradient-to-r from-[#FAF2EE] via-[#FCEAE5] to-[#F7DDD7] dark:from-[#2B1B1D] dark:via-[#362024] dark:to-[#45272D] rounded-xl text-center font-bold text-[#8F4F52] dark:text-[#F3C5BA] border border-[#E8C5BC] dark:border-[#5C383E] shadow-2xs flex items-center justify-center gap-2.5 transition-all"
+            >
+              <img
+                src="/brands/jimmi_jaggu_logo.png"
+                alt="Jimmi Jaggu"
+                className="w-6 h-6 object-contain rounded-full shadow-2xs"
+              />
+              <span className="text-xs font-bold font-serif tracking-wide">
+                Explore Jimmi Jaggu (Baby & Care) →
+              </span>
+            </Link>
+            <Link
+              to="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              About Us
+            </Link>
+            <Link
+              to="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Contact Us
+            </Link>
+          </div>
         </div>
       )}
     </header>
