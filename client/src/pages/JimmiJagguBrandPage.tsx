@@ -8,10 +8,12 @@ import {
   Sparkles,
   ArrowRight,
   Layers,
+  Package,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { ProductCard } from '../components/ProductCard';
 import { SectionHeading } from '../components/ui/SectionHeading';
+import { resolveImageUrl } from '../utils/imageUrl';
 import api from '../services/api';
 import { Product } from '../types';
 
@@ -148,13 +150,37 @@ export const JimmiJagguBrandPage: React.FC = () => {
   });
 
   // Fetch real Jimmi Jaggu Categories from Database
-  const { data: dbCategories = [] } = useQuery({
+  const { data: dbCategories = [], isLoading: isCategoriesLoading } = useQuery({
     queryKey: ['jimmi-jaggu-categories'],
     queryFn: async () => {
       const res = await api.get('/categories?brand=jimmi-jaggu');
       return (res.data?.data || []) as any[];
     },
   });
+
+  const getCategoryImageUrl = (cat: any) => {
+    if (cat?.image) {
+      return resolveImageUrl(cat.image);
+    }
+    const slug = (cat?.slug || '').toLowerCase();
+    const name = (cat?.name || '').toLowerCase();
+
+    if (slug.includes('baby') || name.includes('baby')) {
+      return '/assets/jimmi-jaggu/prod_baby_cream.jpg';
+    }
+    if (
+      slug.includes('skin') ||
+      name.includes('skin') ||
+      slug.includes('clay') ||
+      name.includes('mitti')
+    ) {
+      return '/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg';
+    }
+    if (slug.includes('pregnancy') || name.includes('pregnancy') || slug.includes('maternal')) {
+      return '/assets/jimmi-jaggu/hero_slide_3.jpg';
+    }
+    return '/assets/jimmi-jaggu/hero_slide_1.jpg';
+  };
 
   // Filter products by selected category
   const filteredProducts =
@@ -307,25 +333,133 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
       {/* 
         ========================================================================
-        2. CATEGORY PILLS (Same Interactive Subcategory Bar as Mewa Masala Ghar)
+        2. BROWSE BY CATEGORY (Visual Category Cards & Interactive Filters)
         ========================================================================
       */}
-      {dbCategories.length > 0 && (
-        <section id="categories-section" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
-          <SectionHeading title="Browse by Category" leafColor="#B97375" />
+      <section id="categories-section" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4 sm:mb-6">
+          <div>
+            <SectionHeading title="Browse by Category" leafColor="#B97375" />
+            <p className="text-xs sm:text-sm text-[#82746E] dark:text-gray-400 mt-1">
+              Pure botanical baby care, multani mitti & gentle herbal formulations
+            </p>
+          </div>
+          {products.length > 0 && (
+            <span className="text-xs font-semibold text-[#8C6D37] dark:text-[#E5B85C] bg-[#FAF6EC] dark:bg-[#202E24] px-3 py-1 rounded-full border border-[#E7E0D0] dark:border-[#2A3B2F] self-start sm:self-auto">
+              {products.length} Total Jimmi Jaggu Products
+            </span>
+          )}
+        </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-2 scrollbar-none">
+        {/* Quick Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 pt-1 scrollbar-none">
+          <button
+            onClick={() => handleCategorySelect('all')}
+            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'all'
+                ? 'bg-[#B97375] text-white shadow-xs'
+                : 'bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] text-gray-700 dark:text-gray-300 hover:border-[#B97375]'
+            }`}
+          >
+            All Products ({products.length})
+          </button>
+
+          {dbCategories.map((cat: any) => {
+            const isSelected = selectedCategory === cat.slug || selectedCategory === cat.id;
+            const count = products.filter(
+              (p) =>
+                p.category?.slug === cat.slug ||
+                p.category?.id === cat.id ||
+                (p as any).categoryId === cat.id
+            ).length;
+
+            return (
+              <button
+                key={cat.id}
+                onClick={() => handleCategorySelect(cat.slug || cat.id)}
+                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#B97375] text-white shadow-xs'
+                    : 'bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] text-gray-700 dark:text-gray-300 hover:border-[#B97375]'
+                }`}
+              >
+                {cat.name} {count > 0 ? `(${count})` : ''}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Visual Category Cards Grid */}
+        {isCategoriesLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 pt-2">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-3 animate-pulse space-y-3"
+              >
+                <div className="aspect-[4/3] w-full rounded-xl sm:rounded-2xl bg-gray-200 dark:bg-gray-800" />
+                <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
+              </div>
+            ))}
+          </div>
+        ) : dbCategories.length === 0 ? (
+          <div className="text-center py-8 px-4 bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-dashed border-[#E7E0D0] dark:border-[#2A3B2F]">
+            <Package className="w-8 h-8 text-[#B97375] mx-auto mb-2 opacity-70" />
+            <p className="font-serif font-bold text-sm text-[#2B2321] dark:text-[#EAE0D5]">No categories found</p>
+            <p className="text-xs text-gray-500 mt-1">Categories created in the Admin Panel for Jimmi Jaggu will appear here.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 pt-2">
+            {/* All Products Card */}
             <button
-              onClick={() => handleCategorySelect('all')}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              type="button"
+              onClick={() => {
+                handleCategorySelect('all');
+                const el = document.getElementById('products-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className={`group text-left bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border transition-all duration-300 p-3 sm:p-4 shadow-soft hover:shadow-card hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden ${
                 selectedCategory === 'all'
-                  ? 'bg-[#B97375] text-white shadow-xs'
-                  : 'bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] text-gray-700 dark:text-gray-300 hover:border-[#B97375]'
+                  ? 'border-[#B97375] ring-2 ring-[#B97375]/30 shadow-md'
+                  : 'border-[#E7E0D0] dark:border-[#2A3B2F] hover:border-[#B97375]/60'
               }`}
             >
-              All Products ({products.length})
+              <div className="relative aspect-[4/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC] dark:bg-[#111813] mb-2.5">
+                <img
+                  src="/assets/jimmi-jaggu/hero_slide_1.jpg"
+                  alt="All Jimmi Jaggu Products"
+                  loading="lazy"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                />
+                {selectedCategory === 'all' && (
+                  <span className="absolute top-2 right-2 bg-[#B97375] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                    Selected
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between pt-1 gap-2">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-serif text-xs sm:text-sm font-bold text-[#2B2321] dark:text-[#EAE0D5] group-hover:text-[#B97375] transition-colors truncate">
+                    All Products
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                    {products.length} {products.length === 1 ? 'Product' : 'Products'}
+                  </p>
+                </div>
+                <div
+                  className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-0.5 shadow-2xs shrink-0 ${
+                    selectedCategory === 'all'
+                      ? 'bg-[#B97375] text-white'
+                      : 'bg-[#FAF6EC] dark:bg-[#202E24] text-[#B97375] group-hover:bg-[#B97375] group-hover:text-white'
+                  }`}
+                >
+                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </div>
+              </div>
             </button>
 
+            {/* Individual Category Cards */}
             {dbCategories.map((cat: any) => {
               const isSelected = selectedCategory === cat.slug || selectedCategory === cat.id;
               const count = products.filter(
@@ -334,24 +468,67 @@ export const JimmiJagguBrandPage: React.FC = () => {
                   p.category?.id === cat.id ||
                   (p as any).categoryId === cat.id
               ).length;
+              const catImage = getCategoryImageUrl(cat);
 
               return (
                 <button
                   key={cat.id}
-                  onClick={() => handleCategorySelect(cat.slug || cat.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  type="button"
+                  onClick={() => {
+                    handleCategorySelect(cat.slug || cat.id);
+                    const el = document.getElementById('products-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={`group text-left bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border transition-all duration-300 p-3 sm:p-4 shadow-soft hover:shadow-card hover:-translate-y-1 cursor-pointer flex flex-col justify-between overflow-hidden ${
                     isSelected
-                      ? 'bg-[#B97375] text-white shadow-xs'
-                      : 'bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] text-gray-700 dark:text-gray-300 hover:border-[#B97375]'
+                      ? 'border-[#B97375] ring-2 ring-[#B97375]/30 shadow-md'
+                      : 'border-[#E7E0D0] dark:border-[#2A3B2F] hover:border-[#B97375]/60'
                   }`}
                 >
-                  {cat.name} {count > 0 ? `(${count})` : ''}
+                  <div className="relative aspect-[4/3] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6EC] dark:bg-[#111813] mb-2.5">
+                    <img
+                      src={catImage}
+                      alt={cat.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        const isBaby = cat.slug?.includes('baby') || cat.name?.toLowerCase().includes('baby');
+                        e.currentTarget.src = isBaby
+                          ? '/assets/jimmi-jaggu/prod_baby_cream.jpg'
+                          : '/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg';
+                      }}
+                    />
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 bg-[#B97375] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between pt-1 gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-serif text-xs sm:text-sm font-bold text-[#2B2321] dark:text-[#EAE0D5] group-hover:text-[#B97375] transition-colors truncate">
+                        {cat.name}
+                      </h3>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                        {count} {count === 1 ? 'Product' : 'Products'}
+                      </p>
+                    </div>
+                    <div
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-0.5 shadow-2xs shrink-0 ${
+                        isSelected
+                          ? 'bg-[#B97375] text-white'
+                          : 'bg-[#FAF6EC] dark:bg-[#202E24] text-[#B97375] group-hover:bg-[#B97375] group-hover:text-white'
+                      }`}
+                    >
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    </div>
+                  </div>
                 </button>
               );
             })}
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* 
         ========================================================================
