@@ -215,7 +215,7 @@ export function generateInvoiceHtml(data: InvoiceData): string {
           <p>
             <strong>Terms & Conditions:</strong> Goods once sold are covered under Mewa Masala Ghar Quality Guarantee.
             All food and nutrition items are packed in an FSSAI certified facility (Lic. No. ${ENV.COMPANY_FSSAI}).
-            For queries or returns, please reach out to ${ENV.COMPANY_EMAIL} or call ${ENV.COMPANY_PHONE}.
+            For queries or returns, please reach out to ${data.company?.email || ENV.COMPANY_EMAIL} or call ${data.company?.phone || ENV.COMPANY_PHONE}.
           </p>
           <p>This is a computer-generated tax invoice and does not require a physical signature.</p>
         </div>

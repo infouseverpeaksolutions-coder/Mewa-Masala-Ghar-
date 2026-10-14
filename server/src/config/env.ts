@@ -12,13 +12,13 @@ export const ENV = {
   JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   
-  COMPANY_NAME: process.env.COMPANY_NAME || 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)',
+  COMPANY_NAME: process.env.COMPANY_NAME || 'Jagriti Trading Company',
   COMPANY_GSTIN: process.env.COMPANY_GSTIN || '08BVFPR9012N1Z0',
   COMPANY_FSSAI: process.env.COMPANY_FSSAI || '10021051000123',
   COMPANY_STATE_CODE: process.env.COMPANY_STATE_CODE || '08',
-  COMPANY_ADDRESS: process.env.COMPANY_ADDRESS || 'HANWANT COLONY GANDHIPURA Balotra -344022',
+  COMPANY_ADDRESS: process.env.COMPANY_ADDRESS || 'HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022',
   COMPANY_EMAIL: process.env.COMPANY_EMAIL || 'mewamasalaghar26@gmail.com',
-  COMPANY_PHONE: process.env.COMPANY_PHONE || '+91 70717 04506',
+  COMPANY_PHONE: process.env.COMPANY_PHONE || '+91 70717 04506, +91 94603 02825',
   
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || 'rzp_test_mewamasala2026',
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || 'mewamasalasecretkey2026',
@@ -31,7 +31,7 @@ export const ENV = {
   SMTP_PORT: parseInt(process.env.SMTP_PORT || '587', 10),
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASS: process.env.SMTP_PASS || '',
-  SMTP_FROM: process.env.SMTP_FROM || 'Mewa Masala Ghar <support@mewamasalaghar.com>',
+  SMTP_FROM: process.env.SMTP_FROM || 'Mewa Masala Ghar <mewamasalaghar26@gmail.com>',
 
   // Shiprocket API Integration
   SHIPROCKET_BASE_URL: process.env.SHIPROCKET_BASE_URL || 'https://apiv2.shiprocket.in/v1/external',

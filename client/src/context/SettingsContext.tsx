@@ -17,11 +17,11 @@ export interface CompanySettings {
 }
 
 const DEFAULT_SETTINGS: CompanySettings = {
-  company_name: 'JAGRITI TRADING COMPANY ( MEWAMASALAGHAR)',
+  company_name: 'Jagriti Trading Company',
   tagline: 'Pure Indian Goodness, Rooted in Tradition',
-  phone: '+91 70717 04506',
+  phone: '+91 70717 04506, +91 94603 02825',
   email: 'mewamasalaghar26@gmail.com',
-  address: 'HANWANT COLONY GANDHIPURA Balotra -344022',
+  address: 'HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022',
   gstin: '',
   fssai: '',
   state_code: '08',

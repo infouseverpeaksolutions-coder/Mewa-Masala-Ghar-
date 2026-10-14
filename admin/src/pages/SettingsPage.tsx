@@ -42,11 +42,11 @@ export const SettingsPage: React.FC = () => {
       if (res.data?.success && res.data?.data) {
         const d = res.data.data;
         setForm({
-          company_name: d.company_name || 'Mewa Masala Ghar Private Limited',
+          company_name: d.company_name || 'Jagriti Trading Company',
           tagline: d.tagline || 'Pure Indian Goodness, Rooted in Tradition',
-          phone: d.phone || '+91 98200 12345',
-          email: d.email || 'care@mewamasalaghar.com',
-          address: d.address || 'HANWANT COLONY GANDHIPURA Balotra -344022',
+          phone: d.phone || '+91 70717 04506, +91 94603 02825',
+          email: d.email || 'mewamasalaghar26@gmail.com',
+          address: d.address || 'HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022',
           gstin: d.gstin || '08BVFPR9012N1Z0',
           fssai: d.fssai || '10021051000123',
           state_code: d.state_code || '08',
