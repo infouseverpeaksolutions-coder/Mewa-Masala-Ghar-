@@ -7,6 +7,7 @@ async function main() {
     { key: 'email', value: 'mewamasalaghar26@gmail.com', group: 'contact' },
     { key: 'company_name', value: 'Jagriti Trading Company', group: 'general' },
     { key: 'address', value: 'HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022', group: 'contact' },
+    { key: 'fssai', value: '22226048000212, 22226007002022', group: 'compliance' },
     { key: 'whatsapp_number', value: '+917071704506', group: 'contact' },
     { key: 'phone_secondary', value: '+91 94603 02825', group: 'contact' },
   ];

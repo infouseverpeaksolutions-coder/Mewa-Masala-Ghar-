@@ -48,7 +48,7 @@ export const SettingsPage: React.FC = () => {
           email: d.email || 'mewamasalaghar26@gmail.com',
           address: d.address || 'HANWANT COLONY GANDHIPURA BALOTRA (RAJASTHAN) -344022',
           gstin: d.gstin || '08BVFPR9012N1Z0',
-          fssai: d.fssai || '10021051000123',
+          fssai: d.fssai || '22226048000212, 22226007002022',
           state_code: d.state_code || '08',
           state_name: d.state_name || 'Rajasthan',
           free_shipping_threshold: d.free_shipping_threshold || '499',

@@ -125,7 +125,7 @@ export function generateInvoiceHtml(data: InvoiceData): string {
             <div style="font-size: 13px; color: #4b5563; max-width: 380px;">
               ${data.company?.address || ENV.COMPANY_ADDRESS}<br/>
               <strong>GSTIN:</strong> ${data.company?.gstin || ENV.COMPANY_GSTIN} | <strong>State Code:</strong> ${data.company?.stateCode || ENV.COMPANY_STATE_CODE}<br/>
-              <strong>FSSAI Lic. No:</strong> ${data.company?.fssai || ENV.COMPANY_FSSAI}<br/>
+              <strong>FSSAI Lic. Nos:</strong> ${data.company?.fssai || ENV.COMPANY_FSSAI}<br/>
               <strong>Email:</strong> ${data.company?.email || ENV.COMPANY_EMAIL} | <strong>Phone:</strong> ${data.company?.phone || ENV.COMPANY_PHONE}
             </div>
           </div>
@@ -153,7 +153,7 @@ export function generateInvoiceHtml(data: InvoiceData): string {
             <strong>Place of Supply:</strong> ${data.shippingAddress.state || 'Maharashtra'} (State Code: ${data.shippingAddress.stateCode || '27'})<br/>
             <strong>Payment Status:</strong> <span style="color: ${data.paymentStatus === 'PAID' ? '#15803d' : '#b45309'}; font-weight: bold;">${data.paymentStatus}</span><br/>
             <strong>Reverse Charge:</strong> No<br/>
-            <strong>FSSAI Registration:</strong> Verified Food Business Operator
+            <strong>FSSAI Registration:</strong> Verified FBO (${data.company?.fssai || ENV.COMPANY_FSSAI})
           </div>
         </div>
 
@@ -214,7 +214,7 @@ export function generateInvoiceHtml(data: InvoiceData): string {
         <div class="footer">
           <p>
             <strong>Terms & Conditions:</strong> Goods once sold are covered under Mewa Masala Ghar Quality Guarantee.
-            All food and nutrition items are packed in an FSSAI certified facility (Lic. No. ${ENV.COMPANY_FSSAI}).
+            All food and nutrition items are packed in an FSSAI certified facility (Lic. Nos: ${data.company?.fssai || ENV.COMPANY_FSSAI}).
             For queries or returns, please reach out to ${data.company?.email || ENV.COMPANY_EMAIL} or call ${data.company?.phone || ENV.COMPANY_PHONE}.
           </p>
           <p>This is a computer-generated tax invoice and does not require a physical signature.</p>

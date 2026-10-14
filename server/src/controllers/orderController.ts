@@ -565,13 +565,13 @@ export const getInvoiceHtml = async (req: Request, res: Response) => {
 
     const html = generateInvoiceHtml({
       company: {
-        name: settingsMap['company_name'],
-        address: settingsMap['address'],
-        gstin: settingsMap['gstin'],
-        fssai: settingsMap['fssai'],
-        phone: settingsMap['phone'],
-        email: settingsMap['email'],
-        stateCode: settingsMap['state_code'],
+        name: settingsMap['company_name']?.trim() || ENV.COMPANY_NAME,
+        address: settingsMap['address']?.trim() || ENV.COMPANY_ADDRESS,
+        gstin: settingsMap['gstin']?.trim() || ENV.COMPANY_GSTIN,
+        fssai: settingsMap['fssai']?.trim() || ENV.COMPANY_FSSAI,
+        phone: settingsMap['phone']?.trim() || ENV.COMPANY_PHONE,
+        email: settingsMap['email']?.trim() || ENV.COMPANY_EMAIL,
+        stateCode: settingsMap['state_code']?.trim() || ENV.COMPANY_STATE_CODE,
       },
       orderNumber: order.orderNumber,
       invoiceNumber: order.invoiceNumber || 'GST/2026/00001',

@@ -49,7 +49,7 @@ async function main() {
       { key: 'business_hours', value: 'Monday to Saturday: 9:00 AM – 8:00 PM IST', group: 'contact' },
       { key: 'whatsapp_number', value: '+917071704506', group: 'contact' },
       { key: 'gstin', value: '08BVFPR9012N1Z0', group: 'compliance' },
-      { key: 'fssai', value: '10021051000123', group: 'compliance' },
+      { key: 'fssai', value: '22226048000212, 22226007002022', group: 'compliance' },
       { key: 'state_code', value: '08', group: 'compliance' },
       { key: 'state_name', value: 'Rajasthan', group: 'compliance' },
       { key: 'free_shipping_threshold', value: '499', group: 'shipping' },
