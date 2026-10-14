@@ -149,26 +149,26 @@ export const ProductDetailPage: React.FC = () => {
 
   // Determine store-themed category badges
   const storeSlug = product.store?.slug || 'foods';
+  const isJimmiProduct =
+    product.brand?.slug === 'jimmi-jaggu' ||
+    storeSlug === 'jimmi-jaggu' ||
+    storeSlug === 'baby' ||
+    storeSlug === 'care' ||
+    product.storeId === 'baby' ||
+    product.storeId === 'care';
+
   const getStoreTheme = () => {
-    if (storeSlug === 'baby-nutrition' || product.storeId === 'baby') {
+    if (isJimmiProduct) {
       return {
-        label: 'Baby & Family Nutrition',
-        badgeClass: 'bg-[#5DB4D6]/15 text-[#1e6f92] border-[#5DB4D6]/30',
-        dotClass: 'bg-[#5DB4D6]',
-        primaryColor: '#5DB4D6',
-      };
-    }
-    if (storeSlug === 'personal-care' || product.storeId === 'care') {
-      return {
-        label: 'Personal Care & Clays',
-        badgeClass: 'bg-[#E0808C]/15 text-[#973441] border-[#E0808C]/30',
-        dotClass: 'bg-[#E0808C]',
-        primaryColor: '#E0808C',
+        label: 'Jimmi Jaggu',
+        badgeClass: 'bg-[#B97375]/15 text-[#8F4F52] dark:text-[#F3C5BA] border-[#B97375]/30',
+        dotClass: 'bg-[#B97375]',
+        primaryColor: '#B97375',
       };
     }
     return {
       label: 'Mewa & Healthy Foods',
-      badgeClass: 'bg-[#2F5D3A]/10 text-[#1F4D2E] border-[#2F5D3A]/20',
+      badgeClass: 'bg-[#2F5D3A]/10 text-[#1F4D2E] dark:text-[#8ED9A0] border-[#2F5D3A]/20',
       dotClass: 'bg-[#2F5D3A]',
       primaryColor: '#2F5D3A',
     };
@@ -181,21 +181,34 @@ export const ProductDetailPage: React.FC = () => {
     <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16 pb-28 sm:pb-16 bg-[#FAF6EC] dark:bg-[#111813] text-[#2B2B2B] dark:text-[#F3EFE6] transition-colors duration-300 min-h-screen">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium overflow-x-auto whitespace-nowrap">
-        <Link to="/" className="hover:text-[#2F5D3A] dark:hover:text-[#65B77E] transition-colors">Home</Link>
+        <Link
+          to={isJimmiProduct ? '/jimmi-jaggu' : '/'}
+          className={isJimmiProduct ? 'hover:text-[#B97375] transition-colors' : 'hover:text-[#2F5D3A] dark:hover:text-[#65B77E] transition-colors'}
+        >
+          {isJimmiProduct ? 'Jimmi Jaggu' : 'Home'}
+        </Link>
         <ChevronRight className="w-3 h-3 text-gray-400 dark:text-gray-500 shrink-0" />
-        <Link to={`/shop?store=${storeSlug}`} className="hover:text-[#2F5D3A] dark:hover:text-[#65B77E] transition-colors">
+        <Link
+          to={isJimmiProduct ? '/jimmi-jaggu#products-section' : '/shop'}
+          className={isJimmiProduct ? 'hover:text-[#B97375] transition-colors' : 'hover:text-[#2F5D3A] dark:hover:text-[#65B77E] transition-colors'}
+        >
           {storeTheme.label}
         </Link>
         {product.category && (
           <>
             <ChevronRight className="w-3 h-3 text-gray-400 dark:text-gray-500 shrink-0" />
-            <Link to={`/shop/${product.category.slug}`} className="hover:text-[#2F5D3A] dark:hover:text-[#65B77E] transition-colors">
+            <Link
+              to={isJimmiProduct ? `/jimmi-jaggu?category=${product.category.slug}#products-section` : `/shop?category=${product.category.slug}`}
+              className={isJimmiProduct ? 'hover:text-[#B97375] transition-colors' : 'hover:text-[#2F5D3A] dark:hover:text-[#65B77E] transition-colors'}
+            >
               {product.category.name}
             </Link>
           </>
         )}
         <ChevronRight className="w-3 h-3 text-gray-400 dark:text-gray-500 shrink-0" />
-        <span className="text-[#2F5D3A] dark:text-[#65B77E] font-semibold truncate max-w-xs">{product.name}</span>
+        <span className={isJimmiProduct ? 'text-[#B97375] font-semibold truncate max-w-xs' : 'text-[#2F5D3A] dark:text-[#65B77E] font-semibold truncate max-w-xs'}>
+          {product.name}
+        </span>
       </nav>
 
       {/* Product Hero Details Section */}

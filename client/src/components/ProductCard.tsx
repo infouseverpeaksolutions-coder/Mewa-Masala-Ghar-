@@ -4,7 +4,7 @@ import { ShoppingBag, Check, Heart, ChevronDown } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import { resolveImageUrl } from '../utils/imageUrl';
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 import { formatWeight } from '../utils/weight';
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
@@ -21,11 +21,11 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     cardVariants.find((v) => v.isDefault) || cardVariants[0] || {
       id: 'default',
       name: 'Standard',
-      weightGrams: 250,
+      weightGrams: 200,
       mrp: 299,
       price: 249,
       stock: 50,
-      sku: 'MMG-DEF-250',
+      sku: 'MMG-DEF-200',
       isDefault: true,
     }
   );
@@ -44,22 +44,20 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
   const [addedAnimation, setAddedAnimation] = useState(false);
 
-  const getFallbackImage = () => {
-    const nameLower = (product.name || '').toLowerCase();
-    if (nameLower.includes('flax') || nameLower.includes('seed') || nameLower.includes('chia') || nameLower.includes('pumpkin')) {
-      return '/foods/foods_superseeds.jpg';
-    }
-    if (nameLower.includes('makhana')) {
-      return '/foods/foods_makhana.jpg';
-    }
-    return '/foods/foods_dryfruits.jpg';
-  };
+  const isJimmi =
+    product.brand?.slug === 'jimmi-jaggu' ||
+    (product.storeId &&
+      (product.storeId.includes('baby') ||
+        product.storeId.includes('care') ||
+        product.storeId.includes('jimmi')));
 
   const rawImage =
     product.images?.find((img) => img.isPrimary)?.url ||
     product.images?.[0]?.url;
 
-  const primaryImage = rawImage ? resolveImageUrl(rawImage) : getFallbackImage();
+  const primaryImage = rawImage
+    ? resolveImageUrl(rawImage, product.name, product.category?.name)
+    : getSmartProductFallback(product.name, product.category?.name);
 
   const discountPercent =
     selectedVariant.mrp > selectedVariant.price
@@ -80,74 +78,82 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     toggleWishlist(product);
   };
 
-  // Tag style: show real Category name or Jimmi Jaggu badge
+  // Tag style: show real Category name or brand badge
   const getProductBadge = () => {
-    const sId = product.storeId || '';
-    if (product.brand?.slug === 'jimmi-jaggu' || sId.includes('baby') || sId.includes('care')) {
-      return { label: 'Jimmi Jaggu', bg: 'bg-[#B97375]', text: 'text-white' };
+    if (isJimmi) {
+      return {
+        label: product.category?.name || 'Jimmi Jaggu',
+        bg: 'bg-[#B97375]',
+        text: 'text-white',
+      };
     }
     if (product.category?.name) {
-      return { label: product.category.name, bg: 'bg-[#2F5D3A]', text: 'text-white' };
+      return { label: product.category.name, bg: 'bg-[#1F4D2E]', text: 'text-white' };
     }
-    return { label: 'Pure & Natural', bg: 'bg-[#2F5D3A]', text: 'text-white' };
+    return { label: 'Pure & Natural', bg: 'bg-[#1F4D2E]', text: 'text-white' };
   };
 
   const badge = getProductBadge();
 
   return (
-    <div className="group bg-white rounded-2xl border border-[#E7E0D0] p-3 sm:p-4 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between h-full relative card-hover-lift">
+    <div className="group bg-white dark:bg-[#18221B] rounded-2xl border border-[#E7E0D0] dark:border-[#2A3B2F] p-2.5 sm:p-3 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between h-full relative card-hover-lift">
       {/* Top badges & Wishlist */}
       <div className="relative">
-        <div className="flex items-center justify-between mb-2">
-          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${badge.bg} ${badge.text} shadow-2xs`}>
+        <div className="flex items-center justify-between mb-1.5">
+          <span
+            className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider truncate max-w-[130px] ${badge.bg} ${badge.text} shadow-2xs`}
+          >
             {badge.label}
           </span>
 
           <button
             onClick={handleWishlistClick}
-            className={`p-1.5 rounded-full transition-colors ${
+            className={`p-1 rounded-full transition-colors ${
               inWishlist
                 ? 'bg-rose-50 text-rose-600'
-                : 'text-gray-400 hover:text-rose-600 hover:bg-gray-50'
+                : 'text-gray-400 hover:text-rose-600 hover:bg-gray-50 dark:hover:bg-[#202E24]'
             }`}
             aria-label="Save to Wishlist"
             title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
-            <Heart className={`w-4 h-4 ${inWishlist ? 'fill-rose-600' : ''}`} />
+            <Heart className={`w-3.5 h-3.5 ${inWishlist ? 'fill-rose-600' : ''}`} />
           </button>
         </div>
 
-        {/* Product Image */}
+        {/* Product Image (Compact, responsive, never huge) */}
         <Link
           to={`/product/${product.slug}`}
-          className="relative block aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6EC] flex items-center justify-center mb-3"
+          className="relative block aspect-square sm:aspect-[4/5] max-h-44 sm:max-h-48 rounded-xl overflow-hidden bg-[#FAF6EC]/80 dark:bg-[#111813]/60 flex items-center justify-center mb-2"
         >
           <img
             src={primaryImage}
             alt={product.name}
-            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+            className="w-full h-full object-contain p-1.5 sm:p-2 group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
-              e.currentTarget.src = getFallbackImage();
+              e.currentTarget.src = getSmartProductFallback(product.name, product.category?.name);
             }}
           />
         </Link>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col justify-between">
+      <div className="flex-1 flex flex-col justify-between pt-1">
         <div>
-          <Link to={`/product/${product.slug}`}>
-            <h3 className="font-serif font-bold text-sm sm:text-base text-gray-900 line-clamp-1 group-hover:text-[#2F5D3A] transition-colors">
+          <Link to={`/product/${product.slug}`} className="block mb-1">
+            <h3
+              className={`font-serif font-bold text-xs sm:text-[13px] text-gray-900 dark:text-gray-100 line-clamp-1 transition-colors ${
+                isJimmi ? 'group-hover:text-[#B97375]' : 'group-hover:text-[#1F4D2E] dark:group-hover:text-[#8ED9A0]'
+              }`}
+              title={product.name}
+            >
               {product.name}
             </h3>
           </Link>
 
           {/* Weight Dropdown if multiple variants, or single weight display */}
           {cardVariants.length > 1 ? (
-            <div className="mt-1 mb-2.5">
-              <label className="text-[10px] font-semibold text-gray-400 block mb-1">
-                Weight:
-              </label>
+            <div className="mt-1 mb-2">
               <div className="relative">
                 <select
                   value={selectedVariant.id}
@@ -157,7 +163,9 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
                     if (v) setSelectedVariant(v);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full text-xs font-bold px-2.5 py-1.5 bg-[#FAF6EC] border border-[#E7E0D0] rounded-lg text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#2F5D3A] cursor-pointer appearance-none pr-6"
+                  className={`w-full text-[11px] font-bold px-2 py-1 bg-[#FAF6EC] dark:bg-[#111813] border border-[#E7E0D0] dark:border-[#2A3B2F] rounded-lg text-gray-800 dark:text-gray-200 focus:outline-none cursor-pointer appearance-none pr-5 ${
+                    isJimmi ? 'focus:ring-1 focus:ring-[#B97375]' : 'focus:ring-1 focus:ring-[#1F4D2E]'
+                  }`}
                 >
                   {cardVariants.map((v) => (
                     <option key={v.id} value={v.id}>
@@ -165,48 +173,60 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-[#2F5D3A]">
-                  <ChevronDown className="w-3.5 h-3.5" />
+                <div
+                  className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 ${
+                    isJimmi ? 'text-[#B97375]' : 'text-[#1F4D2E] dark:text-[#8ED9A0]'
+                  }`}
+                >
+                  <ChevronDown className="w-3 h-3" />
                 </div>
               </div>
             </div>
           ) : (
-            <span className="text-xs text-gray-500 block mt-0.5 mb-2 font-medium">
+            <span className="text-[11px] text-gray-500 dark:text-gray-400 block mt-0.5 mb-1.5 font-medium">
               {formatWeight(selectedVariant.weightGrams, selectedVariant.name)}
             </span>
           )}
 
           {/* Price Block */}
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-base sm:text-lg font-bold text-gray-900">
+          <div className="flex items-baseline gap-1.5 mb-2.5">
+            <span className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
               ₹{selectedVariant.price}
             </span>
             {selectedVariant.mrp > selectedVariant.price && (
-              <span className="text-xs text-gray-400 line-through">
+              <span className="text-[10px] text-gray-400 line-through">
                 ₹{selectedVariant.mrp}
               </span>
             )}
             {discountPercent > 0 && (
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+              <span
+                className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                  isJimmi
+                    ? 'text-[#B97375] bg-[#B97375]/10'
+                    : 'text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400'
+                }`}
+              >
                 Save {discountPercent}%
               </span>
             )}
           </div>
         </div>
 
-        {/* Add to Cart Pill Button */}
+        {/* Add to Cart Button (Compact & responsive) */}
         <button
           onClick={handleAddToCart}
-          className={`w-full py-2.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-xs ${
+          className={`w-full py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer ${
             addedAnimation
               ? 'bg-emerald-600 text-white'
-              : 'bg-[#2F5D3A] hover:bg-[#1F4D2E] text-white hover:shadow-md'
+              : isJimmi
+              ? 'bg-[#B97375] hover:bg-[#A66264] text-white hover:shadow-xs active:scale-[0.98]'
+              : 'bg-[#1F4D2E] hover:bg-[#163821] dark:bg-[#284F33] dark:hover:bg-[#346643] text-white hover:shadow-xs active:scale-[0.98]'
           }`}
         >
           {addedAnimation ? (
             <>
-              <Check className="w-3.5 h-3.5" />
-              <span>Added to Cart</span>
+              <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Added</span>
             </>
           ) : (
             <>

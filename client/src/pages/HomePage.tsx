@@ -75,7 +75,7 @@ export const HomePage: React.FC = () => {
   const { data: bestsellersData = [], isLoading: bestsellersLoading } = useQuery({
     queryKey: ['home-bestsellers'],
     queryFn: async () => {
-      const res = await api.get('/products?bestSeller=true&limit=6');
+      const res = await api.get('/products?store=foods&bestSeller=true&limit=6');
       return res.data?.data?.products || [];
     },
   });

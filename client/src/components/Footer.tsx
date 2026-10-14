@@ -7,7 +7,9 @@ import { BrandLogoBadge } from './ui/Icons';
 export const Footer: React.FC = () => {
   const { settings } = useSettings();
   const location = useLocation();
-  const isJimmiJaggu = location.pathname.startsWith('/jimmi-jaggu');
+  const isJimmiJaggu =
+    location.pathname.startsWith('/jimmi-jaggu') ||
+    location.pathname.startsWith('/jimmi_jaggu');
 
   return (
     <footer className="bg-[#1F4D2E] dark:bg-[#111813] text-white pt-12 pb-20 md:pb-12 border-t border-white/10 relative">
@@ -48,18 +50,18 @@ export const Footer: React.FC = () => {
               </h4>
               <ul className="space-y-2 text-xs text-white/80">
                 <li>
-                  <Link to="/baby-nutrition" className="hover:text-[#D9A441] transition-colors">
-                    Baby Products
+                  <Link to="/jimmi-jaggu#products-section" className="hover:text-[#D9A441] transition-colors">
+                    All Products
                   </Link>
                 </li>
                 <li>
-                  <Link to="/personal-care" className="hover:text-[#D9A441] transition-colors">
-                    Skincare
+                  <Link to="/jimmi-jaggu?category=personal-care-skincare#products-section" className="hover:text-[#D9A441] transition-colors">
+                    Personal Care & Skincare
                   </Link>
                 </li>
                 <li>
-                  <Link to="/baby-nutrition?category=pregnancy-care" className="hover:text-[#D9A441] transition-colors">
-                    Pregnancy Products
+                  <Link to="/jimmi-jaggu?category=baby-care#products-section" className="hover:text-[#D9A441] transition-colors">
+                    Baby Care
                   </Link>
                 </li>
               </ul>
@@ -188,7 +190,7 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?category=seeds-mixes" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/shop?category=seeds" className="hover:text-[#D9A441] transition-colors">
                     Seeds
                   </Link>
                 </li>
@@ -198,17 +200,12 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?category=spices-seasonings" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/shop?category=spices" className="hover:text-[#D9A441] transition-colors">
                     Spices
                   </Link>
                 </li>
                 <li>
-                  <Link to="/shop?category=specialty-flours" className="hover:text-[#D9A441] transition-colors">
-                    Aataa (Flour)
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/shop?combo=true" className="hover:text-[#D9A441] transition-colors">
+                  <Link to="/shop?category=combo-packs" className="hover:text-[#D9A441] transition-colors">
                     Combo Packs
                   </Link>
                 </li>

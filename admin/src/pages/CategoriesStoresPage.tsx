@@ -90,7 +90,8 @@ export const CategoriesStoresPage: React.FC = () => {
       c.store?.slug === 'jimmi-jaggu' ||
       c.store?.slug === 'baby' ||
       c.store?.slug === 'care' ||
-      (c.storeId && JIMMI_STORE_IDS.includes(c.storeId))
+      (c.storeId && JIMMI_STORE_IDS.includes(c.storeId)) ||
+      (c.slug && (c.slug.includes('baby') || c.slug.includes('skincare') || c.slug.includes('personal-care')))
     );
   };
 

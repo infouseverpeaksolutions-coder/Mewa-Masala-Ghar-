@@ -515,7 +515,7 @@ export const getAdminProducts = async (req: Request, res: Response) => {
       } else if (brand === 'jimmi-jaggu') {
         where.OR = [
           { brand: { slug: 'jimmi-jaggu' } },
-          { store: { slug: { in: ['baby', 'care'] } } },
+          { store: { slug: { in: ['jimmi-jaggu', 'baby', 'care'] } } },
         ];
       } else {
         where.brand = { slug: String(brand) };

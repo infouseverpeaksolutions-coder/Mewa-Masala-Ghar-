@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ChevronLeft,
@@ -76,11 +76,29 @@ const HERO_SLIDES: HeroSlide[] = [
 
 export const JimmiJagguBrandPage: React.FC = () => {
   const { setActiveStore } = useTheme();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category') || 'all';
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat) {
+      setSelectedCategory(cat);
+    }
+  }, [searchParams]);
+
+  const handleCategorySelect = (slug: string) => {
+    setSelectedCategory(slug);
+    if (slug === 'all') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ category: slug });
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -298,7 +316,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
           <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-2 scrollbar-none">
             <button
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => handleCategorySelect('all')}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === 'all'
                   ? 'bg-[#B97375] text-white shadow-xs'
@@ -320,7 +338,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategory(cat.slug || cat.id)}
+                  onClick={() => handleCategorySelect(cat.slug || cat.id)}
                   className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-[#B97375] text-white shadow-xs'
@@ -361,11 +379,11 @@ export const JimmiJagguBrandPage: React.FC = () => {
         </div>
 
         {isProductsLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4.5">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-80 bg-white dark:bg-[#18221B] animate-pulse rounded-2xl border border-gray-200 dark:border-gray-800"
+                className="h-64 sm:h-72 bg-white dark:bg-[#18221B] animate-pulse rounded-2xl border border-gray-200 dark:border-gray-800"
               />
             ))}
           </div>
@@ -384,7 +402,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </p>
             {selectedCategory !== 'all' && (
               <button
-                onClick={() => setSelectedCategory('all')}
+                onClick={() => handleCategorySelect('all')}
                 className="mt-4 px-4 py-2 rounded-full bg-[#B97375] text-white text-xs font-bold"
               >
                 View All Jimmi Jaggu Products
@@ -392,8 +410,8 @@ export const JimmiJagguBrandPage: React.FC = () => {
             )}
           </div>
         ) : (
-          /* Same High-Performance ProductCard Grid as Mewa Masala Ghar */
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          /* Same High-Performance Compact ProductCard Grid */
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4.5">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

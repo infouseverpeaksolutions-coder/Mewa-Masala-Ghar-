@@ -49,6 +49,7 @@ export const App: React.FC = () => {
           <Route path="/baby-nutrition" element={<BabyNutritionStorePage />} />
           <Route path="/personal-care" element={<PersonalCareStorePage />} />
           <Route path="/jimmi-jaggu" element={<JimmiJagguBrandPage />} />
+          <Route path="/jimmi_jaggu" element={<JimmiJagguBrandPage />} />
 
           {/* Catalog & Product Discovery */}
           <Route path="/shop" element={<ShopPage />} />

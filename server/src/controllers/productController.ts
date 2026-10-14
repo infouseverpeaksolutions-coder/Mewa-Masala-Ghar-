@@ -162,9 +162,15 @@ export const getProducts = async (req: Request, res: Response) => {
     }
 
     if (category) {
-      const catSlug = String(category);
-      const matchedCategory = await prisma.category.findUnique({
-        where: { slug: catSlug },
+      const catSlug = String(category).toLowerCase().trim();
+      const matchedCategory = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: catSlug },
+            { slug: catSlug.replace('-mixes', '').replace('-seasonings', '').replace('-flours', '') },
+            { name: { contains: catSlug } },
+          ],
+        },
         include: { children: { select: { id: true } } },
       });
 
