@@ -14,15 +14,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import api from '../services/api';
-
-const resolveImageUrl = (url: string) => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
-    : 'http://localhost:5000';
-  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-};
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -214,9 +206,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     try {
       const formData = new FormData();
       formData.append('image', file);
-      const res = await api.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await api.post('/upload', formData);
 
       if (res.data?.data?.url) {
         const uploadedUrl = res.data.data.url;
@@ -680,14 +670,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   >
                     <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center">
                       <img
-                        src={resolveImageUrl(img.url)}
+                        src={resolveImageUrl(img.url, name, categoriesList.find((c) => c.id === categoryId)?.name)}
                         alt="Product preview"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;
-                          if (img.url && !target.src.includes('localhost:5000') && !img.url.startsWith('http')) {
-                            target.src = `http://localhost:5000${img.url.startsWith('/') ? '' : '/'}${img.url}`;
-                          }
+                          target.src = getSmartProductFallback(name, categoriesList.find((c) => c.id === categoryId)?.name);
                         }}
                       />
                       {img.isPrimary && (

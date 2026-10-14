@@ -28,7 +28,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import api from '../services/api';
 import { Product, ProductVariant } from '../types';
-import { resolveImageUrl } from '../utils/imageUrl';
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 import { formatWeight } from '../utils/weight';
 
 export const ProductDetailPage: React.FC = () => {
@@ -210,7 +210,7 @@ export const ProductDetailPage: React.FC = () => {
             className="aspect-[4/5] rounded-3xl overflow-hidden bg-white dark:bg-[#18221B] border border-[#E7E0D0] dark:border-[#2A3B2F] shadow-soft relative cursor-crosshair group"
           >
             <img
-              src={resolveImageUrl(currentImage)}
+              src={resolveImageUrl(currentImage, product.name, product.category?.name)}
               alt={product.name}
               style={{
                 transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -220,8 +220,9 @@ export const ProductDetailPage: React.FC = () => {
               }`}
               onError={(e) => {
                 const target = e.currentTarget;
-                if (!target.src.includes('/foods/foods_dryfruits.jpg')) {
-                  target.src = '/foods/foods_dryfruits.jpg';
+                const fallback = getSmartProductFallback(product.name, product.category?.name);
+                if (target.src !== fallback) {
+                  target.src = fallback;
                 }
               }}
             />
@@ -786,11 +787,11 @@ export const ProductDetailPage: React.FC = () => {
           </button>
           <div className="max-w-3xl max-h-[85vh] bg-white dark:bg-[#18221B] rounded-3xl overflow-hidden p-2">
             <img
-              src={resolveImageUrl(currentImage)}
+              src={resolveImageUrl(currentImage, product.name, product.category?.name)}
               alt={product.name}
               className="w-full h-full max-h-[80vh] object-contain rounded-2xl"
               onError={(e) => {
-                e.currentTarget.src = '/foods/foods_dryfruits.jpg';
+                e.currentTarget.src = getSmartProductFallback(product.name, product.category?.name);
               }}
             />
           </div>

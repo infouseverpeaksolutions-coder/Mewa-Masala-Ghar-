@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Check, Star } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { resolveImageUrl } from '../utils/imageUrl';
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 
 export const SeedsAataaCard: React.FC<{ product: any }> = ({ product }) => {
   const { addToCart } = useCart();
@@ -30,13 +30,14 @@ export const SeedsAataaCard: React.FC<{ product: any }> = ({ product }) => {
   const categoryName = product.category?.name || product.category || 'Seeds';
   const badge = product.badge || (product.isFeatured ? 'Featured' : undefined);
 
-  // Image resolution
+  // Image resolution with smart fallback
   const rawImg =
     product.images?.find((i: any) => i.isPrimary)?.url ||
     product.images?.[0]?.url ||
-    product.image ||
-    '/foods/foods_dryfruits.jpg';
-  const imgUrl = resolveImageUrl(rawImg);
+    product.image;
+  const imgUrl = rawImg
+    ? resolveImageUrl(rawImg, name, categoryName)
+    : getSmartProductFallback(name, categoryName);
 
   const rating = product.rating || 4.9;
   const reviewCount = product.reviewCount || 24;
@@ -87,7 +88,7 @@ export const SeedsAataaCard: React.FC<{ product: any }> = ({ product }) => {
           loading="lazy"
           className="w-full h-full object-contain group-hover:scale-108 transition-transform duration-300"
           onError={(e) => {
-            e.currentTarget.src = '/foods/foods_dryfruits.jpg';
+            e.currentTarget.src = getSmartProductFallback(name, categoryName);
           }}
         />
 

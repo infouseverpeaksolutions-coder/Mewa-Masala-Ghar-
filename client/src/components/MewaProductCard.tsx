@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Check, Star, ChevronDown } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { resolveImageUrl } from '../utils/imageUrl';
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 import { formatWeight } from '../utils/weight';
 
 export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
@@ -46,13 +46,14 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
   }, [cardVariants]);
   const price = selectedVariant.price ?? product.price ?? 299;
 
-  // Image resolution
+  // Image resolution with smart fallback
   const rawImg =
     product.images?.find((i: any) => i.isPrimary)?.url ||
     product.images?.[0]?.url ||
-    product.image ||
-    '/foods/foods_dryfruits.jpg';
-  const imgUrl = resolveImageUrl(rawImg);
+    product.image;
+  const imgUrl = rawImg
+    ? resolveImageUrl(rawImg, name, product.category?.name)
+    : getSmartProductFallback(name, product.category?.name);
 
   const rating = product.rating || 4.9;
 
@@ -78,7 +79,7 @@ export const MewaProductCard: React.FC<{ product: any }> = ({ product }) => {
           loading="lazy"
           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
-            e.currentTarget.src = '/foods/foods_dryfruits.jpg';
+            e.currentTarget.src = getSmartProductFallback(name, product.category?.name);
           }}
         />
       </Link>

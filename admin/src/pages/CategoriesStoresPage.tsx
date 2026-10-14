@@ -15,15 +15,7 @@ import {
   Baby,
 } from 'lucide-react';
 import api from '../services/api';
-
-const resolveImageUrl = (url: string) => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
-    : 'http://localhost:5000';
-  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-};
+import { resolveImageUrl } from '../utils/imageUrl';
 
 // Mewa Masala Ghar store IDs (foods store)
 const MEWA_STORE_ID = 'cmu8ago75000ktdb58dx4yrx8';
@@ -254,9 +246,7 @@ export const CategoriesStoresPage: React.FC = () => {
                         className="w-10 h-10 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-2xs"
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;
-                          if (cat.image && !target.src.includes('localhost:5000') && !cat.image.startsWith('http')) {
-                            target.src = `http://localhost:5000${cat.image.startsWith('/') ? '' : '/'}${cat.image}`;
-                          }
+                          target.style.display = 'none';
                         }}
                       />
                     ) : (
@@ -331,9 +321,7 @@ export const CategoriesStoresPage: React.FC = () => {
                               className="w-7 h-7 object-cover rounded-lg border border-gray-200"
                               onError={(e) => {
                                 const target = e.currentTarget as HTMLImageElement;
-                                if (sub.image && !target.src.includes('localhost:5000') && !sub.image.startsWith('http')) {
-                                  target.src = `http://localhost:5000${sub.image.startsWith('/') ? '' : '/'}${sub.image}`;
-                                }
+                                target.style.display = 'none';
                               }}
                             />
                           )}
@@ -575,9 +563,7 @@ export const CategoriesStoresPage: React.FC = () => {
                         className="w-16 h-16 object-cover rounded-xl border border-[#E6DEC8] bg-white shrink-0 shadow-xs"
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;
-                          if (image && !target.src.includes('localhost:5000') && !image.startsWith('http')) {
-                            target.src = `http://localhost:5000${image.startsWith('/') ? '' : '/'}${image}`;
-                          }
+                          target.style.display = 'none';
                         }}
                       />
                       <div>

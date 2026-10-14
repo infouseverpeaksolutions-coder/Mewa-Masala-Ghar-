@@ -20,15 +20,7 @@ import {
 import api from '../services/api';
 import { Product } from '../types';
 import { ProductFormModal } from '../components/ProductFormModal';
-
-const resolveImageUrl = (url: string) => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
-    : 'http://localhost:5000';
-  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-};
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 
 export const ProductsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -630,17 +622,12 @@ export const ProductsPage: React.FC = () => {
                       <td className="p-3.5 flex items-center gap-3">
                         <div className="w-12 sm:w-14 aspect-[4/5] rounded-xl overflow-hidden border border-[#E6DEC8] shrink-0 bg-white shadow-2xs relative">
                           <img
-                            src={resolveImageUrl(primaryImg)}
+                            src={resolveImageUrl(primaryImg, p.name, p.category?.name)}
                             alt={p.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               const target = e.currentTarget as HTMLImageElement;
-                              if (primaryImg && !target.src.includes('localhost:5000') && !primaryImg.startsWith('http')) {
-                                target.src = `http://localhost:5000${primaryImg.startsWith('/') ? '' : '/'}${primaryImg}`;
-                              } else {
-                                target.src =
-                                  'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80';
-                              }
+                              target.src = getSmartProductFallback(p.name, p.category?.name);
                             }}
                           />
                         </div>

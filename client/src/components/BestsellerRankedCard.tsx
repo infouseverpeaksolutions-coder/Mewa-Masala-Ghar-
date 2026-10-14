@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Check, Star, Trophy, Sparkles, Flame, Award } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { resolveImageUrl } from '../utils/imageUrl';
+import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 
 export const BestsellerRankedCard: React.FC<{
   product: any;
@@ -33,13 +33,14 @@ export const BestsellerRankedCard: React.FC<{
   const categoryName = product.category?.name || product.category || 'Mewa Masala';
   const badge = product.badge || (product.isFeatured ? 'Featured' : undefined);
 
-  // Image resolution
+  // Image resolution with smart fallback
   const rawImg =
     product.images?.find((i: any) => i.isPrimary)?.url ||
     product.images?.[0]?.url ||
-    product.image ||
-    '/foods/foods_dryfruits.jpg';
-  const imgUrl = resolveImageUrl(rawImg);
+    product.image;
+  const imgUrl = rawImg
+    ? resolveImageUrl(rawImg, name, categoryName)
+    : getSmartProductFallback(name, categoryName);
 
   const rating = product.rating || 4.9;
   const reviewCount = product.reviewCount || 36;
@@ -116,7 +117,7 @@ export const BestsellerRankedCard: React.FC<{
           loading="lazy"
           className="w-full h-full object-contain group-hover:scale-108 transition-transform duration-300"
           onError={(e) => {
-            e.currentTarget.src = '/foods/foods_dryfruits.jpg';
+            e.currentTarget.src = getSmartProductFallback(name, categoryName);
           }}
         />
 
