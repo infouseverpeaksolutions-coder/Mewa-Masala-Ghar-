@@ -8,73 +8,15 @@ import {
   Mail,
   Check,
   ArrowRight,
+  Sparkles,
+  Baby,
+  Package,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 import { Product } from '../types';
 import { resolveImageUrl } from '../utils/imageUrl';
-
-
-
-interface HeroSlide {
-  id: string;
-  image: string;
-  badgeStore: string;
-  title: string;
-  titleAccent: string;
-  subtitle: string;
-  ctaText: string;
-  ctaLink: string;
-  objectPosition?: string;
-}
-
-const HERO_SLIDES: HeroSlide[] = [
-  {
-    id: 'slide-1',
-    image: '/assets/jimmi-jaggu/hero_slide_1.jpg',
-    badgeStore: 'Presented by Mewa Masala Ghar',
-    title: 'Gentle Care for',
-    titleAccent: 'Little Ones & You',
-    subtitle: 'Pure, wholesome botanicals crafted for happy babies, healthy skin and a healthier tomorrow.',
-    ctaText: 'Shop Baby Care',
-    ctaLink: '#featured-products',
-    objectPosition: 'object-[65%_35%] sm:object-[center_35%]',
-  },
-  {
-    id: 'slide-2',
-    image: '/assets/jimmi-jaggu/hero_slide_2.jpg',
-    badgeStore: '100% Safe & Certified Essentials',
-    title: 'Pure Comfort for',
-    titleAccent: 'Tender Baby Skin',
-    subtitle: 'Nourishing botanical oils, soothing creams and everyday bedtime warmth.',
-    ctaText: 'Explore Baby Products',
-    ctaLink: '/baby-nutrition',
-    objectPosition: 'object-[50%_35%] sm:object-[center_35%]',
-  },
-  {
-    id: 'slide-3',
-    image: '/assets/jimmi-jaggu/hero_slide_3.jpg',
-    badgeStore: 'Ayurvedic Poshan for Mothers',
-    title: 'Loving Care for',
-    titleAccent: 'Mothers-to-Be',
-    subtitle: 'Thoughtful formulations crafted for every stage — from bump to babyhood.',
-    ctaText: 'Shop Pregnancy Care',
-    ctaLink: '/baby-nutrition?category=pregnancy-care',
-    objectPosition: 'object-[50%_45%] sm:object-[center_40%]',
-  },
-  {
-    id: 'slide-4',
-    image: '/assets/jimmi-jaggu/hero_slide_4.jpg',
-    badgeStore: 'Triple-Sifted Ayurvedic Purity',
-    title: 'Pure Botanical &',
-    titleAccent: 'Ayurvedic Skincare',
-    subtitle: 'Time-honored natural clays, multani mitti and chemical-free botanical blends.',
-    ctaText: 'Discover Skincare',
-    ctaLink: '/personal-care',
-    objectPosition: 'object-[50%_55%] sm:object-[center_50%]',
-  },
-];
 
 export const JimmiJagguBrandPage: React.FC = () => {
   const { setActiveStore } = useTheme();
@@ -86,20 +28,54 @@ export const JimmiJagguBrandPage: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
 
-  // Auto-advance hero slides every 4 seconds with smooth blur transition
   useEffect(() => {
+    window.scrollTo(0, 0);
+    setActiveStore('baby');
+  }, [setActiveStore]);
+
+  // Fetch real uploaded banners from Database / Admin Panel
+  const { data: dbBanners = [] } = useQuery({
+    queryKey: ['jimmi-jaggu-banners'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/banners');
+        const allBanners = res.data?.data || [];
+        const jimmiBanners = allBanners.filter(
+          (b: any) =>
+            b.isActive &&
+            (b.ctaLink?.includes('jimmi') ||
+              b.ctaLink?.includes('baby') ||
+              b.ctaLink?.includes('care') ||
+              b.title?.toLowerCase().includes('jimmi') ||
+              b.title?.toLowerCase().includes('baby') ||
+              b.title?.toLowerCase().includes('care'))
+        );
+        return jimmiBanners.length > 0
+          ? jimmiBanners
+          : allBanners.filter((b: any) => b.isActive && b.imageUrl);
+      } catch {
+        return [];
+      }
+    },
+  });
+
+  // Auto-advance banner slides if multiple banners exist
+  useEffect(() => {
+    if (dbBanners.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 4000);
+      setCurrentSlide((prev) => (prev + 1) % dbBanners.length);
+    }, 4500);
     return () => clearInterval(timer);
-  }, [currentSlide]);
+  }, [dbBanners.length]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    if (dbBanners.length <= 1) return;
+    setCurrentSlide((prev) => (prev + 1) % dbBanners.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    if (dbBanners.length <= 1) return;
+    setCurrentSlide((prev) => (prev - 1 + dbBanners.length) % dbBanners.length);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -107,7 +83,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || dbBanners.length <= 1) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 40) {
       if (diff > 0) {
@@ -119,11 +95,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
     touchStartX.current = null;
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    setActiveStore('baby');
-  }, [setActiveStore]);
-
+  // Fetch Real Jimmi Jaggu Products from Database
   const { data: products = [], isLoading: isProductsLoading } = useQuery({
     queryKey: ['jimmi-jaggu-products'],
     queryFn: async () => {
@@ -183,164 +155,160 @@ export const JimmiJagguBrandPage: React.FC = () => {
     <div className="bg-[#FAF7F2] dark:bg-[#111813] text-[#2B2321] dark:text-[#F3EFE6] transition-colors duration-300 min-h-screen">
       {/* 
         ========================================================================
-        1. HERO SECTION (Full-Screen Image Slider with 4s Smooth Blur Transition)
-        Centered Heading, Badge, Subtitle & Buttons, Perfectly Fit to Viewport
+        1. HERO SECTION (Dynamic from Admin Banners OR Clean Brand Hero)
+        NO DEMO STOCK PHOTOS - Only Real Uploads from Admin Panel
         ========================================================================
       */}
-      <section
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-152px)] sm:h-[calc(100dvh-114px)] min-h-[380px] flex items-center justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
-      >
-        {/* Full-bleed background images with dreamy smooth blur crossfade */}
-        {HERO_SLIDES.map((slide, index) => {
-          const isActive = index === currentSlide;
-          return (
-            <div
-              key={slide.id}
-              aria-hidden={!isActive}
-              className={`absolute inset-0 w-full h-full will-change-[opacity,filter,transform] ${
-                isActive ? 'z-0 pointer-events-auto' : '-z-10 pointer-events-none'
-              }`}
-              style={{
-                opacity: isActive ? 1 : 0,
-                filter: isActive ? 'blur(0px)' : 'blur(8px)',
-                transform: isActive ? 'scale(1)' : 'scale(1.02)',
-                transition: 'opacity 700ms cubic-bezier(0.4, 0, 0.2, 1), filter 700ms cubic-bezier(0.4, 0, 0.2, 1), transform 700ms cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-            >
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className={`w-full h-full object-cover ${slide.objectPosition || 'object-center'}`}
-              />
-            </div>
-          );
-        })}
+      {dbBanners.length > 0 ? (
+        <section
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] h-[calc(100dvh-152px)] sm:h-[calc(100dvh-114px)] min-h-[380px] flex items-center justify-center bg-[#FAF6F0] dark:bg-[#141E17] select-none"
+        >
+          {dbBanners.map((slide: any, index: number) => {
+            const isActive = index === currentSlide;
+            return (
+              <div
+                key={slide.id || index}
+                aria-hidden={!isActive}
+                className={`absolute inset-0 w-full h-full will-change-[opacity,filter,transform] ${
+                  isActive ? 'z-0 pointer-events-auto' : '-z-10 pointer-events-none'
+                }`}
+                style={{
+                  opacity: isActive ? 1 : 0,
+                  filter: isActive ? 'blur(0px)' : 'blur(8px)',
+                  transform: isActive ? 'scale(1)' : 'scale(1.02)',
+                  transition:
+                    'opacity 700ms cubic-bezier(0.4, 0, 0.2, 1), filter 700ms cubic-bezier(0.4, 0, 0.2, 1), transform 700ms cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              >
+                <img
+                  src={resolveImageUrl(slide.imageUrl)}
+                  alt={slide.title || 'Jimmi Jaggu Banner'}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            );
+          })}
 
-        {/* 
-          Ultra-low fade scrim (reduced to ~15%):
-          Ensures images are 100% vibrant, rich and natural without any milky wash,
-          while providing optimal contrast for centered text across all slides.
-        */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.08)_50%,transparent_80%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(17,24,19,0.40)_0%,rgba(17,24,19,0.15)_50%,transparent_80%)]" />
+          <div className="absolute inset-0 w-full h-full pointer-events-none z-10 bg-gradient-to-t from-black/50 via-black/20 to-transparent dark:from-black/70 dark:via-black/30" />
 
-        {/* Subtle decorative botanical background line art (Left & Right) */}
-        <div className="absolute top-6 left-6 w-56 h-56 pointer-events-none opacity-20 dark:opacity-10 hidden md:block z-10">
-          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#C7926B]">
-            <path d="M20 180 C 40 120, 80 80, 160 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M70 125 C 85 110, 110 115, 115 130 C 105 140, 80 135, 70 125 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-            <path d="M100 95 C 115 80, 140 85, 145 100 C 135 110, 110 105, 100 95 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-            <path d="M130 65 C 145 50, 170 55, 175 70 C 165 80, 140 75, 130 65 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-            <circle cx="50" cy="150" r="15" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-          </svg>
-        </div>
-        <div className="absolute bottom-10 right-8 w-56 h-56 pointer-events-none opacity-20 dark:opacity-10 hidden md:block z-10">
-          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#C7926B]">
-            <path d="M180 20 C 140 80, 110 130, 40 160" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M130 75 C 115 90, 90 85, 85 70 C 95 60, 120 65, 130 75 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-            <path d="M100 105 C 85 120, 60 115, 55 100 C 65 90, 90 95, 100 105 Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-            <circle cx="150" cy="50" r="15" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-          </svg>
-        </div>
-
-        {/* Centered Content directly over the image (No box / No heavy card) */}
-        <div className="relative z-20 w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-2 sm:py-6">
-          <div className="flex flex-col items-center justify-center text-center space-y-2 sm:space-y-3.5 md:space-y-4 max-w-xl sm:max-w-2xl lg:max-w-3xl">
-            {/* Sub-brand badge with official Jimmi Jaggu logo */}
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-[10px] sm:text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-md transition-all mx-auto">
+          {/* Centered Content over banner */}
+          <div className="relative z-20 w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-md mb-3">
               <img
                 src="/assets/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
-                className="w-3.5 h-4 sm:w-4 sm:h-5 object-contain dark:hidden"
+                className="w-4 h-5 object-contain dark:hidden"
               />
               <img
                 src="/assets/jimmi-jaggu/logo_light.png"
                 alt="Jimmi Jaggu"
-                className="w-3.5 h-4 sm:w-4 sm:h-5 object-contain hidden dark:block"
+                className="w-4 h-5 object-contain hidden dark:block"
               />
-              <span className="transition-opacity duration-500">
-                {HERO_SLIDES[currentSlide].badgeStore}
-              </span>
+              <span>Presented by Mewa Masala Ghar</span>
             </div>
 
-            {/* Headline with dynamic slide title & responsive typography */}
-            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[46px] xl:text-[52px] leading-[1.14] sm:leading-[1.12] font-black text-[#1F1410] dark:text-white tracking-tight drop-shadow-[0_2px_14px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] transition-all duration-700 mx-auto">
-              {HERO_SLIDES[currentSlide].title}{' '}
-              <span className="text-[#A0352A] dark:text-[#F0C060] drop-shadow-[0_2px_12px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                {HERO_SLIDES[currentSlide].titleAccent}
-              </span>
+            {dbBanners[currentSlide]?.title && (
+              <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md">
+                {dbBanners[currentSlide].title}
+              </h1>
+            )}
+
+            {dbBanners[currentSlide]?.subtitle && (
+              <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-xl leading-relaxed font-medium drop-shadow-sm mt-2">
+                {dbBanners[currentSlide].subtitle}
+              </p>
+            )}
+
+            {dbBanners[currentSlide]?.ctaText && (
+              <div className="pt-4">
+                <a
+                  href={dbBanners[currentSlide].ctaLink || '#featured-products'}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
+                >
+                  <span>{dbBanners[currentSlide].ctaText}</span>
+                  <span>→</span>
+                </a>
+              </div>
+            )}
+          </div>
+
+          {dbBanners.length > 1 && (
+            <>
+              <button
+                onClick={prevSlide}
+                className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 dark:bg-[#18221B]/80 hover:bg-white text-gray-900 dark:text-white items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-105 cursor-pointer"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 dark:bg-[#18221B]/80 hover:bg-white text-gray-900 dark:text-white items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-105 cursor-pointer"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </>
+          )}
+        </section>
+      ) : (
+        /* Pristine Brand Showcase Hero (Zero Demo Photos) */
+        <section className="relative w-full overflow-hidden border-b border-[#EFE8DF] dark:border-[#243529] py-16 sm:py-24 bg-gradient-to-b from-[#FBF6F0] via-[#FAF3EC] to-[#FAF7F2] dark:from-[#152018] dark:via-[#131A15] dark:to-[#111813] flex items-center justify-center text-center">
+          <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 space-y-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 dark:bg-[#18221B]/95 backdrop-blur-md border border-[#E8DDD0] dark:border-[#2A3B2F] text-xs font-bold text-[#8C5E58] dark:text-[#E5B85C] shadow-xs">
+              <img
+                src="/assets/jimmi-jaggu/logo_dark.png"
+                alt="Jimmi Jaggu"
+                className="w-4 h-5 object-contain dark:hidden"
+              />
+              <img
+                src="/assets/jimmi-jaggu/logo_light.png"
+                alt="Jimmi Jaggu"
+                className="w-4 h-5 object-contain hidden dark:block"
+              />
+              <span>A Brand of Mewa Masala Ghar</span>
+            </div>
+
+            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-black text-[#2B2321] dark:text-white tracking-tight leading-tight">
+              JIMMI JAGGU
             </h1>
 
-            {/* Subtitle with high-visibility shadow */}
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-[#2A1D18] dark:text-gray-100 max-w-md sm:max-w-lg md:max-w-xl leading-relaxed font-semibold drop-shadow-[0_1px_10px_rgba(255,255,255,0.95)] dark:drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] transition-all duration-700 mx-auto line-clamp-2 sm:line-clamp-none">
-              {HERO_SLIDES[currentSlide].subtitle}
+            <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.2em] font-bold text-[#A0352A] dark:text-[#E5B85C]">
+              Baby Nutrition &nbsp;•&nbsp; Pure Skincare &nbsp;•&nbsp; Maternity Care
             </p>
 
-            {/* CTA Buttons - Centered */}
-            <div className="pt-1.5 sm:pt-2.5 md:pt-3 flex items-center justify-center gap-2.5 sm:gap-4 flex-wrap mx-auto">
-              <a
-                href={HERO_SLIDES[currentSlide].ctaLink}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
-              >
-                <span>{HERO_SLIDES[currentSlide].ctaText}</span>
-                <span className="text-sm">→</span>
-              </a>
+            <p className="text-xs sm:text-sm md:text-base text-[#6E5D57] dark:text-gray-300 max-w-xl mx-auto leading-relaxed">
+              Pure botanical formulations, doctor-safe infant foods, and natural earthen clays crafted with utmost honesty and gentle care.
+            </p>
 
+            <div className="pt-2 flex items-center justify-center gap-3 flex-wrap">
               <a
-                href="#categories"
-                className="inline-flex items-center justify-center gap-2 px-4.5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white/95 dark:bg-[#18221B]/95 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-bold backdrop-blur-xs transition-all hover:scale-105 shadow-md"
+                href="#featured-products"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 rounded-full bg-[#C47D76] hover:bg-[#B36E67] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all hover:scale-105"
               >
-                <span>Explore Categories</span>
+                <span>View Products</span>
+                <span>↓</span>
               </a>
+              <Link
+                to="/shop"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white dark:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#D5C9B8] dark:border-[#2A3B2F] text-xs sm:text-sm font-bold shadow-xs hover:bg-gray-50 dark:hover:bg-gray-800 transition-all hover:scale-105"
+              >
+                <span>Explore All Stores</span>
+              </Link>
             </div>
           </div>
-        </div>
-
-        {/* Left / Right Nav Arrows (Edge Positioned, Vertically Centered on sm+) */}
-        <button
-          onClick={prevSlide}
-          className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
-
-        <button
-          onClick={nextSlide}
-          className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/85 dark:bg-[#18221B]/85 hover:bg-white dark:hover:bg-[#18221B] text-[#2B2321] dark:text-white border border-[#E0D4C3] dark:border-[#2A3B2F] items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-110 active:scale-95 cursor-pointer"
-          aria-label="Next slide"
-        >
-          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
-
-        {/* Slide Progress Indicators - Centered at Bottom with safe clearance */}
-        <div className="absolute bottom-3.5 sm:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 pointer-events-auto">
-          {HERO_SLIDES.map((slide, idx) => {
-            const isActive = idx === currentSlide;
-            return (
-              <button
-                key={slide.id}
-                onClick={() => setCurrentSlide(idx)}
-                className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
-                  isActive
-                    ? 'w-8 sm:w-12 bg-[#C47D76] dark:bg-[#E5B85C] shadow-sm'
-                    : 'w-2 sm:w-2.5 bg-black/25 dark:bg-white/35 hover:bg-black/45 dark:hover:bg-white/60'
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            );
-          })}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 
         ========================================================================
-        2. CATEGORY SHOWCASE CARDS (Dynamic from DB + Presets Fallback)
+        2. CATEGORY SHOWCASE CARDS (Strictly Database Driven, No Fake Demo Cards)
         ========================================================================
       */}
-      <section id="categories" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
-        {dbCategories && dbCategories.length > 0 ? (
+      {dbCategories && dbCategories.length > 0 && (
+        <section id="categories" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-10 sm:pt-14">
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -353,36 +321,44 @@ export const JimmiJagguBrandPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-7">
               {dbCategories.map((cat: any, idx: number) => {
-                const fallbackImages = [
-                  '/assets/jimmi-jaggu/cat_baby_bottle.jpg',
-                  '/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg',
-                  '/assets/jimmi-jaggu/cat_pregnancy_mother.jpg',
-                ];
-                const catImg = cat.image ? resolveImageUrl(cat.image) : fallbackImages[idx % fallbackImages.length];
-                const targetUrl = cat.slug?.includes('baby') || cat.slug?.includes('aahar') || cat.slug?.includes('poshan')
-                  ? `/baby-nutrition?category=${cat.slug}`
-                  : cat.slug?.includes('care') || cat.slug?.includes('skin') || cat.slug?.includes('clay')
-                  ? `/personal-care?category=${cat.slug}`
-                  : `/shop?category=${cat.slug}&brand=jimmi-jaggu`;
+                const hasImg = Boolean(cat.image);
+                const catImg = hasImg ? resolveImageUrl(cat.image) : null;
+                const targetUrl =
+                  cat.slug?.includes('baby') || cat.slug?.includes('aahar') || cat.slug?.includes('poshan')
+                    ? `/baby-nutrition?category=${cat.slug}`
+                    : cat.slug?.includes('care') || cat.slug?.includes('skin') || cat.slug?.includes('clay')
+                    ? `/personal-care?category=${cat.slug}`
+                    : `/shop?category=${cat.slug}&brand=jimmi-jaggu`;
 
                 return (
                   <div
                     key={cat.id || idx}
-                    className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+                    className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
                   >
                     <div>
-                      <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                        <img
-                          src={catImg}
-                          alt={cat.name}
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
+                      {hasImg ? (
+                        <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
+                          <img
+                            src={catImg!}
+                            alt={cat.name}
+                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#FAF5EE] to-[#F5EBE1] dark:from-[#1E2B22] dark:to-[#141E17] mb-3.5 flex flex-col items-center justify-center border border-[#EFE8DF]/60 dark:border-[#2A3B2F]">
+                          <span className="font-serif font-bold text-3xl text-[#8C5E58] dark:text-[#E5B85C]">
+                            {cat.name.charAt(0)}
+                          </span>
+                          <span className="text-[10px] font-bold text-[#8C5E58]/80 dark:text-[#E5B85C]/80 uppercase tracking-widest mt-1">
+                            Jimmi Jaggu
+                          </span>
+                        </div>
+                      )}
                       <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
                         {cat.name}
                       </h3>
                       <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1 line-clamp-2">
-                        {cat.description || 'Safe • Gentle • Everyday Essentials'}
+                        {cat.description || 'Gentle • Safe • Everyday Essentials'}
                       </p>
                     </div>
                     <div className="px-1">
@@ -399,135 +375,51 @@ export const JimmiJagguBrandPage: React.FC = () => {
               })}
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
-            {/* Card 1: Baby Products */}
-            <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-              <div>
-                <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                  <img
-                    src="/assets/jimmi-jaggu/cat_baby_bottle.jpg"
-                    alt="Baby Products"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
-                  Baby Products
-                </h3>
-                <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
-                  Safe • Gentle • Everyday Essentials
-                </p>
-              </div>
-              <div className="px-1">
-                <Link
-                  to="/baby-nutrition"
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-                >
-                  <span>Explore</span>
-                  <span className="text-xs">→</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Card 2: Personal Care & Skincare */}
-            <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-              <div>
-                <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                  <img
-                    src="/assets/jimmi-jaggu/cat_ayurvedic_powder.jpg"
-                    alt="Personal Care & Skincare"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
-                  Personal Care & Skincare
-                </h3>
-                <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
-                  Pure Ingredients • Healthy Skin
-                </p>
-              </div>
-              <div className="px-1">
-                <Link
-                  to="/personal-care"
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#6D8B74] hover:bg-[#5C7762] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-                >
-                  <span>Explore</span>
-                  <span className="text-xs">→</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Card 3: Pregnancy Products */}
-            <div className="bg-white dark:bg-[#18221B] rounded-2xl sm:rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3 sm:p-4 pb-5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-              <div>
-                <div className="w-full aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3.5">
-                  <img
-                    src="/assets/jimmi-jaggu/cat_pregnancy_mother.jpg"
-                    alt="Pregnancy Products"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="font-serif font-bold text-lg sm:text-xl text-[#2B2321] dark:text-white px-1">
-                  Pregnancy Products
-                </h3>
-                <p className="text-xs text-[#82746E] dark:text-gray-400 mt-1 mb-4 px-1">
-                  Care for You & Your Little One
-                </p>
-              </div>
-              <div className="px-1">
-                <Link
-                  to="/baby-nutrition?category=pregnancy-care"
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
-                >
-                  <span>Explore</span>
-                  <span className="text-xs">→</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
 
       {/* 
         ========================================================================
-        3. FEATURED PRODUCTS (With Left/Right Carousel Controls)
+        3. FEATURED PRODUCTS (Dynamic from Admin Uploads Only)
         ========================================================================
       */}
       <section id="featured-products" className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#2B2321] dark:text-white tracking-tight">
-              Featured Products
+              Products
             </h2>
             <div className="w-12 sm:w-16 h-[1.5px] bg-[#D8CFC4] dark:bg-[#3E5244] hidden sm:block" />
           </div>
-          <Link
-            to="/baby-nutrition"
-            className="text-xs sm:text-sm font-semibold text-[#8C6D37] dark:text-[#E5B85C] hover:underline flex items-center gap-1"
-          >
-            <span>View All</span>
-            <span className="text-xs">→</span>
-          </Link>
+          {products.length > 0 && (
+            <Link
+              to="/shop?brand=jimmi-jaggu"
+              className="text-xs sm:text-sm font-semibold text-[#8C6D37] dark:text-[#E5B85C] hover:underline flex items-center gap-1"
+            >
+              <span>View All</span>
+              <span className="text-xs">→</span>
+            </Link>
+          )}
         </div>
 
-        {/* Carousel or Empty State */}
+        {/* Empty State when no products are uploaded yet under Jimmi Jaggu */}
         {products.length === 0 ? (
-          <div className="w-full text-center py-12 px-6 bg-white dark:bg-[#18221B] rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-soft max-w-xl mx-auto">
-            <div className="w-16 h-16 rounded-2xl bg-[#B97375]/10 text-[#B97375] flex items-center justify-center text-3xl mx-auto mb-4">
-              🍼
+          <div className="w-full text-center py-16 px-6 bg-white dark:bg-[#18221B] rounded-3xl border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-soft max-w-xl mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-[#B97375]/10 text-[#B97375] flex items-center justify-center mx-auto mb-4">
+              <Package className="w-7 h-7 text-[#B97375]" />
             </div>
             <h3 className="font-serif text-lg sm:text-xl font-bold text-[#2B2321] dark:text-white">
-              Fresh Batches Launching Soon
+              No Jimmi Jaggu Products Listed Yet
             </h3>
             <p className="text-xs text-[#82746E] dark:text-gray-400 mt-2 max-w-md mx-auto leading-relaxed">
-              Our doctor-formulated baby nutrition and pure volcanic & ayurvedic skincare collections are currently being prepared and packaged. New stock will be available soon!
+              Products uploaded under the Jimmi Jaggu brand in the Admin Panel will appear here automatically with your images and custom prices.
             </p>
             <div className="mt-5">
               <Link
                 to="/shop"
                 className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs font-semibold shadow-xs transition-all hover:scale-105"
               >
-                <span>Explore Mewa Masala Ghar Foods</span>
+                <span>Browse Mewa Masala Ghar Foods</span>
                 <span className="text-xs">→</span>
               </Link>
             </div>
@@ -561,8 +453,7 @@ export const JimmiJagguBrandPage: React.FC = () => {
               {products.map((prod) => {
                 const primaryImg =
                   prod.images?.find((img) => img.isPrimary)?.url ||
-                  prod.images?.[0]?.url ||
-                  '/assets/jimmi-jaggu/cat_baby_bottle.jpg';
+                  prod.images?.[0]?.url;
                 const defaultVariant =
                   prod.variants?.find((v) => v.isDefault) || prod.variants?.[0];
                 const price = defaultVariant?.price ?? 0;
@@ -573,13 +464,25 @@ export const JimmiJagguBrandPage: React.FC = () => {
                     className="w-[210px] sm:w-[230px] shrink-0 bg-white dark:bg-[#18221B] rounded-2xl border border-[#EFE8DF] dark:border-[#2A3B2F] p-3.5 shadow-soft hover:shadow-card transition-all duration-300 flex flex-col justify-between"
                   >
                     <div>
-                      {/* Product Image */}
-                      <Link to={`/product/${prod.slug}`} className="block w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3 flex items-center justify-center p-2">
-                        <img
-                          src={resolveImageUrl(primaryImg)}
-                          alt={prod.name}
-                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
-                        />
+                      {/* Product Image - Uploaded Image ONLY */}
+                      <Link
+                        to={`/product/${prod.slug}`}
+                        className="block w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#FAF6F0] dark:bg-[#141E17] mb-3 flex items-center justify-center p-2"
+                      >
+                        {primaryImg ? (
+                          <img
+                            src={resolveImageUrl(primaryImg)}
+                            alt={prod.name}
+                            className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                            <span className="font-serif font-bold text-sm text-[#8C5E58]">
+                              Jimmi Jaggu
+                            </span>
+                            <span className="text-[10px] text-gray-400 mt-1">Image Pending</span>
+                          </div>
+                        )}
                       </Link>
 
                       {/* Title */}
@@ -597,7 +500,9 @@ export const JimmiJagguBrandPage: React.FC = () => {
                       {/* Star Rating */}
                       <div className="flex items-center justify-center gap-1 text-[11px] text-[#82746E] dark:text-gray-400 mt-1 mb-3">
                         <Star className="w-3.5 h-3.5 fill-[#D9A441] text-[#D9A441]" />
-                        <span className="font-bold text-[#2B2321] dark:text-white">{prod.rating || 5.0}</span>
+                        <span className="font-bold text-[#2B2321] dark:text-white">
+                          {prod.rating || 5.0}
+                        </span>
                         <span>({prod.reviewCount || 0})</span>
                       </div>
                     </div>
@@ -626,66 +531,51 @@ export const JimmiJagguBrandPage: React.FC = () => {
             </div>
           </div>
         )}
-
       </section>
 
       {/* 
         ========================================================================
-        4. SUB-BRAND STORY / HIGHLIGHT BANNER
+        4. SUB-BRAND STORY / HIGHLIGHT BANNER (Clean Brand Styling, No Demo Still)
         ========================================================================
       */}
       <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-card min-h-[340px] sm:min-h-[380px] md:min-h-[400px] lg:min-h-[420px] flex items-center group">
-          {/* Full-bleed background image across the whole banner */}
-          <img
-            src="/assets/jimmi-jaggu/banner_still.jpg"
-            alt="Jimmi Jaggu Baby and Skincare"
-            className="absolute inset-0 w-full h-full object-cover object-[78%_center] group-hover:scale-[1.02] transition-transform duration-700 ease-out"
-          />
-
-          {/* Gentle gradient overlay on left for sharp, pristine text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9]/95 via-[#FFFDF9]/85 to-transparent dark:from-[#18221B]/95 dark:via-[#18221B]/85 dark:to-transparent max-w-lg sm:max-w-xl md:max-w-2xl pointer-events-none" />
-
-          {/* Subtle mobile overlay for extra clarity on small screens */}
-          <div className="absolute inset-0 bg-[#FFFDF9]/30 dark:bg-[#18221B]/30 sm:hidden pointer-events-none" />
-
-          {/* Content overlay directly on the banner */}
-          <div className="relative z-10 p-6 sm:p-8 md:p-10 lg:p-12 max-w-lg sm:max-w-xl space-y-3.5 sm:space-y-4">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[#EFE8DF] dark:border-[#2A3B2F] shadow-card bg-gradient-to-br from-[#FFF9F5] via-[#FFF3EC] to-[#FCEEEA] dark:from-[#18221B] dark:via-[#1F171A] dark:to-[#141E17] min-h-[260px] sm:min-h-[280px] flex items-center p-6 sm:p-10 md:p-12">
+          <div className="relative z-10 max-w-xl space-y-4">
             <div className="flex items-center gap-3.5">
               <img
                 src="/assets/jimmi-jaggu/logo_dark.png"
                 alt="Jimmi Jaggu"
-                className="h-12 sm:h-14 lg:h-16 w-auto object-contain dark:hidden"
+                className="h-12 sm:h-14 w-auto object-contain dark:hidden"
               />
               <img
                 src="/assets/jimmi-jaggu/logo_light.png"
                 alt="Jimmi Jaggu"
-                className="h-12 sm:h-14 lg:h-16 w-auto object-contain hidden dark:block"
+                className="h-12 sm:h-14 w-auto object-contain hidden dark:block"
               />
               <div>
                 <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#8C6D37] dark:text-[#E5B85C] uppercase block">
                   OUR SISTER BRAND
                 </span>
-                <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2B2321] dark:text-white">
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#2B2321] dark:text-white">
                   JIMMI JAGGU
                 </h3>
               </div>
             </div>
 
             <p className="text-xs sm:text-sm font-semibold text-[#6E5D57] dark:text-gray-200 tracking-wider">
-              Baby &nbsp;•&nbsp; Skincare &nbsp;•&nbsp; Pregnancy
+              Baby Nutrition &nbsp;•&nbsp; Natural Skincare &nbsp;•&nbsp; Pregnancy Care
             </p>
 
-            <p className="text-xs sm:text-sm text-[#4A3F3A] dark:text-gray-200 max-w-md leading-relaxed font-normal">
-              Thoughtfully crafted products for every stage of your journey — from bump to babyhood.
+            <p className="text-xs sm:text-sm text-[#4A3F3A] dark:text-gray-300 leading-relaxed font-normal">
+              Thoughtfully curated products crafted with ancient wisdom and gentle purity — presented with pride by Mewa Masala Ghar.
             </p>
 
-            <div className="pt-2">
+            <div className="pt-1">
               <Link
-                to="/shop?store=baby"
+                to="/shop?brand=jimmi-jaggu"
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#B97375] hover:bg-[#A86466] text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-98"
               >
-                <span>Explore Jimmi Jaggu</span>
+                <span>Explore Brand Products</span>
                 <span>→</span>
               </Link>
             </div>
@@ -693,25 +583,14 @@ export const JimmiJagguBrandPage: React.FC = () => {
         </div>
       </section>
 
-
-
       {/* 
         ========================================================================
-        7. NEWSLETTER STRIP (Soft Peach / Blush background)
+        5. NEWSLETTER STRIP
         ========================================================================
       */}
       <section className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl mx-auto pt-14 sm:pt-16 pb-16">
         <div className="bg-[#FCEEEA] dark:bg-[#1E1719] rounded-2xl sm:rounded-3xl border border-[#F2DDD7] dark:border-[#38262A] p-6 sm:p-8 lg:p-10 shadow-soft relative overflow-hidden">
-          {/* Decorative Corner Florals */}
-          <div className="absolute top-0 right-0 w-32 h-32 pointer-events-none opacity-20">
-            <svg viewBox="0 0 100 100" fill="currentColor" className="w-full h-full text-[#C47D76]">
-              <circle cx="80" cy="20" r="15" />
-              <path d="M50 20 Q 80 50 80 80" stroke="currentColor" strokeWidth="2" fill="none" />
-            </svg>
-          </div>
-
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
-            {/* Left Title & Icon */}
             <div className="flex items-center gap-4 text-center lg:text-left">
               <div className="w-12 h-12 rounded-full bg-white/70 dark:bg-white/10 flex items-center justify-center shrink-0 text-[#C47D76] shadow-xs">
                 <Mail className="w-5 h-5" />
@@ -726,8 +605,10 @@ export const JimmiJagguBrandPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Email Form */}
-            <form onSubmit={handleNewsletterSubmit} className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-2 max-w-md">
+            <form
+              onSubmit={handleNewsletterSubmit}
+              className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-2 max-w-md"
+            >
               <input
                 type="email"
                 required

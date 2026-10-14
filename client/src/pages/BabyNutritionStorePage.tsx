@@ -175,11 +175,9 @@ export const BabyNutritionStorePage: React.FC = () => {
           {/* Card 1: Pratham Aahar */}
           <div className="bg-[#E6F4FA] rounded-2xl border border-[#CCE8F5] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
             <div className="flex items-center gap-4 mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=200&q=80"
-                alt="Pratham Aahar Baby Nutrition"
-                className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
-              />
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-[#5DB4D6]/30 text-[#1E6B86] shadow-xs">
+                <Baby className="w-7 h-7" />
+              </div>
               <div>
                 <h3 className="font-serif font-bold text-base text-[#1E6B86]">
                   Pratham Aahar (6+ Months)
@@ -201,11 +199,9 @@ export const BabyNutritionStorePage: React.FC = () => {
           <div className="bg-[#E6F4FA] rounded-2xl border border-[#CCE8F5] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
             <div>
               <div className="flex items-center gap-4 mb-3">
-                <img
-                  src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80"
-                  alt="Daily Family Nutrition"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
-                />
+                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-[#5DB4D6]/30 text-[#1E6B86] shadow-xs">
+                  <Users className="w-7 h-7" />
+                </div>
                 <div>
                   <h3 className="font-serif font-bold text-base text-[#1E6B86]">
                     Daily Poshan (Family)
@@ -233,11 +229,9 @@ export const BabyNutritionStorePage: React.FC = () => {
           {/* Card 3: Pregnancy Diet */}
           <div className="bg-[#E6F4FA] rounded-2xl border border-[#CCE8F5] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
             <div className="flex items-center gap-4 mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=200&q=80"
-                alt="Pregnancy Care & Maternal Diet"
-                className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
-              />
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-[#5DB4D6]/30 text-[#1E6B86] shadow-xs">
+                <HeartPulse className="w-7 h-7" />
+              </div>
               <div>
                 <h3 className="font-serif font-bold text-base text-[#1E6B86]">
                   Pregnancy Diet & Care

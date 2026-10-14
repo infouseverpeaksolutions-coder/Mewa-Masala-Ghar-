@@ -189,11 +189,9 @@ export const PersonalCareStorePage: React.FC = () => {
           {/* Card 1: Premium Multani Mitti */}
           <div className="bg-[#FCE9EC] rounded-2xl border border-[#F5CED4] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
             <div className="flex items-center gap-4 mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=200&q=80"
-                alt="Premium Multani Mitti"
-                className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
-              />
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-[#E0808C]/30 text-[#C26371] shadow-xs">
+                <Sun className="w-7 h-7" />
+              </div>
               <div>
                 <h3 className="font-serif font-bold text-base text-[#8E3B46]">
                   Premium Multani Mitti
@@ -214,11 +212,9 @@ export const PersonalCareStorePage: React.FC = () => {
           {/* Card 2: Pink Multani */}
           <div className="bg-[#FCE9EC] rounded-2xl border border-[#F5CED4] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
             <div className="flex items-center gap-4 mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=200&q=80"
-                alt="Pink Multani Clay"
-                className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
-              />
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-[#E0808C]/30 text-[#C26371] shadow-xs">
+                <Sparkles className="w-7 h-7" />
+              </div>
               <div>
                 <h3 className="font-serif font-bold text-base text-[#8E3B46]">
                   Pink Multani Mitti
@@ -239,11 +235,9 @@ export const PersonalCareStorePage: React.FC = () => {
           {/* Card 3: Dead Sea Mud */}
           <div className="bg-[#FCE9EC] rounded-2xl border border-[#F5CED4] p-6 shadow-soft flex flex-col justify-between relative group hover:shadow-card transition-all">
             <div className="flex items-center gap-4 mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=200&q=80"
-                alt="Dead Sea Mineral Mud"
-                className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs"
-              />
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-[#E0808C]/30 text-[#C26371] shadow-xs">
+                <Droplet className="w-7 h-7" />
+              </div>
               <div>
                 <h3 className="font-serif font-bold text-base text-[#8E3B46]">
                   Dead Sea Mineral Mud
