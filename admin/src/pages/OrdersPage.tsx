@@ -46,6 +46,60 @@ const ALL_STATUSES = [
   'RETURNED',
 ];
 
+const getOrderPackageInfo = (order: Order | null) => {
+  if (!order) return null;
+  let totalWeightGrams = 0;
+  (order.items || []).forEach((item: any) => {
+    let w = item.variant?.weightGrams || item.weightGrams;
+    if (!w && (item.variantName || item.productName)) {
+      const text = `${item.variantName || ''} ${item.productName || ''}`.toLowerCase();
+      if (text.includes('1 kg') || text.includes('1kg') || text.includes('1000g') || text.includes('1000 g')) w = 1000;
+      else if (text.includes('500g') || text.includes('500 g')) w = 500;
+      else if (text.includes('250g') || text.includes('250 g')) w = 250;
+      else if (text.includes('200g') || text.includes('200 g')) w = 200;
+      else if (text.includes('100g') || text.includes('100 g')) w = 100;
+      else if (text.includes('70g') || text.includes('70 g')) w = 70;
+    }
+    if (!w) w = 200;
+    totalWeightGrams += w * (item.quantity || 1);
+  });
+
+  if (totalWeightGrams <= 120) {
+    return {
+      dimensions: '20 x 10 x 10 cm',
+      deadWeight: totalWeightGrams <= 80 ? '0.16 Kg' : '0.19 Kg',
+      volumetric: '0.40 Kg',
+      tier: '70g / 100g Box',
+      totalWeightGrams,
+    };
+  }
+  if (totalWeightGrams <= 250) {
+    return {
+      dimensions: '11 x 11 x 9 cm',
+      deadWeight: '0.29 Kg',
+      volumetric: '0.217 Kg',
+      tier: '200g Box',
+      totalWeightGrams,
+    };
+  }
+  if (totalWeightGrams <= 600) {
+    return {
+      dimensions: '20 x 15 x 10 cm',
+      deadWeight: `${((totalWeightGrams + 90) / 1000).toFixed(2)} Kg`,
+      volumetric: '0.60 Kg',
+      tier: '500g Box',
+      totalWeightGrams,
+    };
+  }
+  return {
+    dimensions: '20 x 30 x 10 cm',
+    deadWeight: `${Math.max(1.15, (totalWeightGrams + 150) / 1000).toFixed(2)} Kg`,
+    volumetric: '1.20 Kg',
+    tier: '1 kg Box',
+    totalWeightGrams,
+  };
+};
+
 export const OrdersPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
@@ -497,6 +551,27 @@ export const OrdersPage: React.FC = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Auto Package Dimensions & Weight Spec Banner */}
+                {(() => {
+                  const pkg = getOrderPackageInfo(viewingOrder);
+                  if (!pkg) return null;
+                  return (
+                    <div className="p-3 bg-white/95 rounded-xl border border-[#E6DEC8] flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-bold text-[#2F5D3A]">Package Specs:</span>
+                        <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-800 font-semibold">{pkg.dimensions}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-600">Dead Wt: <strong className="text-gray-900 font-mono">{pkg.deadWeight}</strong></span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-600">Volumetric Wt: <strong className="text-gray-900 font-mono">{pkg.volumetric}</strong></span>
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md">
+                        {pkg.tier}
+                      </span>
+                    </div>
+                  );
+                })()}
 
                 {/* Shipment Details Card */}
                 {viewingOrder.shipments && viewingOrder.shipments.length > 0 ? (

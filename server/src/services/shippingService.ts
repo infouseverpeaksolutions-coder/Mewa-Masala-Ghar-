@@ -22,6 +22,70 @@ export interface ShippingProvider {
 }
 
 /**
+ * Packaging specifications based on weight tier:
+ * - 70g & 100g: 20 x 10 x 10 (cm), Dead wt: ~0.16 - 0.19 Kg (Volumetric: 0.40 Kg)
+ * - 200g: 11 x 11 x 9 (cm), Dead wt: 0.29 Kg (Volumetric: 0.217 Kg)
+ * - 250g - 500g: 20 x 15 x 10 (cm), Dead wt: ~0.35 - 0.60 Kg (Volumetric: 0.60 Kg)
+ * - 1 kg (1000g+): 20 x 30 x 10 (cm), Dead wt: ~1.15 Kg (Volumetric: 1.20 Kg)
+ */
+export function getPackagingSpecs(totalWeightGrams: number): {
+  length: number;
+  width: number;
+  height: number;
+  deadWeightKg: number;
+  volumetricWeightKg: number;
+} {
+  // Tier 1: 70 grams and 100 grams -> 20 x 10 x 10 (cm)
+  if (totalWeightGrams <= 120) {
+    const l = 20, w = 10, h = 10;
+    const deadWeightKg = totalWeightGrams <= 80 ? 0.16 : 0.19;
+    return {
+      length: l,
+      width: w,
+      height: h,
+      deadWeightKg,
+      volumetricWeightKg: 0.40,
+    };
+  }
+
+  // Tier 2: 200 grams -> 11 x 11 x 9 (cm), Dead wt: 0.29 Kg, Volumetric wt: 0.217 Kg
+  if (totalWeightGrams <= 250) {
+    const l = 11, w = 11, h = 9;
+    return {
+      length: l,
+      width: w,
+      height: h,
+      deadWeightKg: 0.29,
+      volumetricWeightKg: 0.217,
+    };
+  }
+
+  // Tier 3: 250g - 500g
+  if (totalWeightGrams <= 600) {
+    const l = 20, w = 15, h = 10;
+    const deadWeightKg = Number(((totalWeightGrams + 90) / 1000).toFixed(2));
+    return {
+      length: l,
+      width: w,
+      height: h,
+      deadWeightKg,
+      volumetricWeightKg: 0.60,
+    };
+  }
+
+  // Tier 4: 1 kg (1000g+) -> 20 x 30 x 10 (cm)
+  const l = 20, w = 30, h = 10;
+  const deadWeightKg = Number(Math.max(1.15, (totalWeightGrams + 150) / 1000).toFixed(2));
+  return {
+    length: l,
+    width: w,
+    height: h,
+    deadWeightKg,
+    volumetricWeightKg: 1.20,
+  };
+}
+
+/**
  * Production Shiprocket Shipping Provider
  * Seamlessly interfaces with Shiprocket Logistics Gateway
  */
@@ -35,8 +99,26 @@ export class ShiprocketShippingProvider implements ShippingProvider {
     // Calculate total shipment weight in Kgs
     let totalWeightGrams = 0;
     const orderItemsPayload = items.map((item: any) => {
-      const weightPerItem = item.variant?.weightGrams || item.weightGrams || 250;
-      totalWeightGrams += weightPerItem * item.quantity;
+      let weightPerItem = item.variant?.weightGrams || item.weightGrams;
+      if (!weightPerItem && (item.variantName || item.productName)) {
+        const text = `${item.variantName || ''} ${item.productName || ''}`.toLowerCase();
+        if (text.includes('1 kg') || text.includes('1kg') || text.includes('1000g') || text.includes('1000 g')) {
+          weightPerItem = 1000;
+        } else if (text.includes('500g') || text.includes('500 g')) {
+          weightPerItem = 500;
+        } else if (text.includes('250g') || text.includes('250 g')) {
+          weightPerItem = 250;
+        } else if (text.includes('200g') || text.includes('200 g')) {
+          weightPerItem = 200;
+        } else if (text.includes('100g') || text.includes('100 g')) {
+          weightPerItem = 100;
+        } else if (text.includes('70g') || text.includes('70 g')) {
+          weightPerItem = 70;
+        }
+      }
+      if (!weightPerItem) weightPerItem = 200;
+
+      totalWeightGrams += weightPerItem * (item.quantity || 1);
 
       return {
         name: item.productName || item.name || 'Dry Fruits & Spices',
@@ -49,12 +131,13 @@ export class ShiprocketShippingProvider implements ShippingProvider {
       };
     });
 
-    const shipmentWeightKg = Math.max(0.5, Number((totalWeightGrams / 1000).toFixed(2)));
+    // Auto-calculate package specs based on weight tiers (70g, 100g, 200g, 1kg, etc.)
+    const packageSpecs = getPackagingSpecs(totalWeightGrams);
 
-    // Standard dimensions (in cms)
-    const lengthCm = orderData.length || 20;
-    const widthCm = orderData.width || 15;
-    const heightCm = orderData.height || 10;
+    const lengthCm = Number(orderData.length || packageSpecs.length);
+    const widthCm = Number(orderData.width || packageSpecs.width);
+    const heightCm = Number(orderData.height || packageSpecs.height);
+    const shipmentWeightKg = Number(orderData.weight || packageSpecs.deadWeightKg);
 
     const isCod = orderData.paymentMethod === 'COD';
     const totalAmount = Number(orderData.totalAmount || 0);

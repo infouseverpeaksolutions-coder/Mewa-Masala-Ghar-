@@ -56,9 +56,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
 
-  // Standard 5 Weight Categories (100g, 200g, 250g, 500g, 1 kg)
+  // Standard Weight Categories (70g, 100g, 200g, 250g, 500g, 1 kg)
   const WEIGHT_CATEGORIES = [
     { value: 70, label: '70 Grams (70g)' },
+    { value: 100, label: '100 Grams (100g)' },
     { value: 200, label: '200 Grams (200g)' },
     { value: 250, label: '250 Grams (250g)' },
     { value: 500, label: '500 Grams (500g)' },
@@ -473,13 +474,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </button>
               </div>
 
-              {/* Quick-add buttons for the 5 requested weight categories */}
+              {/* Quick-add buttons for the standard weight categories */}
               <div className="flex flex-wrap items-center gap-1.5 p-2 bg-[#FAF6EC] border border-[#E6DEC8] rounded-xl">
                 <span className="text-[10px] font-bold text-[#8C7B65] uppercase tracking-wider mr-1">
                   Add Weight:
                 </span>
                 {WEIGHT_CATEGORIES.map((cat) => {
                   const isAlreadyAdded = variants.some((v) => Number(v.weightGrams) === cat.value);
+                  const displayWeight = cat.value >= 1000 ? `${cat.value / 1000} kg` : `${cat.value}g`;
                   return (
                     <button
                       key={cat.value}
@@ -492,7 +494,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           : 'bg-white hover:bg-emerald-50 text-[#2F5D3A] border-[#D9A441] shadow-2xs cursor-pointer'
                       }`}
                     >
-                      + {cat.label.split(' ')[0]} {isAlreadyAdded ? '✓' : ''}
+                      + {displayWeight} {isAlreadyAdded ? '✓' : ''}
                     </button>
                   );
                 })}
