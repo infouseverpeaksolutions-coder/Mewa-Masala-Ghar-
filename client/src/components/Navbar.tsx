@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   Search,
   ShoppingBag,
@@ -19,6 +20,20 @@ import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
 import { LeafIcon, BrandLogoBadge } from './ui/Icons';
 import { ThemeToggle } from './ThemeToggle';
+import api from '../services/api';
+
+const DEFAULT_FOOD_CATEGORIES = [
+  { id: 'cat-df', name: 'Dry Fruits', slug: 'dry-fruits' },
+  { id: 'cat-seeds', name: 'Seeds', slug: 'seeds' },
+  { id: 'cat-makhana', name: 'Makhana', slug: 'makhana' },
+  { id: 'cat-spices', name: 'Spices', slug: 'spices' },
+  { id: 'cat-aataa', name: 'Aataa (Flour)', slug: 'aataa-flour' },
+];
+
+const DEFAULT_JIMMI_CATEGORIES = [
+  { id: 'cat-skincare', name: 'Personal Care & Skincare', slug: 'personal-care-skincare' },
+  { id: 'cat-baby', name: 'Baby care', slug: 'baby-care' },
+];
 
 export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
   const { itemCount, setIsCartOpen } = useCart();
@@ -28,6 +43,29 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
   const location = useLocation();
 
   const isJimmiJaggu = location.pathname.startsWith('/jimmi-jaggu');
+
+  // Dynamically load categories for Mewa Masala Ghar and Jimmi Jaggu
+  const { data: foodCategories = [] } = useQuery({
+    queryKey: ['navbar-food-categories'],
+    queryFn: async () => {
+      const res = await api.get('/categories?store=foods');
+      return (res.data?.data || []) as any[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: jimmiCategories = [] } = useQuery({
+    queryKey: ['navbar-jimmi-categories'],
+    queryFn: async () => {
+      const res = await api.get('/categories?brand=jimmi-jaggu');
+      return (res.data?.data || []) as any[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const currentCategories = isJimmiJaggu
+    ? (jimmiCategories.length > 0 ? jimmiCategories : DEFAULT_JIMMI_CATEGORIES)
+    : (foodCategories.length > 0 ? foodCategories : DEFAULT_FOOD_CATEGORIES);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -201,54 +239,54 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               </button>
 
               {shopDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-[#E7E0D0] py-2 z-50 animate-in fade-in duration-150">
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-[#18221B] rounded-2xl shadow-xl border border-[#E7E0D0] dark:border-[#2A3B2F] py-2 z-50 animate-in fade-in duration-150">
                   <Link
                     to="/shop"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                   >
                     All Products
                   </Link>
                   <Link
                     to="/shop?category=dry-fruits"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                   >
                     Dry Fruits
                   </Link>
                   <Link
-                    to="/shop?category=seeds-mixes"
+                    to="/shop?category=seeds"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                   >
                     Seeds & Mixes
                   </Link>
                   <Link
                     to="/shop?category=makhana"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                   >
                     Flavoured Makhana
                   </Link>
                   <Link
-                    to="/shop?category=spices-seasonings"
+                    to="/shop?category=spices"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                   >
                     Spices
                   </Link>
                   <Link
-                    to="/shop?category=specialty-flours"
+                    to="/shop?category=aataa-flour"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
+                    className="block px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0]"
                   >
                     Aataa (Flour)
                   </Link>
-                  <div className="border-t border-gray-100 my-1" />
+                  <div className="border-t border-gray-100 dark:border-gray-800 my-1" />
                   <Link
                     to="/shop?combo=true"
                     onClick={() => setShopDropdownOpen(false)}
-                    className="block px-4 py-2 text-xs font-semibold text-[#8C6D37] hover:bg-[#FAF6EC]"
+                    className="block px-4 py-2 text-xs font-semibold text-[#8C6D37] dark:text-[#E5B85C] hover:bg-[#FAF6EC] dark:hover:bg-[#202E24]"
                   >
                     Combo Packs (2/4/6)
                   </Link>
@@ -267,47 +305,27 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               </button>
 
               {categoriesDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-[#E7E0D0] py-2 z-50 animate-in fade-in duration-150">
-                  <Link
-                    to="/shop?category=dry-fruits"
-                    onClick={() => setCategoriesDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
-                    <span>Dry Fruits</span>
-                  </Link>
-                  <Link
-                    to="/shop?category=seeds-mixes"
-                    onClick={() => setCategoriesDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
-                    <span>Seeds</span>
-                  </Link>
-                  <Link
-                    to="/shop?category=makhana"
-                    onClick={() => setCategoriesDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
-                    <span>Makhana</span>
-                  </Link>
-                  <Link
-                    to="/shop?category=spices-seasonings"
-                    onClick={() => setCategoriesDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
-                    <span>Spices</span>
-                  </Link>
-                  <Link
-                    to="/shop?category=specialty-flours"
-                    onClick={() => setCategoriesDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-[#FAF6EC] hover:text-[#1F4D2E]"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-[#1F4D2E]" />
-                    <span>Aataa (Flour)</span>
-                  </Link>
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#18221B] rounded-2xl shadow-xl border border-[#E7E0D0] dark:border-[#2A3B2F] py-2 z-50 animate-in fade-in duration-150">
+                  {currentCategories.map((cat: any) => {
+                    const targetUrl = isJimmiJaggu
+                      ? `/jimmi-jaggu?category=${cat.slug}`
+                      : `/shop?category=${cat.slug}`;
+                    return (
+                      <Link
+                        key={cat.id || cat.slug}
+                        to={targetUrl}
+                        onClick={() => setCategoriesDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-[#FAF6EC] dark:hover:bg-[#202E24] hover:text-[#1F4D2E] dark:hover:text-[#8ED9A0] transition-colors"
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            isJimmiJaggu ? 'bg-[#B97375]' : 'bg-[#1F4D2E]'
+                          }`}
+                        />
+                        <span className="truncate">{cat.name}</span>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -555,7 +573,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               Dry Fruits
             </Link>
             <Link
-              to="/shop?category=seeds-mixes"
+              to="/shop?category=seeds"
               onClick={() => setMobileMenuOpen(false)}
               className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >
@@ -569,7 +587,14 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
               Makhana
             </Link>
             <Link
-              to="/shop?category=specialty-flours"
+              to="/shop?category=spices"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
+            >
+              Spices
+            </Link>
+            <Link
+              to="/shop?category=aataa-flour"
               onClick={() => setMobileMenuOpen(false)}
               className="p-2.5 bg-white dark:bg-[#18221B] rounded-xl text-center text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1F2E23] border border-[#E7E0D0] dark:border-[#2A3B2F]"
             >

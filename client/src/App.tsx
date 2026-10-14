@@ -54,6 +54,8 @@ export const App: React.FC = () => {
           {/* Catalog & Product Discovery */}
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:category" element={<ShopPage />} />
+          <Route path="/categories" element={<Navigate to="/shop" replace />} />
+          <Route path="/categories/:category" element={<ShopPage />} />
           <Route path="/product/:slug" element={<ProductDetailPage />} />
           <Route path="/search" element={<SearchPage />} />
 

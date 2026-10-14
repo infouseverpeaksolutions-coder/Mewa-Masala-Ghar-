@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Filter, RefreshCw, X, ChevronDown, Sparkles } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
@@ -7,17 +7,35 @@ import { LeafIcon } from '../components/ui/Icons';
 import api from '../services/api';
 import { Product, Category } from '../types';
 
+export const normalizeCatSlug = (slug: string): string => {
+  const s = (slug || '').toLowerCase().trim();
+  if (s === 'seeds-mixes' || s === 'super-seeds') return 'seeds';
+  if (s === 'spices-seasonings' || s === 'pure-spices' || s === 'authentic-spices') return 'spices';
+  if (s === 'specialty-flours' || s === 'flours' || s === 'aata') return 'aataa-flour';
+  if (s === 'dry-fruits-nuts' || s === 'dry-fruits-combos') return 'dry-fruits';
+  return s;
+};
+
+export const isCategoryActive = (catSlug: string, currentSelected: string) => {
+  if (!currentSelected && !catSlug) return true;
+  if (!currentSelected || !catSlug) return false;
+  return normalizeCatSlug(catSlug) === normalizeCatSlug(currentSelected);
+};
+
 export const ShopPage: React.FC = () => {
+  const { category: pathCategory } = useParams<{ category?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const storeParam = searchParams.get('store');
-  const categoryParam = searchParams.get('category') || '';
+  const rawCategoryParam = pathCategory || searchParams.get('category') || '';
+  const initialCategory = normalizeCatSlug(rawCategoryParam);
   const searchParam = searchParams.get('search') || '';
   const featuredParam = searchParams.get('featured') || '';
+  const comboParam = searchParams.get('combo') || '';
   const sortParam = searchParams.get('sort') || 'newest';
 
-  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [selectedSort, setSelectedSort] = useState<string>(sortParam);
   const [searchInput, setSearchInput] = useState<string>(searchParam);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -31,6 +49,22 @@ export const ShopPage: React.FC = () => {
     }
   }, [storeParam, searchParams, navigate]);
 
+  // Keep selectedCategory in sync whenever the URL changes (Header dropdown, Back/Forward, or Direct Link)
+  useEffect(() => {
+    const currentParam = pathCategory || searchParams.get('category') || '';
+    const normalized = normalizeCatSlug(currentParam);
+    setSelectedCategory(normalized);
+    setCurrentPage(1);
+  }, [pathCategory, searchParams]);
+
+  useEffect(() => {
+    setSelectedSort(searchParams.get('sort') || 'newest');
+  }, [searchParams]);
+
+  useEffect(() => {
+    setSearchInput(searchParams.get('search') || '');
+  }, [searchParams]);
+
   // Fetch Mewa Masala Ghar food categories
   const { data: foodCategories = [] } = useQuery({
     queryKey: ['mewa-food-categories'],
@@ -42,23 +76,25 @@ export const ShopPage: React.FC = () => {
 
   // Fetch products exclusively for Mewa Masala Ghar foods
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ['mewa-products', selectedCategory, searchParam, featuredParam, selectedSort],
+    queryKey: ['mewa-products', selectedCategory, searchParam, featuredParam, comboParam, selectedSort],
     queryFn: async () => {
       let url = `/products?store=foods&sort=${selectedSort}`;
       if (selectedCategory) url += `&category=${selectedCategory}`;
       if (searchParam) url += `&search=${encodeURIComponent(searchParam)}`;
       if (featuredParam) url += `&featured=true`;
+      if (comboParam) url += `&combo=true`;
       const res = await api.get(url);
       return res.data?.data?.products as Product[];
     },
   });
 
   const handleApplyFilter = (catSlug: string) => {
-    setSelectedCategory(catSlug);
+    const norm = normalizeCatSlug(catSlug);
+    setSelectedCategory(norm);
     setCurrentPage(1);
     setSearchParams((prev) => {
       const p = new URLSearchParams(prev);
-      if (catSlug) p.set('category', catSlug);
+      if (norm) p.set('category', norm);
       else p.delete('category');
       return p;
     });
@@ -107,7 +143,9 @@ export const ShopPage: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <LeafIcon className="w-5 h-5 text-[#2F5D3A]" color="#2F5D3A" />
             <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#1F4D2E] tracking-tight">
-              Mewa Masala Ghar Catalog
+              {selectedCategory
+                ? foodCategories.find((c) => isCategoryActive(c.slug, selectedCategory))?.name || 'Mewa Masala Ghar Catalog'
+                : 'Mewa Masala Ghar Catalog'}
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-gray-600 mt-1 max-w-xl font-sans">
@@ -172,22 +210,25 @@ export const ShopPage: React.FC = () => {
                 <span>All Categories</span>
                 {!selectedCategory && <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />}
               </button>
-              {foodCategories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => handleApplyFilter(cat.slug)}
-                  className={`w-full text-left px-3.5 py-2 rounded-xl text-xs transition-all flex items-center justify-between min-h-[40px] ${
-                    selectedCategory === cat.slug
-                      ? 'font-bold text-[#1F4D2E] bg-[#FAF6EC]'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                >
-                  <span>{cat.name}</span>
-                  {selectedCategory === cat.slug && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />
-                  )}
-                </button>
-              ))}
+              {foodCategories.map((cat) => {
+                const isActive = isCategoryActive(cat.slug, selectedCategory);
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleApplyFilter(cat.slug)}
+                    className={`w-full text-left px-3.5 py-2 rounded-xl text-xs transition-all flex items-center justify-between min-h-[40px] ${
+                      isActive
+                        ? 'font-bold text-[#1F4D2E] bg-[#FAF6EC]'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span>{cat.name}</span>
+                    {isActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -375,22 +416,28 @@ export const ShopPage: React.FC = () => {
                     <span>All Categories</span>
                     {!selectedCategory && <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />}
                   </button>
-                  {foodCategories.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => handleApplyFilter(cat.slug)}
-                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs min-h-[44px] flex items-center justify-between ${
-                        selectedCategory === cat.slug
-                          ? 'font-bold text-[#1F4D2E] bg-[#FAF6EC]'
-                          : 'text-gray-700 bg-gray-50'
-                      }`}
-                    >
-                      <span>{cat.name}</span>
-                      {selectedCategory === cat.slug && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />
-                      )}
-                    </button>
-                  ))}
+                  {foodCategories.map((cat) => {
+                    const isActive = isCategoryActive(cat.slug, selectedCategory);
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => {
+                          handleApplyFilter(cat.slug);
+                          setMobileFilterOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 rounded-xl text-xs min-h-[44px] flex items-center justify-between ${
+                          isActive
+                            ? 'font-bold text-[#1F4D2E] bg-[#FAF6EC]'
+                            : 'text-gray-700 bg-gray-50'
+                        }`}
+                      >
+                        <span>{cat.name}</span>
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#2F5D3A]" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
