@@ -1,3 +1,11 @@
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Automatically load environment variables from server/.env
+dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(process.cwd(), 'server/.env') });
+dotenv.config();
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
