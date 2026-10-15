@@ -8,8 +8,8 @@ const QUICK_FAQS = [
     a: 'You can use the Track Order page with your MMG order number or click the direct tracking link sent to your registered email and mobile SMS.',
   },
   {
-    q: 'Do you offer Cash on Delivery (COD)?',
-    a: 'Yes! Cash on Delivery is available across 25,000+ Indian pincodes without any hidden surcharges on orders above ₹999.',
+    q: 'What payment modes are supported?',
+    a: 'We accept 100% secure online payments via Razorpay — including UPI (Google Pay, PhonePe, Paytm, BHIM), Credit/Debit cards, and Netbanking.',
   },
   {
     q: 'Can I get custom corporate or festive gifting hampers?',

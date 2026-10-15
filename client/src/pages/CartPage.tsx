@@ -370,7 +370,7 @@ export const CartPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Truck className="w-4 h-4 text-[#2F5D3A] shrink-0" />
-                <span>Cash on Delivery (COD) available across India</span>
+                <span>Express Pan-India Delivery (2-5 Business Days)</span>
               </div>
             </div>
           </div>

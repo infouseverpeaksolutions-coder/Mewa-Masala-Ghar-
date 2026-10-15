@@ -50,6 +50,10 @@ export const createOrder = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Order must contain at least one item' });
     }
 
+    if (paymentMethod === PaymentMethod.COD) {
+      return res.status(400).json({ error: 'Cash on Delivery is disabled. Please pay securely online via Razorpay.' });
+    }
+
     const orderData = await prisma.$transaction(async (tx) => {
       let subtotal = 0;
       let gstAmount = 0;

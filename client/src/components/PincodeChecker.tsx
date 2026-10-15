@@ -37,7 +37,7 @@ export const PincodeChecker: React.FC = () => {
     <div className="bg-[#FAF6EC]/70 p-4 rounded-2xl border border-[#E7E0D0] my-4">
       <div className="flex items-center gap-2 mb-2.5 text-xs font-bold uppercase tracking-wider text-gray-800">
         <MapPin className="w-4 h-4 text-[#2F5D3A]" />
-        <span>Check Delivery & Cash on Delivery (COD) Availability</span>
+        <span>Check Delivery & Serviceability</span>
       </div>
 
       <form onSubmit={handleCheck} className="flex gap-2">
@@ -76,7 +76,7 @@ export const PincodeChecker: React.FC = () => {
           </div>
           <div className="text-gray-600 pl-5.5 flex flex-wrap gap-x-4 gap-y-1 pt-1">
             <span>🚚 Delivery: <strong>{info.estimatedDays} Business Days</strong></span>
-            <span>💵 COD: <strong>{info.isCodAvailable ? 'Available' : 'Prepaid Only'}</strong></span>
+            <span>🔒 Payment: <strong>100% Secure Online</strong></span>
             <span>✨ Free shipping on ₹{info.freeDeliveryThreshold}+</span>
           </div>
         </div>

@@ -4,7 +4,6 @@ import {
   ShieldCheck,
   Truck,
   CreditCard,
-  Banknote,
   Loader2,
   AlertCircle,
   ArrowLeft,
@@ -55,7 +54,7 @@ export const CheckoutPage: React.FC = () => {
   const [stateCode, setStateCode] = useState('');
   const [pincode, setPincode] = useState('');
   const [customerGstin, setCustomerGstin] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'RAZORPAY'>('COD');
+  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'RAZORPAY'>('RAZORPAY');
   const [customerNotes, setCustomerNotes] = useState('');
 
   // Saved Addresses for Logged-in Users
@@ -281,7 +280,7 @@ export const CheckoutPage: React.FC = () => {
             modal: {
               ondismiss: function () {
                 setLoading(false);
-                setError('Payment was cancelled. You can retry payment or choose Cash on Delivery.');
+                setError('Payment was cancelled. You can retry payment whenever you are ready.');
               },
             },
           };
@@ -570,58 +569,33 @@ export const CheckoutPage: React.FC = () => {
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <label
-                className={`p-4 rounded-2xl border-2 cursor-pointer flex items-start gap-3 transition-all min-h-[44px] ${
-                  paymentMethod === 'COD'
-                    ? 'border-[#2F5D3A] bg-[#FAF6EC] ring-2 ring-[#2F5D3A]/20 shadow-xs'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="payment"
-                  value="COD"
-                  checked={paymentMethod === 'COD'}
-                  onChange={() => setPaymentMethod('COD')}
-                  className="mt-1 accent-[#2F5D3A]"
-                />
-                <div>
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-gray-900">
-                    <Banknote className="w-4 h-4 text-[#2F5D3A]" />
-                    <span>Cash on Delivery (COD)</span>
-                  </div>
-                  <p className="text-[11px] text-gray-500 mt-1 leading-normal">
-                    Pay via cash or UPI QR directly at doorstep to delivery agent.
-                  </p>
-                </div>
-              </label>
-
-              <label
-                className={`p-4 rounded-2xl border-2 cursor-pointer flex items-start gap-3 transition-all min-h-[44px] ${
-                  paymentMethod === 'RAZORPAY'
-                    ? 'border-[#2F5D3A] bg-[#FAF6EC] ring-2 ring-[#2F5D3A]/20 shadow-xs'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
+            <div>
+              <div
+                className="p-4 rounded-2xl border-2 border-[#2F5D3A] bg-[#FAF6EC] ring-2 ring-[#2F5D3A]/20 shadow-xs flex items-start gap-3 transition-all min-h-[44px]"
               >
                 <input
                   type="radio"
                   name="payment"
                   value="RAZORPAY"
-                  checked={paymentMethod === 'RAZORPAY'}
-                  onChange={() => setPaymentMethod('RAZORPAY')}
+                  checked={true}
+                  readOnly
                   className="mt-1 accent-[#2F5D3A]"
                 />
-                <div>
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-gray-900">
-                    <CreditCard className="w-4 h-4 text-[#2F5D3A]" />
-                    <span>Online Payment (Razorpay)</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-gray-900">
+                      <CreditCard className="w-4 h-4 text-[#2F5D3A]" />
+                      <span>Online Payment (Razorpay)</span>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#2F5D3A] bg-emerald-100/70 border border-emerald-300 px-2 py-0.5 rounded-full">
+                      100% Secure
+                    </span>
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-1 leading-normal">
-                    UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, Netbanking.
+                  <p className="text-[11px] text-gray-600 mt-1 leading-normal">
+                    Instant & encrypted payment via UPI (Google Pay, PhonePe, Paytm, BHIM), Credit/Debit Cards, Netbanking & Wallets.
                   </p>
                 </div>
-              </label>
+              </div>
             </div>
 
             {/* Special Instructions */}

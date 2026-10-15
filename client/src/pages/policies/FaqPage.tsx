@@ -68,9 +68,9 @@ const FAQS: FaqItem[] = [
   },
   {
     category: 'Orders & Shipping',
-    question: 'Is Cash on Delivery (COD) available?',
+    question: 'What payment methods do you accept?',
     answer:
-      'Yes, Cash on Delivery is available across 25,000+ Indian postal pin codes for your convenience.',
+      'We accept all major prepaid online payment options including UPI (Google Pay, PhonePe, Paytm, BHIM), Credit Cards, Debit Cards, and Netbanking via our 100% secure Razorpay payment gateway.',
   },
 ];
 
