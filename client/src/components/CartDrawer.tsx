@@ -60,7 +60,7 @@ export const CartDrawer: React.FC = () => {
   };
 
   // Free delivery progress in green & gold
-  const freeDeliveryThreshold = settings.free_shipping_threshold || 499;
+  const freeDeliveryThreshold = Number(settings.free_shipping_threshold) || 999;
   const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - subtotal);
   const progressPercent = Math.min(100, Math.round((subtotal / freeDeliveryThreshold) * 100));
 

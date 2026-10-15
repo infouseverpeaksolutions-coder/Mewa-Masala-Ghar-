@@ -13,7 +13,7 @@ export const CouponsPage: React.FC = () => {
   const [code, setCode] = useState('');
   const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FLAT'>('PERCENTAGE');
   const [discountValue, setDiscountValue] = useState('10');
-  const [minOrderValue, setMinOrderValue] = useState('499');
+  const [minOrderValue, setMinOrderValue] = useState('999');
   const [maxDiscount, setMaxDiscount] = useState('200');
 
   const { data: coupons, isLoading } = useQuery({

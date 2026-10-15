@@ -135,7 +135,7 @@ export const createOrder = async (req: Request, res: Response) => {
       }
 
       // C. Shipping and Fees
-      let freeShippingThreshold = 499;
+      let freeShippingThreshold = 999;
       let defaultShippingFee = 50;
 
       const freeShippingSetting = await tx.setting.findUnique({ where: { key: 'free_shipping_threshold' } });

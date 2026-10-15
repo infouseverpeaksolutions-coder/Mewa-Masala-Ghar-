@@ -94,7 +94,7 @@ export const LoginPage: React.FC = () => {
               <div className="w-5 h-5 rounded-full bg-[#D9A441]/20 flex items-center justify-center text-[#D9A441]">
                 <Check className="w-3 h-3" />
               </div>
-              <span>Free Delivery across India on ₹499+</span>
+              <span>Free Delivery across India on ₹999+</span>
             </div>
           </div>
         </div>

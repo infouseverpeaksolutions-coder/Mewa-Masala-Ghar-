@@ -9,7 +9,7 @@ const QUICK_FAQS = [
   },
   {
     q: 'Do you offer Cash on Delivery (COD)?',
-    a: 'Yes! Cash on Delivery is available across 25,000+ Indian pincodes without any hidden surcharges on orders above ₹499.',
+    a: 'Yes! Cash on Delivery is available across 25,000+ Indian pincodes without any hidden surcharges on orders above ₹999.',
   },
   {
     q: 'Can I get custom corporate or festive gifting hampers?',

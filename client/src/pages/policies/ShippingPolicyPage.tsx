@@ -77,7 +77,7 @@ export const ShippingPolicyPage: React.FC = () => {
             <span>3. Shipping Rates & Free Delivery</span>
           </h2>
           <p>
-            Orders with a cart value of <strong className="text-gray-900 font-bold">₹{settings.free_shipping_threshold || 499} or more qualify for 100% FREE Standard Shipping</strong> across India. For orders below ₹{settings.free_shipping_threshold || 499}, a nominal shipping fee of ₹{settings.standard_delivery_fee || 50} is applied at checkout.
+            Orders with a cart value of <strong className="text-gray-900 font-bold">₹{settings.free_shipping_threshold || 999} or more qualify for 100% FREE Standard Shipping</strong> across India. For orders below ₹{settings.free_shipping_threshold || 999}, a nominal shipping fee of ₹{settings.standard_delivery_fee || 50} is applied at checkout.
           </p>
         </section>
 

@@ -64,7 +64,7 @@ const FAQS: FaqItem[] = [
     category: 'Orders & Shipping',
     question: 'What is your free shipping threshold and delivery timeline?',
     answer:
-      'Orders above ₹499 qualify for 100% FREE delivery across India. Metro cities are delivered within 2-4 business days, while other destinations take 3-6 business days.',
+      'Orders above ₹999 qualify for 100% FREE delivery across India. Metro cities are delivered within 2-4 business days, while other destinations take 3-6 business days.',
   },
   {
     category: 'Orders & Shipping',

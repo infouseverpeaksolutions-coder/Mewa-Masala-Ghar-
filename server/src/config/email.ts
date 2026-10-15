@@ -78,7 +78,7 @@ export const sendVerificationEmail = async (to: string, name: string, token: str
         </p>
       </div>
       <div style="text-align: center; margin-top: 24px; color: #8C7B65; font-size: 12px;">
-        <p style="margin: 4px 0;">FSSAI Lic. No.: 10021051000123 • GSTIN: 08BVFPR9012N1Z0</p>
+        <p style="margin: 4px 0;">FSSAI Lic. No.: ${ENV.COMPANY_FSSAI} • GSTIN: ${ENV.COMPANY_GSTIN}</p>
         <p style="margin: 4px 0;">JAGRITI TRADING COMPANY ( MEWAMASALAGHAR) • HANWANT COLONY GANDHIPURA Balotra -344022</p>
       </div>
     </div>

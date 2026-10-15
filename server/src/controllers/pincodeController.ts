@@ -30,9 +30,12 @@ export const checkPincode = async (req: Request, res: Response) => {
     }
 
     // Check database first
-    const record = await prisma.pincode.findUnique({
-      where: { pincode },
-    });
+    const [record, freeShippingSetting] = await Promise.all([
+      prisma.pincode.findUnique({ where: { pincode } }),
+      prisma.setting.findUnique({ where: { key: 'free_shipping_threshold' } }),
+    ]);
+
+    const freeDeliveryThreshold = freeShippingSetting ? (parseFloat(freeShippingSetting.value) || 999) : 999;
 
     if (record) {
       return res.json({
@@ -46,7 +49,7 @@ export const checkPincode = async (req: Request, res: Response) => {
           estimatedDays: record.estimatedDays,
           isCodAvailable: record.isCodAvailable,
           deliveryCharge: record.deliveryCharge,
-          freeDeliveryThreshold: 499,
+          freeDeliveryThreshold,
           shiprocket: shiprocketServiceability,
           message: record.isServiceable
             ? `Serviceable in ${record.city}, ${record.state}. Estimated delivery in ${record.estimatedDays} business days.`
@@ -116,7 +119,7 @@ export const checkPincode = async (req: Request, res: Response) => {
         estimatedDays,
         isCodAvailable: true,
         deliveryCharge: 0,
-        freeDeliveryThreshold: 499,
+        freeDeliveryThreshold,
         shiprocket: shiprocketServiceability,
         message: `Standard delivery to ${city}, ${state} within ${estimatedDays}-${estimatedDays + 1} days.`,
       },

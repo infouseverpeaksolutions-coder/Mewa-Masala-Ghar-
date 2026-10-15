@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { Product, ProductVariant, CartItem } from '../types';
 import api from '../services/api';
 import { useAuth } from './AuthContext';
+import { useSettings } from './SettingsContext';
 
 interface CartContextType {
   items: CartItem[];
@@ -29,6 +30,7 @@ const LOCAL_STORAGE_KEY = 'mmg_cart';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const { settings } = useSettings();
   const [items, setItems] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
@@ -180,8 +182,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
   const taxableAfterDiscount = Math.max(0, subtotal - discountAmount);
-  // Free delivery threshold is ₹499
-  const shippingFee = items.length === 0 ? 0 : taxableAfterDiscount >= 499 ? 0 : 49;
+  // Free delivery threshold is ₹999 (configurable via admin settings)
+  const freeShippingThreshold = Number(settings.free_shipping_threshold) || 999;
+  const standardDeliveryFee = Number(settings.standard_delivery_fee) || 49;
+  const shippingFee = items.length === 0 ? 0 : taxableAfterDiscount >= freeShippingThreshold ? 0 : standardDeliveryFee;
   const totalAmount = Number((taxableAfterDiscount + shippingFee).toFixed(2));
 
   return (

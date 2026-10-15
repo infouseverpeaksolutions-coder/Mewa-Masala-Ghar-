@@ -156,7 +156,7 @@ export async function ensureDefaultStoresAndBrands() {
         primaryColor: '#2F5D3A',
         accentColor: '#D9A441',
         bgColor: '#FAF6EC',
-        fssaiNumber: '10021051000123',
+        fssaiNumber: '22226048000212, 22226007002022',
         isActive: true,
       },
     });
@@ -177,7 +177,7 @@ export async function ensureDefaultStoresAndBrands() {
         primaryColor: '#B97375',
         accentColor: '#6D8B74',
         bgColor: '#FFFDF9',
-        fssaiNumber: '10021051000123',
+        fssaiNumber: '22226048000212, 22226007002022',
         isActive: true,
       },
     });
@@ -196,7 +196,7 @@ export async function ensureDefaultStoresAndBrands() {
         accentColor: '#D9A441',
         bgColor: '#FAF6EC',
         textColor: '#2B2B2B',
-        fssaiNumber: '10021051000123',
+        fssaiNumber: '22226048000212, 22226007002022',
         isActive: true,
       },
     });
@@ -215,7 +215,7 @@ export async function ensureDefaultStoresAndBrands() {
         accentColor: '#6D8B74',
         bgColor: '#FFFDF9',
         textColor: '#2A2A2A',
-        fssaiNumber: '10021051000123',
+        fssaiNumber: '22226048000212, 22226007002022',
         isActive: true,
       },
     });

@@ -26,6 +26,7 @@ import { ProductCard } from '../components/ProductCard';
 import { ProductReviewsSection } from '../components/ProductReviewsSection';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useSettings } from '../context/SettingsContext';
 import api from '../services/api';
 import { Product, ProductVariant } from '../types';
 import { resolveImageUrl } from '../utils/imageUrl';
@@ -36,6 +37,7 @@ export const ProductDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { settings } = useSettings();
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -552,7 +554,7 @@ export const ProductDetailPage: React.FC = () => {
               </div>
               <div className="text-[11px] leading-tight">
                 <strong className="block text-gray-900 dark:text-white">Pan-India</strong>
-                <span className="text-gray-500 dark:text-gray-400">Free on ₹499+</span>
+                <span className="text-gray-500 dark:text-gray-400">Free on ₹{settings.free_shipping_threshold || 999}+</span>
               </div>
             </div>
 

@@ -27,9 +27,9 @@ export const SettingsPage: React.FC = () => {
     address: '',
     gstin: '',
     fssai: '',
-    state_code: '27',
-    state_name: 'Maharashtra',
-    free_shipping_threshold: '499',
+    state_code: '08',
+    state_name: 'Rajasthan',
+    free_shipping_threshold: '999',
     standard_delivery_fee: '49',
     cod_charge: '0',
   });
@@ -51,7 +51,7 @@ export const SettingsPage: React.FC = () => {
           fssai: d.fssai || '22226048000212, 22226007002022',
           state_code: d.state_code || '08',
           state_name: d.state_name || 'Rajasthan',
-          free_shipping_threshold: d.free_shipping_threshold || '499',
+          free_shipping_threshold: d.free_shipping_threshold || '999',
           standard_delivery_fee: d.standard_delivery_fee || '49',
           cod_charge: d.cod_charge || '0',
         });

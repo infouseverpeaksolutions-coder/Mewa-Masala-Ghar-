@@ -137,7 +137,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             {isJimmiJaggu ? (
               <>
                 <span className="text-white/60">‹</span>
-                <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
+                <span>Free shipping above ₹{settings.free_shipping_threshold || '999'}</span>
                 <span className="text-white/40">•</span>
                 <span>100% Safe & Gentle</span>
                 <span className="text-white/40 hidden sm:inline">•</span>
@@ -147,7 +147,7 @@ export const Navbar: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => 
             ) : (
               <>
                 <LeafIcon className="w-3.5 h-3.5 text-[#D9A441]" color="#D9A441" />
-                <span>Free shipping above ₹{settings.free_shipping_threshold || '499'}</span>
+                <span>Free shipping above ₹{settings.free_shipping_threshold || '999'}</span>
                 <span className="text-white/40">•</span>
                 <span>100% Veg</span>
                 <span className="text-white/40 hidden sm:inline">•</span>

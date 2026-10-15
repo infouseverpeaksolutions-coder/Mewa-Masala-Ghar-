@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: CompanySettings = {
   fssai: '22226048000212, 22226007002022',
   state_code: '08',
   state_name: 'Rajasthan',
-  free_shipping_threshold: 499,
+  free_shipping_threshold: 999,
   standard_delivery_fee: 49,
   cod_charge: 0,
 };

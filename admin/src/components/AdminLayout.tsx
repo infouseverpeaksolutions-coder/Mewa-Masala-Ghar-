@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -24,7 +24,7 @@ import {
   Search,
   ChevronDown,
 } from 'lucide-react';
-import { setAdminToken } from '../services/api';
+import api, { setAdminToken } from '../services/api';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -48,6 +48,17 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [fssaiNo, setFssaiNo] = useState('22226048000212, 22226007002022');
+  const [gstinNo, setGstinNo] = useState('08BVFPR9012N1Z0');
+
+  useEffect(() => {
+    api.get('/settings').then((res) => {
+      if (res.data?.data) {
+        if (res.data.data.fssai) setFssaiNo(res.data.data.fssai);
+        if (res.data.data.gstin) setGstinNo(res.data.data.gstin);
+      }
+    }).catch(() => {});
+  }, []);
 
   const handleLogout = () => {
     setAdminToken(null);
@@ -139,7 +150,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
             <div className="hidden xl:flex items-center gap-2 text-xs font-medium text-[#2F5D3A] bg-[#2F5D3A]/10 px-3 py-1 rounded-full border border-[#2F5D3A]/20">
               <ShieldCheck className="w-3.5 h-3.5 text-[#2F5D3A]" />
-              <span>FSSAI: 10021051000123 • GSTIN: 08BVFPR9012N1Z0</span>
+              <span>FSSAI: {fssaiNo} • GSTIN: {gstinNo}</span>
             </div>
           </div>
 

@@ -43,7 +43,7 @@ export const CartPage: React.FC = () => {
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
 
-  const freeShippingThreshold = settings.free_shipping_threshold || 499;
+  const freeShippingThreshold = Number(settings.free_shipping_threshold) || 999;
   const progressToFreeShipping = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
   const amountNeededForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
 
