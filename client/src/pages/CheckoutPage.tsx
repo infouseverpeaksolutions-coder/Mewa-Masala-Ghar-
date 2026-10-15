@@ -45,15 +45,15 @@ export const CheckoutPage: React.FC = () => {
   const [pincodeStatus, setPincodeStatus] = useState<{ checked: boolean; serviceable: boolean; city?: string; state?: string; days?: number } | null>(null);
 
   // Form Fields
-  const [customerName, setCustomerName] = useState(user?.name || 'Aarav Sharma');
-  const [customerEmail, setCustomerEmail] = useState(user?.email || 'aarav@example.com');
-  const [customerPhone, setCustomerPhone] = useState(user?.phone || '9876543210');
-  const [addressLine, setAddressLine] = useState('Flat 402, Golden Heights, Palm Beach Road');
-  const [landmark, setLandmark] = useState('Near Seawoods Station');
-  const [city, setCity] = useState('Navi Mumbai');
-  const [state, setState] = useState('Maharashtra');
-  const [stateCode, setStateCode] = useState('27');
-  const [pincode, setPincode] = useState('400706');
+  const [customerName, setCustomerName] = useState(user?.name || '');
+  const [customerEmail, setCustomerEmail] = useState(user?.email || '');
+  const [customerPhone, setCustomerPhone] = useState(user?.phone || '');
+  const [addressLine, setAddressLine] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [stateCode, setStateCode] = useState('');
+  const [pincode, setPincode] = useState('');
   const [customerGstin, setCustomerGstin] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'RAZORPAY'>('COD');
   const [customerNotes, setCustomerNotes] = useState('');
@@ -150,13 +150,38 @@ export const CheckoutPage: React.FC = () => {
       return;
     }
 
+    if (!customerName.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+
     if (!/^[6-9]\d{9}$/.test(customerPhone.trim())) {
       setError('Please enter a valid 10-digit Indian mobile number');
       return;
     }
 
+    if (!customerEmail.trim() || !customerEmail.includes('@')) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (!addressLine.trim()) {
+      setError('Please enter your delivery street address');
+      return;
+    }
+
     if (!/^\d{6}$/.test(pincode.trim())) {
       setError('Please enter a valid 6-digit Indian PIN code');
+      return;
+    }
+
+    if (!city.trim()) {
+      setError('Please enter your city or district');
+      return;
+    }
+
+    if (!state.trim()) {
+      setError('Please select your state');
       return;
     }
 
@@ -301,7 +326,7 @@ export const CheckoutPage: React.FC = () => {
     );
   }
 
-  const isInterState = stateCode !== '27';
+  const isInterState = stateCode ? stateCode !== '08' : false;
 
   return (
     <div className="w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-8 sm:py-12">
@@ -387,7 +412,7 @@ export const CheckoutPage: React.FC = () => {
                   required
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Aarav Sharma"
+                  placeholder="Full Name"
                   className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
                 />
               </div>
@@ -399,7 +424,7 @@ export const CheckoutPage: React.FC = () => {
                   maxLength={10}
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, ''))}
-                  placeholder="9876543210"
+                  placeholder="10-digit mobile number"
                   className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
                 />
               </div>
@@ -412,7 +437,7 @@ export const CheckoutPage: React.FC = () => {
                 required
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
-                placeholder="aarav@example.com"
+                placeholder="Email address"
                 className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
               />
             </div>
@@ -436,7 +461,7 @@ export const CheckoutPage: React.FC = () => {
                 required
                 value={addressLine}
                 onChange={(e) => setAddressLine(e.target.value)}
-                placeholder="Flat 402, Golden Heights, Palm Beach Road"
+                placeholder="Flat / House No., Building, Street"
                 className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
               />
             </div>
@@ -448,7 +473,7 @@ export const CheckoutPage: React.FC = () => {
                   type="text"
                   value={landmark}
                   onChange={(e) => setLandmark(e.target.value)}
-                  placeholder="Near Seawoods Station"
+                  placeholder="Nearby landmark (optional)"
                   className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
                 />
               </div>
@@ -465,7 +490,7 @@ export const CheckoutPage: React.FC = () => {
                     if (val.length === 6) checkPincodeServiceability(val);
                   }}
                   onBlur={handlePincodeBlur}
-                  placeholder="400706"
+                  placeholder="6-digit PIN code"
                   className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
                 />
               </div>
@@ -496,17 +521,19 @@ export const CheckoutPage: React.FC = () => {
                   required
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  placeholder="Navi Mumbai"
+                  placeholder="City / District"
                   className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
                 />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">State *</label>
                 <select
+                  required
                   value={state}
                   onChange={(e) => handleStateChange(e.target.value)}
                   className="w-full px-4 py-2.5 text-xs bg-[#FAF6EC]/40 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F5D3A] focus:bg-white transition-all min-h-[44px]"
                 >
+                  <option value="">Select State</option>
                   {INDIAN_STATES.map((s) => (
                     <option key={s.code} value={s.name}>
                       {s.name} (Code: {s.code})
