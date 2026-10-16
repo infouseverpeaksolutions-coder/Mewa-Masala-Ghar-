@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { resolveImageUrl, getSmartProductFallback } from '../utils/imageUrl';
 import { formatWeight } from '../utils/weight';
+import { isGiftProduct } from '../utils/productUtils';
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { addToCart } = useCart();
@@ -64,10 +65,13 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       ? Math.round(((selectedVariant.mrp - selectedVariant.price) / selectedVariant.mrp) * 100)
       : 0;
 
+  const isGift = isGiftProduct(product);
+  const minQty = isGift ? 3 : 1;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product, selectedVariant, 1);
+    addToCart(product, selectedVariant, minQty);
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 1200);
   };
@@ -209,6 +213,11 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
                 Save {discountPercent}%
               </span>
             )}
+            {isGift && (
+              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded text-amber-800 bg-amber-50 border border-amber-200">
+                Min. 3 packs
+              </span>
+            )}
           </div>
         </div>
 
@@ -231,7 +240,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           ) : (
             <>
               <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Add to Cart</span>
+              <span>{isGift ? 'Add to Cart (Min. 3)' : 'Add to Cart'}</span>
             </>
           )}
         </button>

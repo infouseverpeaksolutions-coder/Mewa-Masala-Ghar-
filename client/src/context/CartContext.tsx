@@ -3,6 +3,7 @@ import { Product, ProductVariant, CartItem } from '../types';
 import api from '../services/api';
 import { useAuth } from './AuthContext';
 import { useSettings } from './SettingsContext';
+import { isGiftProduct } from '../utils/productUtils';
 
 interface CartContextType {
   items: CartItem[];
@@ -83,6 +84,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user, syncServerCart]);
 
   const addToCart = async (product: Product, variant: ProductVariant, quantity = 1) => {
+    const minQty = isGiftProduct(product) ? 3 : 1;
+    let finalAddedQty = quantity;
+
     // Optimistic local update
     setItems((prev) => {
       const existing = prev.find((item) => item.variant.id === variant.id);
@@ -93,13 +97,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             : item
         );
       }
-      return [...prev, { product, variant, quantity }];
+      finalAddedQty = Math.max(minQty, quantity);
+      return [...prev, { product, variant, quantity: finalAddedQty }];
     });
     setIsCartOpen(true);
 
     // Sync to server
     try {
-      await api.post('/cart/items', { variantId: variant.id, quantity });
+      await api.post('/cart/items', { variantId: variant.id, quantity: finalAddedQty });
     } catch (e) {
       // Local storage fallback remains
     }
@@ -129,9 +134,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    const currentItem = items.find((item) => item.variant.id === variantId);
+    const minQty = currentItem && isGiftProduct(currentItem.product) ? 3 : 1;
+    const finalQty = Math.max(minQty, quantity);
+
     setItems((prev) =>
       prev.map((item) =>
-        item.variant.id === variantId ? { ...item, quantity } : item
+        item.variant.id === variantId ? { ...item, quantity: finalQty } : item
       )
     );
 
@@ -139,7 +148,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await api.get('/cart');
       const sItem = res.data?.data?.items?.find((i: any) => i.productVariantId === variantId);
       if (sItem?.id) {
-        await api.put(`/cart/items/${sItem.id}`, { quantity });
+        await api.put(`/cart/items/${sItem.id}`, { quantity: finalQty });
       }
     } catch (e) {
       // Fallback
@@ -147,7 +156,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const applyCoupon = (code: string, discount: number) => {
-    setAppliedCoupon({ code, discount });
+    const cleanDiscount = Number(discount);
+    const safeDiscount = isNaN(cleanDiscount) ? 0 : Math.max(0, cleanDiscount);
+    setAppliedCoupon({
+      code: String(code || '').toUpperCase().trim(),
+      discount: Number(safeDiscount.toFixed(2)),
+    });
   };
 
   const removeCoupon = () => {
@@ -180,13 +194,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return sum + (price * qty - base);
   }, 0);
 
-  const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
+  const rawDiscount = appliedCoupon?.discount ?? 0;
+  const discountAmount = isNaN(Number(rawDiscount)) ? 0 : Number(rawDiscount);
   const taxableAfterDiscount = Math.max(0, subtotal - discountAmount);
   // Free delivery threshold is ₹999 (configurable via admin settings)
   const freeShippingThreshold = Number(settings.free_shipping_threshold) || 999;
   const standardDeliveryFee = Number(settings.standard_delivery_fee) || 49;
   const shippingFee = items.length === 0 ? 0 : taxableAfterDiscount >= freeShippingThreshold ? 0 : standardDeliveryFee;
-  const totalAmount = Number((taxableAfterDiscount + shippingFee).toFixed(2));
+  const safeTotal = taxableAfterDiscount + shippingFee;
+  const totalAmount = Number((isNaN(safeTotal) ? 0 : safeTotal).toFixed(2));
 
   return (
     <CartContext.Provider

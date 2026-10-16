@@ -31,6 +31,7 @@ import api from '../services/api';
 import { Product, ProductVariant } from '../types';
 import { resolveImageUrl } from '../utils/imageUrl';
 import { formatWeight } from '../utils/weight';
+import { isGiftProduct } from '../utils/productUtils';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -79,6 +80,14 @@ export const ProductDetailPage: React.FC = () => {
       });
     }
   }, [variants]);
+
+  // Enforce minimum order quantity for gift products
+  React.useEffect(() => {
+    if (product) {
+      const min = isGiftProduct(product) ? 3 : 1;
+      setQuantity((prev) => Math.max(prev, min));
+    }
+  }, [product]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!imgContainerRef.current) return;
@@ -457,25 +466,44 @@ export const ProductDetailPage: React.FC = () => {
 
           {/* Quantity Stepper & Dual CTA Buttons (Green Add to Cart + Gold Buy Now) */}
           <div className="space-y-3 pt-2">
+            {isGiftProduct(product) && (
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200 font-semibold">
+                <Package className="w-4 h-4 text-[#D9A441] shrink-0" />
+                <span>Minimum Order Quantity: 3 units for Gift Hampers & Packs</span>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {/* Stepper */}
-              <div className="flex items-center justify-between border border-gray-300 dark:border-[#2A3B2F] rounded-full bg-white dark:bg-[#18221B] px-2 py-1 shadow-xs shrink-0 h-12 sm:w-36">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#223326] rounded-full transition-colors active:scale-95"
-                  aria-label="Decrease quantity"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="font-bold text-sm text-gray-900 dark:text-white px-2">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#223326] rounded-full transition-colors active:scale-95"
-                  aria-label="Increase quantity"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
+              {(() => {
+                const isGift = isGiftProduct(product);
+                const minQty = isGift ? 3 : 1;
+                const isAtMin = quantity <= minQty;
+                return (
+                  <div className="flex items-center justify-between border border-gray-300 dark:border-[#2A3B2F] rounded-full bg-white dark:bg-[#18221B] px-2 py-1 shadow-xs shrink-0 h-12 sm:w-36">
+                    <button
+                      onClick={() => setQuantity(Math.max(minQty, quantity - 1))}
+                      disabled={isAtMin}
+                      className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors active:scale-95 ${
+                        isAtMin
+                          ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed opacity-40'
+                          : 'text-gray-600 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#223326]'
+                      }`}
+                      aria-label="Decrease quantity"
+                      title={isAtMin ? `Minimum order quantity is ${minQty} units` : 'Decrease quantity'}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="font-bold text-sm text-gray-900 dark:text-white px-2">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-[#FAF6EC] dark:hover:bg-[#223326] rounded-full transition-colors active:scale-95"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                );
+              })()}
 
               {/* Green Pill Add to Cart */}
               <button

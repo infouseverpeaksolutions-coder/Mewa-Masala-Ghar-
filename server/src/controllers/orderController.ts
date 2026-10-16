@@ -66,11 +66,37 @@ export const createOrder = async (req: Request, res: Response) => {
       for (const item of items) {
         const variant = await tx.productVariant.findUnique({
           where: { id: item.variantId },
-          include: { product: true }
+          include: {
+            product: {
+              include: {
+                category: true,
+              },
+            },
+          },
         });
 
         if (!variant || !variant.product) {
           throw new Error(`Variant or Product not found for variant ID: ${item.variantId}`);
+        }
+
+        // Validate Minimum Order Quantity (MOQ = 3) for Gift category / hampers
+        const catName = (variant.product.category?.name || '').toLowerCase();
+        const catSlug = (variant.product.category?.slug || '').toLowerCase();
+        const prodName = (variant.product.name || '').toLowerCase();
+        const isGift =
+          catName.includes('gift') ||
+          catSlug.includes('gift') ||
+          catName.includes('hamper') ||
+          catSlug.includes('hamper') ||
+          prodName.includes('hamper') ||
+          prodName.includes('gift box') ||
+          prodName.includes('gift pack') ||
+          prodName.includes('gift hamper');
+
+        if (isGift && item.quantity < 3) {
+          throw new Error(
+            `Minimum order quantity for ${variant.product.name} (Gift Pack) is 3 units. Please update your basket to proceed.`
+          );
         }
 
         if (variant.stockQty < item.quantity) {
@@ -114,13 +140,14 @@ export const createOrder = async (req: Request, res: Response) => {
       // B. Coupon Validation
       let discountAmount = 0;
       if (couponCode) {
-        const coupon = await tx.coupon.findUnique({ where: { code: couponCode } });
+        const cleanCode = String(couponCode).toUpperCase().trim();
+        const coupon = await tx.coupon.findUnique({ where: { code: cleanCode } });
         if (!coupon) throw new Error('Invalid coupon code');
         if (!coupon.isActive) throw new Error('Coupon is no longer active');
         if (coupon.startDate && new Date(coupon.startDate) > new Date()) throw new Error('Coupon is not yet valid');
         if (coupon.endDate && new Date(coupon.endDate) < new Date()) throw new Error('Coupon has expired');
         if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) throw new Error('Coupon has expired');
-        if (coupon.minOrderValue && subtotal < Number(coupon.minOrderValue)) throw new Error(`Minimum order value for this coupon is ${coupon.minOrderValue}`);
+        if (coupon.minOrderValue && subtotal < Number(coupon.minOrderValue)) throw new Error(`Minimum order value for this coupon is ₹${coupon.minOrderValue}`);
         if (coupon.usageLimit && coupon.usageCount >= coupon.usageLimit) throw new Error('Coupon usage limit exceeded');
 
         if (coupon.discountType === 'PERCENTAGE') {
@@ -131,6 +158,9 @@ export const createOrder = async (req: Request, res: Response) => {
         } else {
           discountAmount = Number(coupon.discountValue);
         }
+
+        discountAmount = Math.min(discountAmount, subtotal);
+        discountAmount = Number(discountAmount.toFixed(2));
 
         await tx.coupon.update({
           where: { id: coupon.id },

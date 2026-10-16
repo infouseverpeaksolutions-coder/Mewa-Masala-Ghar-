@@ -29,6 +29,7 @@ const cartInclude = {
         include: {
           product: {
             include: {
+              category: true,
               store: { select: { id: true, name: true, slug: true } },
               images: { where: { isPrimary: true }, take: 1 },
             },
@@ -73,14 +74,34 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response) => {
     // Validate variant exists and has stock
     const variant = await prisma.productVariant.findUnique({
       where: { id: variantId },
-      include: { product: { select: { isActive: true } } },
+      include: {
+        product: {
+          include: { category: true },
+        },
+      },
     });
 
     if (!variant || !variant.isActive || !variant.product.isActive) {
       return res.status(400).json({ success: false, message: 'Product variant not available.' });
     }
 
-    if (variant.stockQty < quantity) {
+    const catName = (variant.product.category?.name || '').toLowerCase();
+    const catSlug = (variant.product.category?.slug || '').toLowerCase();
+    const prodName = (variant.product.name || '').toLowerCase();
+    const isGift =
+      catName.includes('gift') ||
+      catSlug.includes('gift') ||
+      catName.includes('hamper') ||
+      catSlug.includes('hamper') ||
+      prodName.includes('hamper') ||
+      prodName.includes('gift box') ||
+      prodName.includes('gift pack') ||
+      prodName.includes('gift hamper');
+
+    const minQty = isGift ? 3 : 1;
+    const requestedQty = Number(quantity) || 1;
+
+    if (variant.stockQty < requestedQty) {
       return res.status(400).json({
         success: false,
         message: `Only ${variant.stockQty} units available in stock.`,
@@ -110,7 +131,7 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response) => {
     });
 
     if (existingItem) {
-      const newQty = existingItem.quantity + quantity;
+      const newQty = existingItem.quantity + requestedQty;
       if (newQty > variant.stockQty) {
         return res.status(400).json({
           success: false,
@@ -122,8 +143,9 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response) => {
         data: { quantity: newQty },
       });
     } else {
+      const initialQty = Math.max(minQty, requestedQty);
       await prisma.cartItem.create({
-        data: { cartId: cart.id, productVariantId: variantId, quantity },
+        data: { cartId: cart.id, productVariantId: variantId, quantity: initialQty },
       });
     }
 
@@ -149,7 +171,16 @@ export const updateCartItemQty = async (req: AuthenticatedRequest, res: Response
 
     const item = await prisma.cartItem.findUnique({
       where: { id: itemId },
-      include: { productVariant: true, cart: true },
+      include: {
+        productVariant: {
+          include: {
+            product: {
+              include: { category: true },
+            },
+          },
+        },
+        cart: true,
+      },
     });
 
     if (!item) {
@@ -164,6 +195,27 @@ export const updateCartItemQty = async (req: AuthenticatedRequest, res: Response
     }
     if (!item.cart.userId && item.cart.sessionId !== sessionId) {
       return res.status(403).json({ success: false, message: 'Access denied.' });
+    }
+
+    const catName = (item.productVariant.product.category?.name || '').toLowerCase();
+    const catSlug = (item.productVariant.product.category?.slug || '').toLowerCase();
+    const prodName = (item.productVariant.product.name || '').toLowerCase();
+    const isGift =
+      catName.includes('gift') ||
+      catSlug.includes('gift') ||
+      catName.includes('hamper') ||
+      catSlug.includes('hamper') ||
+      prodName.includes('hamper') ||
+      prodName.includes('gift box') ||
+      prodName.includes('gift pack') ||
+      prodName.includes('gift hamper');
+
+    const minQty = isGift ? 3 : 1;
+    if (quantity < minQty) {
+      return res.status(400).json({
+        success: false,
+        message: `Minimum order quantity for ${item.productVariant.product.name} is ${minQty} units.`,
+      });
     }
 
     // Stock check

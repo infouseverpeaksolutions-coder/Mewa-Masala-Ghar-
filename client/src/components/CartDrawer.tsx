@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useSettings } from '../context/SettingsContext';
 import api from '../services/api';
 import { resolveImageUrl } from '../utils/imageUrl';
+import { isGiftProduct } from '../utils/productUtils';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -42,10 +43,11 @@ export const CartDrawer: React.FC = () => {
         cartAmount: subtotal,
       });
       if (res.data?.success) {
-        applyCoupon(res.data.data.code, res.data.data.discountAmount);
+        const discountVal = Number(res.data.data?.discountAmount ?? res.data.data?.discount ?? 0);
+        applyCoupon(res.data.data.code, discountVal);
         setCouponCode('');
       } else {
-        setCouponError(res.data.message || 'Invalid coupon');
+        setCouponError(res.data?.message || 'Invalid coupon');
       }
     } catch (err: any) {
       setCouponError(err.response?.data?.message || 'Invalid or ineligible coupon code');
@@ -163,6 +165,11 @@ export const CartDrawer: React.FC = () => {
                           <span className="text-[10px] text-gray-500 block">
                             Pack: {item.variant.name}
                           </span>
+                          {isGiftProduct(item.product) && (
+                            <span className="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 mt-1 inline-block">
+                              Min. Order: 3 packs
+                            </span>
+                          )}
                         </div>
                         <button
                           onClick={() => removeFromCart(item.variant.id)}
@@ -175,23 +182,42 @@ export const CartDrawer: React.FC = () => {
 
                       <div className="flex items-center justify-between mt-2">
                         {/* Quantity Stepper */}
-                        <div className="flex items-center border border-gray-300 rounded-full bg-white p-0.5 shadow-xs">
-                          <button
-                            onClick={() => updateQuantity(item.variant.id, item.quantity - 1)}
-                            className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-[#FAF6EC] rounded-full"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="px-2 text-xs font-bold text-gray-800">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item.variant.id, item.quantity + 1)}
-                            className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-[#FAF6EC] rounded-full"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
+                        {(() => {
+                          const isGift = isGiftProduct(item.product);
+                          const minQty = isGift ? 3 : 1;
+                          const isAtMin = item.quantity <= minQty;
+                          return (
+                            <div className="flex items-center border border-gray-300 rounded-full bg-white p-0.5 shadow-xs">
+                              <button
+                                onClick={() => {
+                                  if (!isAtMin) {
+                                    updateQuantity(item.variant.id, item.quantity - 1);
+                                  }
+                                }}
+                                disabled={isAtMin}
+                                className={`w-6 h-6 flex items-center justify-center rounded-full transition-colors ${
+                                  isAtMin
+                                    ? 'text-gray-300 cursor-not-allowed opacity-50'
+                                    : 'text-gray-600 hover:bg-[#FAF6EC]'
+                                }`}
+                                title={isAtMin ? `Minimum order quantity is ${minQty} units. Use trash icon to remove.` : 'Decrease quantity'}
+                                aria-label="Decrease quantity"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="px-2 text-xs font-bold text-gray-800 min-w-[20px] text-center">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() => updateQuantity(item.variant.id, item.quantity + 1)}
+                                className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-[#FAF6EC] rounded-full transition-colors active:scale-95"
+                                aria-label="Increase quantity"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+                          );
+                        })()}
 
                         {/* Price */}
                         <div className="text-right">
@@ -216,7 +242,7 @@ export const CartDrawer: React.FC = () => {
                   <div className="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
                     <div className="flex items-center gap-1.5 font-bold">
                       <Tag className="w-3.5 h-3.5" />
-                      <span>Coupon '{appliedCoupon.code}' (-₹{appliedCoupon.discount})</span>
+                      <span>Coupon '{appliedCoupon.code}' (-₹{Number(appliedCoupon.discount || 0).toFixed(2)})</span>
                     </div>
                     <button
                       onClick={removeCoupon}

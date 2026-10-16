@@ -19,6 +19,7 @@ import { useCart } from '../context/CartContext';
 import { useSettings } from '../context/SettingsContext';
 import api from '../services/api';
 import { resolveImageUrl } from '../utils/imageUrl';
+import { isGiftProduct } from '../utils/productUtils';
 
 export const CartPage: React.FC = () => {
   const {
@@ -62,8 +63,9 @@ export const CartPage: React.FC = () => {
       });
 
       if (res.data?.success) {
-        applyCoupon(res.data.data.code, res.data.data.discountAmount);
-        setCouponSuccess(`Coupon ${res.data.data.code} applied! You saved ₹${res.data.data.discountAmount}`);
+        const discountVal = Number(res.data.data?.discountAmount ?? res.data.data?.discount ?? 0);
+        applyCoupon(res.data.data.code, discountVal);
+        setCouponSuccess(`Coupon ${res.data.data.code} applied! You saved ₹${discountVal.toFixed(2)}`);
         setCouponCode('');
       } else {
         setCouponError(res.data?.message || 'Invalid coupon code');
@@ -175,10 +177,15 @@ export const CartPage: React.FC = () => {
                     >
                       {item.product.name}
                     </Link>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#FAF6EC] text-gray-700 border border-[#E7E0D0] font-medium">
                         {item.variant.name}
                       </span>
+                      {isGiftProduct(item.product) && (
+                        <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                          Min. Order: 3 packs
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-gray-600 font-semibold mt-1">
                       ₹{item.variant.price}{' '}
@@ -192,25 +199,42 @@ export const CartPage: React.FC = () => {
                 {/* Quantity Stepper, Total & Remove */}
                 <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
                   {/* Quantity Stepper */}
-                  <div className="flex items-center border border-gray-300 rounded-full bg-white p-0.5 shadow-xs">
-                    <button
-                      onClick={() => updateQuantity(item.variant.id, item.quantity - 1)}
-                      className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-[#FAF6EC] rounded-full transition-colors active:scale-95"
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="px-3 text-xs sm:text-sm font-bold text-gray-900 min-w-[28px] text-center">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(item.variant.id, item.quantity + 1)}
-                      className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-[#FAF6EC] rounded-full transition-colors active:scale-95"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  {(() => {
+                    const isGift = isGiftProduct(item.product);
+                    const minQty = isGift ? 3 : 1;
+                    const isAtMin = item.quantity <= minQty;
+                    return (
+                      <div className="flex items-center border border-gray-300 rounded-full bg-white p-0.5 shadow-xs">
+                        <button
+                          onClick={() => {
+                            if (!isAtMin) {
+                              updateQuantity(item.variant.id, item.quantity - 1);
+                            }
+                          }}
+                          disabled={isAtMin}
+                          className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors active:scale-95 ${
+                            isAtMin
+                              ? 'text-gray-300 cursor-not-allowed opacity-50'
+                              : 'text-gray-600 hover:bg-[#FAF6EC]'
+                          }`}
+                          aria-label="Decrease quantity"
+                          title={isAtMin ? `Minimum order quantity is ${minQty} units. Use trash icon to remove.` : 'Decrease quantity'}
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="px-3 text-xs sm:text-sm font-bold text-gray-900 min-w-[28px] text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.variant.id, item.quantity + 1)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-[#FAF6EC] rounded-full transition-colors active:scale-95"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })()}
 
                   {/* Subtotal for Line Item */}
                   <div className="text-right min-w-[80px]">
@@ -260,7 +284,7 @@ export const CartPage: React.FC = () => {
                       {appliedCoupon.code}
                     </span>
                     <p className="text-[11px] text-emerald-600 font-medium">
-                      ₹{appliedCoupon.discount} savings applied
+                      ₹{Number(appliedCoupon.discount || 0).toFixed(2)} savings applied
                     </p>
                   </div>
                 </div>
