@@ -707,7 +707,7 @@ export const createProduct = async (req: Request, res: Response) => {
               price: parseFloat(v.price) || 0,
               stockQty: v.stockQty !== undefined ? parseInt(v.stockQty, 10) : (v.stock ? parseInt(v.stock, 10) : 50),
               packQty: v.packQty ? parseInt(v.packQty, 10) : 1,
-              gstPercent: v.gstPercent ? parseFloat(v.gstPercent) : 12.0,
+              gstPercent: v.gstPercent ? parseFloat(v.gstPercent) : (gstRate ? parseFloat(gstRate) : 12.0),
               sku: v.sku ? v.sku.trim() : `MMG-${Date.now().toString().slice(-4)}-${index + 1}-${randSuffix}`,
               isDefault: v.isDefault !== undefined ? Boolean(v.isDefault) : index === 0,
               isActive: v.isActive !== undefined ? Boolean(v.isActive) : true,
@@ -777,6 +777,13 @@ export const updateProduct = async (req: Request, res: Response) => {
         variants: true,
       },
     });
+
+    if (data.gstRate !== undefined) {
+      await prisma.productVariant.updateMany({
+        where: { productId: id },
+        data: { gstPercent: parseFloat(data.gstRate) },
+      });
+    }
 
     // Sync variants if array provided
     if (Array.isArray(data.variants) && data.variants.length > 0) {

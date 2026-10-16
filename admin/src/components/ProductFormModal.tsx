@@ -752,6 +752,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                       <option value={5}>5% (Whole Raw Spices)</option>
                       <option value={12}>12% (Dry Fruits, Makhana, Seeds)</option>
                       <option value={18}>18% (Processed Foods / Skincare)</option>
+                      <option value={28}>28% (Special Taxable Goods)</option>
                     </select>
                   </div>
                 </div>
